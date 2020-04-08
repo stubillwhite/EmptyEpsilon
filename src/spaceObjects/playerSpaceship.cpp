@@ -202,8 +202,8 @@ REGISTER_SCRIPT_SUBCLASS(PlayerSpaceship, SpaceShip)
     /// Example: ship:getSelfDestructSize()
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, getSelfDestructSize);
     // Changes the list of labels used to describe scans.
-    // Example: player:setSignalLabels("Reticulating splines", "Reversing polarity")
-    REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, setSignalLabels);
+    // Example: player:setScanLabels("Reticulating splines", "Reversing polarity")
+    REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, setScanLabels);
 }
 
 float PlayerSpaceship::system_power_user_factor[] = {
@@ -310,7 +310,20 @@ PlayerSpaceship::PlayerSpaceship()
     alert_level = AL_Normal;
     shields_active = false;
     control_code = "";
-    signal_labels.assign( { "Electric signature", "Biomass frequency", "Gravity well signature", "Radiation halftime", "Radio profile", "Ionic phase shift", "Infra-red color shift", "Doppler stability", "Raspberry jam prevention", "infinity improbability", "Zerospace audio frequency", "Polarity inversion" } );
+    scan_labels.assign({
+        tr("Electric signature"),
+        tr("Biomass frequency"),
+        tr("Gravity well signature"),
+        tr("Radiation halftime"),
+        tr("Radio profile"),
+        tr("Ionic phase shift"),
+        tr("Infra-red color shift"),
+        tr("Doppler stability"),
+        tr("Raspberry jam prevention"),
+        tr("Infinity improbability"),
+        tr("Zerospace audio frequency"),
+        tr("Polarity inversion")
+    });
 
     setFactionId(1);
 
@@ -353,6 +366,7 @@ PlayerSpaceship::PlayerSpaceship()
     registerMemberReplication(&alert_level);
     registerMemberReplication(&linked_science_probe_id);
     registerMemberReplication(&control_code);
+    registerMemberReplication(&scan_labels, 1.0);
     registerMemberReplication(&long_range_radar_range);
     registerMemberReplication(&short_range_radar_range);
     registerMemberReplication(&custom_functions);
@@ -1184,13 +1198,13 @@ void PlayerSpaceship::closeComms()
     }
 }
 
-void PlayerSpaceship::setSignalLabels(std::vector<string> labels) {
+void PlayerSpaceship::setScanLabels(std::vector<string> labels) {
     if (labels.size() > 0)
-        signal_labels = labels;
+        scan_labels = labels;
 }
 
-const std::vector<string> PlayerSpaceship::getSignalLabels() {
-    return signal_labels;
+const std::vector<string> PlayerSpaceship::getScanLabels() {
+    return scan_labels;
 }
 
 void PlayerSpaceship::onReceiveClientCommand(int32_t client_id, sf::Packet& packet)
