@@ -129,15 +129,6 @@ ShipTemplate::ShipTemplate()
     impulse_sound_file = "sfx/engine.wav";
 }
 
-void ShipTemplate::setBeamTexture(int index, string texture)
-
-{
-    if (index >= 0 && index < max_beam_weapons)
-    {
-        beams[index].setBeamTexture(texture);
-    }
-}
-
 void ShipTemplate::setTubes(int amount, float load_time)
 {
     weapon_tube_count = std::min(max_weapon_tubes, amount);
@@ -247,6 +238,15 @@ void ShipTemplate::setBeamWeaponTurret(int index, float arc, float direction, fl
     beams[index].setTurretArc(arc);
     beams[index].setTurretDirection(direction);
     beams[index].setTurretRotationRate(rotation_rate);
+}
+
+void ShipTemplate::setBeamTexture(int index, string texture)
+
+{
+    if (index >= 0 && index < max_beam_weapons)
+    {
+        beams[index].setBeamTexture(texture);
+    }
 }
 
 sf::Vector2i ShipTemplate::interiorSize()

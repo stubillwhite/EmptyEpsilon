@@ -48,9 +48,12 @@ public:
     void setPosition(sf::Vector3f position);
     sf::Vector3f getPosition();
     
+    void setStation(int station);
+    int getStation();
+    
     void setBeamTexture(string beam_texture);
     string getBeamTexture();
-
+    
     float getCooldown();
     
     void update(float delta);
@@ -72,6 +75,7 @@ protected:
     //Beam runtime state
     float cooldown;
     string beam_texture;
+    int station;
 };
 
 #endif//BEAM_WEAPON_H

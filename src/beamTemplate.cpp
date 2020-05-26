@@ -11,6 +11,7 @@ BeamTemplate::BeamTemplate()
     cycle_time = 0;
     damage = 0;
     beam_texture = "beam_orange.png";
+    station = 0;
 
     energy_per_beam_fire = 3.0;
     heat_per_beam_fire = 0.02;
@@ -161,6 +162,19 @@ void BeamTemplate::setHeatPerFire(float heat)
     heat_per_beam_fire = heat;
 }
 
+int BeamTemplate::getStation()
+{
+    return station;
+}
+
+void BeamTemplate::setStation(int station)
+{
+    if(station < 0)
+        this->station = 0;
+    else
+        this->station = station;
+}
+
 BeamTemplate& BeamTemplate::operator=(const BeamTemplate& other)
 {
     beam_texture = other.beam_texture;
@@ -174,5 +188,6 @@ BeamTemplate& BeamTemplate::operator=(const BeamTemplate& other)
     damage = other.damage;
     energy_per_beam_fire = other.energy_per_beam_fire;
     heat_per_beam_fire = other.heat_per_beam_fire;
+    station = other.station;
     return *this;
 }

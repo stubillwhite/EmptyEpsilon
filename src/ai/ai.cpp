@@ -311,9 +311,9 @@ void ShipAI::updateTarget()
         }
     }
     if (!target)
-        owner->target_id = -1;
+        owner->target_id[0] = -1;
     else
-        owner->target_id = target->getMultiplayerId();
+        owner->target_id[0] = target->getMultiplayerId();
 }
 
 void ShipAI::runOrders()
@@ -334,7 +334,7 @@ void ShipAI::runOrders()
             P<SpaceObject> new_target = findBestTarget(owner->getPosition(), 50000);
             if (new_target)
             {
-                owner->target_id = new_target->getMultiplayerId();
+                owner->target_id[0] = new_target->getMultiplayerId();
             }else{
                 sf::Vector2f diff = owner->getOrderTargetLocation() - owner->getPosition();
                 if (diff < 1000.0f)

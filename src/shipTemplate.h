@@ -164,7 +164,7 @@ public:
     void weaponTubeDisallowMissle(int index, EMissileWeapons type);
     void setWeaponTubeExclusiveFor(int index, EMissileWeapons type);
     void setTubeSize(int index, EMissileSizes size);
-    
+
     void setTubeDirection(int index, float direction);
     void setHull(float amount) { hull = amount; }
     void setShields(std::vector<float> values);

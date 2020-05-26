@@ -243,7 +243,7 @@ public:
     void commandImpulse(float target);
     void commandWarp(int8_t target);
     void commandJump(float distance);
-    void commandSetTarget(P<SpaceObject> target);
+    void commandSetTarget(P<SpaceObject> target, int8_t station = 0);
     void commandSetScienceLink(int32_t id);
     void commandLoadTube(int8_t tubeNumber, EMissileWeapons missileType);
     void commandUnloadTube(int8_t tubeNumber);

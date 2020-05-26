@@ -2,6 +2,7 @@
 #include "spaceObjects/spaceship.h"
 #include "spaceObjects/beamEffect.h"
 #include "spaceObjects/spaceObject.h"
+#include "preferenceManager.h"
 
 BeamWeapon::BeamWeapon()
 {
@@ -16,6 +17,7 @@ BeamWeapon::BeamWeapon()
     damage = 1.0;
     energy_per_beam_fire = 3.0;
     heat_per_beam_fire = 0.02;
+    station = 0;
     parent = nullptr;
 }
 
@@ -32,6 +34,7 @@ void BeamWeapon::setParent(SpaceShip* parent)
     parent->registerMemberReplication(&turret_rotation_rate);
     parent->registerMemberReplication(&cycle_time);
     parent->registerMemberReplication(&cooldown, 0.5);
+    parent->registerMemberReplication(&station, 1.0);
 }
 
 void BeamWeapon::setArc(float arc)
@@ -109,6 +112,11 @@ void BeamWeapon::setDamage(float damage)
     this->damage = damage;
 }
 
+void BeamWeapon::setStation(int station)
+{
+    this->station = station;
+}
+
 float BeamWeapon::getDamage()
 {
     return damage;
@@ -159,15 +167,21 @@ float BeamWeapon::getCooldown()
     return cooldown;
 }
 
+int BeamWeapon::getStation()
+{
+    return station;
+}
+
 void BeamWeapon::update(float delta)
 {
     if (cooldown > 0.0)
         cooldown -= delta * parent->getSystemEffectiveness(SYS_BeamWeapons);
 
-    P<SpaceObject> target = parent->getTarget();
+    P<SpaceObject> target = parent->getTarget(station);
 
     // Check on beam weapons only if we are on the server, have a target, and
-    // not paused, and if the beams are cooled down or have a turret arc.
+    // not paused, and if the beams are cooled down or have a turret arc, and 
+    // if the specific weapons station is ok.
     if (game_server && range > 0.0 && target && parent->isEnemy(target) && delta > 0 && parent->current_warp == 0.0 && parent->docking_state == DS_NotDocking)
     {
         // Get the angle to the target.

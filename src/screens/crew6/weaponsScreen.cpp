@@ -38,9 +38,9 @@ WeaponsScreen::WeaponsScreen(GuiContainer* owner)
         [this](sf::Vector2f position) {
             targets.setToClosestTo(position, 250, TargetsContainer::Targetable);
             if (my_spaceship && targets.get())
-                my_spaceship->commandSetTarget(targets.get());
+                my_spaceship->commandSetTarget(targets.get(), PreferencesManager::get("weapons_specific_station", "0").toInt());
             else if (my_spaceship)
-                my_spaceship->commandSetTarget(NULL);
+                my_spaceship->commandSetTarget(NULL, PreferencesManager::get("weapons_specific_station", "0").toInt());
         }, nullptr, nullptr
     );
     radar->setAutoRotating(PreferencesManager::get("weapons_radar_lock","0")=="1");
@@ -73,13 +73,15 @@ WeaponsScreen::WeaponsScreen(GuiContainer* owner)
         }
     }
 
+    station_display = new GuiKeyValueDisplay(this, "STATION_DISPLAY", 0.45, tr("Weapons", "Station"), "");
+    station_display->setIcon("gui/icons/station-weapons")->setTextSize(20)->setPosition(20, 60, ATopLeft)->setSize(240, 40);
     energy_display = new GuiKeyValueDisplay(this, "ENERGY_DISPLAY", 0.45, tr("Energy"), "");
     energy_display->setIcon("gui/icons/energy")->setTextSize(20)->setPosition(20, 100, ATopLeft)->setSize(240, 40);
     front_shield_display = new GuiKeyValueDisplay(this, "FRONT_SHIELD_DISPLAY", 0.45, tr("shields","Front"), "");
     front_shield_display->setIcon("gui/icons/shields-fore")->setTextSize(20)->setPosition(20, 140, ATopLeft)->setSize(240, 40);
     rear_shield_display = new GuiKeyValueDisplay(this, "REAR_SHIELD_DISPLAY", 0.45, tr("shields", "Rear"), "");
     rear_shield_display->setIcon("gui/icons/shields-aft")->setTextSize(20)->setPosition(20, 180, ATopLeft)->setSize(240, 40);
-
+    
     if (gameGlobalInfo->use_beam_shield_frequencies)
     {
         //The shield frequency selection includes a shield enable button.
@@ -98,7 +100,8 @@ void WeaponsScreen::onDraw(sf::RenderTarget& window)
         energy_display->setValue(string(int(my_spaceship->energy_level)));
         front_shield_display->setValue(string(my_spaceship->getShieldPercentage(0)) + "%");
         rear_shield_display->setValue(string(my_spaceship->getShieldPercentage(1)) + "%");
-        targets.set(my_spaceship->getTarget());
+        targets.set(my_spaceship->getTarget(PreferencesManager::get("weapons_specific_station", "0").toInt()));
+        station_display->setValue(string(PreferencesManager::get("weapons_specific_station_name", "")))->setVisible(string(PreferencesManager::get("weapons_specific_station_name", "")) != "");
 
         missile_aim->setVisible(tube_controls->getManualAim());
     }
@@ -122,7 +125,7 @@ void WeaponsScreen::onHotkey(const HotkeyResult& key)
                 if (current_found && sf::length(obj->getPosition() - my_spaceship->getPosition()) < my_spaceship->getShortRangeRadarRange() && my_spaceship->isEnemy(obj) && my_spaceship->getScannedStateFor(obj) >= SS_FriendOrFoeIdentified && obj->canBeTargetedBy(my_spaceship))
                 {
                     targets.set(obj);
-                    my_spaceship->commandSetTarget(targets.get());
+                    my_spaceship->commandSetTarget(targets.get(), PreferencesManager::get("weapons_specific_station", "0").toInt());
                     return;
                 }
             }
@@ -135,7 +138,7 @@ void WeaponsScreen::onHotkey(const HotkeyResult& key)
                 if (my_spaceship->isEnemy(obj) && sf::length(obj->getPosition() - my_spaceship->getPosition()) < my_spaceship->getShortRangeRadarRange() && my_spaceship->getScannedStateFor(obj) >= SS_FriendOrFoeIdentified && obj->canBeTargetedBy(my_spaceship))
                 {
                     targets.set(obj);
-                    my_spaceship->commandSetTarget(targets.get());
+                    my_spaceship->commandSetTarget(targets.get(), PreferencesManager::get("weapons_specific_station", "0").toInt());
                     return;
                 }
             }
@@ -155,7 +158,7 @@ void WeaponsScreen::onHotkey(const HotkeyResult& key)
                 if (current_found && sf::length(obj->getPosition() - my_spaceship->getPosition()) < my_spaceship->getShortRangeRadarRange() && obj->canBeTargetedBy(my_spaceship))
                 {
                     targets.set(obj);
-                    my_spaceship->commandSetTarget(targets.get());
+                    my_spaceship->commandSetTarget(targets.get(), PreferencesManager::get("weapons_specific_station", "0").toInt());
                     return;
                 }
             }
@@ -166,7 +169,7 @@ void WeaponsScreen::onHotkey(const HotkeyResult& key)
                 if (sf::length(obj->getPosition() - my_spaceship->getPosition()) < my_spaceship->getShortRangeRadarRange() && obj->canBeTargetedBy(my_spaceship))
                 {
                     targets.set(obj);
-                    my_spaceship->commandSetTarget(targets.get());
+                    my_spaceship->commandSetTarget(targets.get(), PreferencesManager::get("weapons_specific_station", "0").toInt());
                     return;
                 }
             }
