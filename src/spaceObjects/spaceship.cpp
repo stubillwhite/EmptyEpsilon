@@ -259,7 +259,6 @@ void SpaceShip::applyTemplateValues()
         beam_weapons[n].setBeamTexture(ship_template->beams[n].getBeamTexture());
         beam_weapons[n].setEnergyPerFire(ship_template->beams[n].getEnergyPerFire());
         beam_weapons[n].setHeatPerFire(ship_template->beams[n].getHeatPerFire());
-        //beam_weapons[n].setStation(ship_template->beams[n].getStation());
         beam_weapons[n].setStation(0);
     }
     weapon_tube_count = ship_template->weapon_tube_count;
@@ -280,7 +279,6 @@ void SpaceShip::applyTemplateValues()
         weapon_tube[n].setLoadTimeConfig(ship_template->weapon_tube[n].load_time);
         weapon_tube[n].setDirection(ship_template->weapon_tube[n].direction);
         weapon_tube[n].setSize(ship_template->weapon_tube[n].size);
-        //weapon_tube[n].setStation(ship_template->weapon_tube[n].station);
         weapon_tube[n].setStation(0);
         for(int m=0; m<MW_Count; m++)
         {
