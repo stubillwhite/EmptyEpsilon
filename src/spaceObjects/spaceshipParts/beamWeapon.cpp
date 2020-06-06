@@ -178,6 +178,8 @@ void BeamWeapon::update(float delta)
         cooldown -= delta * parent->getSystemEffectiveness(SYS_BeamWeapons);
 
     P<SpaceObject> target = parent->getTarget(station);
+    if (!target)
+        target = parent->getTarget(0);
 
     // Check on beam weapons only if we are on the server, have a target, and
     // not paused, and if the beams are cooled down or have a turret arc, and 

@@ -464,7 +464,7 @@ void GuiRadarView::drawTargetProjections(sf::RenderTarget& window)
         {
             if (!my_spaceship->weapon_tube[n].isLoaded())
                 continue;
-            if (my_spaceship->weapon_tube[n].getStation() != PreferencesManager::get("weapons_specific_station", "0").toInt())
+            if (PreferencesManager::get("weapons_specific_station", "0").toInt() != 0 && my_spaceship->weapon_tube[n].getStation() != PreferencesManager::get("weapons_specific_station", "0").toInt())
                 continue;
             sf::Vector2f fire_position = my_spaceship->getPosition() + sf::rotateVector(my_spaceship->ship_template->model_data->getTubePosition2D(n), my_spaceship->getRotation());
             sf::Vector2f fire_draw_position = worldToScreen(fire_position);

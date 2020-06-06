@@ -211,12 +211,14 @@ SpaceShip::SpaceShip(string multiplayerClassName, float multiplayer_significant_
     for(int n = 0; n < max_beam_weapons; n++)
     {
         beam_weapons[n].setParent(this);
+        beam_weapons[n].setStation(0);
     }
 
     for(int n = 0; n < max_weapon_tubes; n++)
     {
         weapon_tube[n].setParent(this);
         weapon_tube[n].setIndex(n);
+        weapon_tube[n].setStation(0);
     }
 
     for(int n = 0; n < MW_Count; n++)
@@ -402,7 +404,7 @@ void SpaceShip::drawOnRadar(sf::RenderTarget& window, sf::Vector2f position, flo
             sf::Color color = sf::Color::Red;
             
             // Draw beam arcs only if the specific weapons station is ok
-            if (my_spaceship == this && beam_weapons[n].getStation() != PreferencesManager::get("weapons_specific_station", "0").toInt())
+            if (PreferencesManager::get("weapons_specific_station", "0").toInt() != 0 && my_spaceship == this && beam_weapons[n].getStation() != PreferencesManager::get("weapons_specific_station", "0").toInt())
                 color.a = 64;
 
             // If the beam is cooling down, flash and fade the arc color.

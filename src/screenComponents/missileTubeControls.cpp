@@ -97,7 +97,16 @@ void GuiMissileTubeControls::onDraw(sf::RenderTarget& window){
     for (int n = 0; n < my_spaceship->weapon_tube_count; n++)
     {
         WeaponTube& tube = my_spaceship->weapon_tube[n];
+        
+        if (PreferencesManager::get("weapons_specific_station", "0").toInt() != 0 && tube.getStation() != PreferencesManager::get("weapons_specific_station", "0").toInt())
+        {
+            LOG(WARNING) << "TEST : " << tube.getStation() << PreferencesManager::get("weapons_specific_station", "0").toInt();
+            rows[n].layout->hide();
+            continue;
+        }
         rows[n].layout->show();
+        visible_tubes = true;
+        
         if (tube.canOnlyLoad(MW_Mine))
             rows[n].fire_button->setIcon("gui/icons/weapon-mine", ACenterLeft);
         else
@@ -142,10 +151,6 @@ void GuiMissileTubeControls::onDraw(sf::RenderTarget& window){
             rows[n].fire_button->setText(tr("missile","Firing"));
             rows[n].loading_bar->hide();
         }
-        if (tube.getStation() != PreferencesManager::get("weapons_specific_station", "0").toInt())
-            rows[n].layout->hide();
-        else
-            visible_tubes = true;
     }
     if (!visible_tubes)
     {
@@ -175,7 +180,7 @@ void GuiMissileTubeControls::onHotkey(const HotkeyResult& key)
 
         for(int n=0; n<my_spaceship->weapon_tube_count; n++)
         {
-            if (my_spaceship->weapon_tube[n].getStation() == PreferencesManager::get("weapons_specific_station", "0").toInt())
+            if (PreferencesManager::get("weapons_specific_station", "0").toInt() != 0 && my_spaceship->weapon_tube[n].getStation() == PreferencesManager::get("weapons_specific_station", "0").toInt())
             {
                 if (key.hotkey == "LOAD_TUBE_" + string(n+1))
                     my_spaceship->commandLoadTube(n, load_type);
