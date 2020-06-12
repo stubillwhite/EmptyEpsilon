@@ -70,6 +70,7 @@ public:
     constexpr static float heat_per_combat_maneuver_strafe = 0.2;
     constexpr static float heat_per_warp = 0.02;
     constexpr static float unhack_time = 180.0f; //It takes this amount of time to go from 100% hacked to 0% hacked for systems.
+    constexpr static int max_target_id = 10; // Number of maximal specific weapons stations
 
 
     float energy_level;
@@ -179,7 +180,8 @@ public:
     int shield_frequency;
 
     /// MultiplayerObjectID of the targeted object, or -1 when no target is selected.
-    int32_t target_id;
+    /// Multi target for specific weapons stations
+    int32_t target_id[max_target_id];
 
     EDockingState docking_state;
     P<SpaceObject> docking_target; //Server only
@@ -309,7 +311,7 @@ public:
 
     virtual void applyTemplateValues() override;
 
-    P<SpaceObject> getTarget();
+    P<SpaceObject> getTarget(int station = 0);
 
     virtual std::unordered_map<string, string> getGMInfo() override;
 
@@ -400,6 +402,7 @@ public:
     float getBeamWeaponDamage(int index) { if (index < 0 || index >= max_beam_weapons) return 0.0; return beam_weapons[index].getDamage(); }
     float getBeamWeaponEnergyPerFire(int index) { if (index < 0 || index >= max_beam_weapons) return 0.0; return beam_weapons[index].getEnergyPerFire(); }
     float getBeamWeaponHeatPerFire(int index) { if (index < 0 || index >= max_beam_weapons) return 0.0; return beam_weapons[index].getHeatPerFire(); }
+    int getBeamWeaponStation(int index) { if (index < 0 || index >= max_beam_weapons) return 0; return beam_weapons[index].getStation(); }
 
     int getShieldsFrequency(void){ return shield_frequency; }
     void setShieldsFrequency(float freq) { if ((freq > SpaceShip::max_frequency) || (freq < 0)) return; shield_frequency = freq;}
@@ -435,6 +438,8 @@ public:
 
     void setBeamWeaponEnergyPerFire(int index, float energy) { if (index < 0 || index >= max_beam_weapons) return; return beam_weapons[index].setEnergyPerFire(energy); }
     void setBeamWeaponHeatPerFire(int index, float heat) { if (index < 0 || index >= max_beam_weapons) return; return beam_weapons[index].setHeatPerFire(heat); }
+    void setBeamWeaponStation(int index, int station) { if (index < 0 || index >= max_beam_weapons) return; return beam_weapons[index].setStation(station); }
+
     void setTractorBeam(ETractorBeamMode mode, float arc, float direction, float range, float max_area, float drag_per_second)
     {
         tractor_beam.setMode(mode);
@@ -444,10 +449,12 @@ public:
         tractor_beam.setMaxArea(max_area);
         tractor_beam.setDragPerSecond(drag_per_second);
     }
+    
     void setWeaponTubeCount(int amount);
     int getWeaponTubeCount();
     EMissileWeapons getWeaponTubeLoadType(int index);
     EMissileSizes getWeaponTubeSize(int index);
+    int getWeaponTubeStation(int index);
     
     void weaponTubeAllowMissle(int index, EMissileWeapons type);
     void weaponTubeDisallowMissle(int index, EMissileWeapons type);
@@ -456,6 +463,7 @@ public:
     void setWeaponTubeSize(int index, EMissileSizes size);
     void setTubeSize(int index, EMissileSizes size);
     EMissileSizes getTubeSize(int index);
+    void setWeaponTubeStation(int index, int station);
 
     void setRadarTrace(string trace) { radar_trace = trace; }
 

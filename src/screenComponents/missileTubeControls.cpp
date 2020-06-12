@@ -2,6 +2,7 @@
 #include "spaceObjects/playerSpaceship.h"
 #include "missileTubeControls.h"
 #include "powerDamageIndicator.h"
+#include "preferenceManager.h"
 
 #include "gui/gui2_button.h"
 #include "gui/gui2_progressbar.h"
@@ -44,7 +45,7 @@ GuiMissileTubeControls::GuiMissileTubeControls(GuiContainer* owner, string id, P
                 float target_angle = missile_target_angle;
                 if (!manual_aim)
                 {
-                    target_angle = target_spaceship->weapon_tube[n].calculateFiringSolution(target_spaceship->getTarget());
+                    target_angle = target_spaceship->weapon_tube[n].calculateFiringSolution(my_spaceship->getTarget(PreferencesManager::get("weapons_specific_station", "0").toInt()));
                     if (target_angle == std::numeric_limits<float>::infinity())
                         target_angle = target_spaceship->getRotation() + target_spaceship->weapon_tube[n].getDirection();
                 }
@@ -98,11 +99,20 @@ void GuiMissileTubeControls::onDraw(sf::RenderTarget& window){
         load_type_rows[n].button->setText(getLocaleMissileWeaponName(EMissileWeapons(n)) + " [" + string(target_spaceship->weapon_storage[n]) + "/" + string(target_spaceship->weapon_storage_max[n]) + "]");
         load_type_rows[n].layout->setVisible(target_spaceship->weapon_storage_max[n] > 0);
     }
-    
+    bool visible_tubes = false;
     for (int n = 0; n < target_spaceship->weapon_tube_count; n++)
     {
         WeaponTube& tube = target_spaceship->weapon_tube[n];
+        
+        if (PreferencesManager::get("weapons_specific_station", "0").toInt() != 0 && tube.getStation() != PreferencesManager::get("weapons_specific_station", "0").toInt())
+        {
+            rows[n].layout->hide();
+            continue;
+        }
+        
         rows[n].layout->show();
+        visible_tubes = true;
+        
         if (tube.canOnlyLoad(MW_Mine))
             rows[n].fire_button->setIcon("gui/icons/weapon-mine", ACenterLeft);
         else
@@ -148,6 +158,11 @@ void GuiMissileTubeControls::onDraw(sf::RenderTarget& window){
             rows[n].loading_bar->hide();
         }
     }
+    if (!visible_tubes)
+    {
+        for (int n = 0; n < MW_Count; n++)
+        load_type_rows[n].layout->hide();
+    }
     for(int n=target_spaceship->weapon_tube_count; n<max_weapon_tubes; n++)
         rows[n].layout->hide();
 
@@ -171,20 +186,23 @@ void GuiMissileTubeControls::onHotkey(const HotkeyResult& key)
 
         for(int n=0; n<target_spaceship->weapon_tube_count; n++)
         {
-            if (key.hotkey == "LOAD_TUBE_" + string(n+1))
-                target_spaceship->commandLoadTube(n, load_type);
-            if (key.hotkey == "UNLOAD_TUBE_" + string(n+1))
-                target_spaceship->commandUnloadTube(n);
-            if (key.hotkey == "FIRE_TUBE_" + string(n+1))
+            if (PreferencesManager::get("weapons_specific_station", "0").toInt() != 0 && target_spaceship->weapon_tube[n].getStation() == PreferencesManager::get("weapons_specific_station", "0").toInt())
             {
-                float target_angle = missile_target_angle;
-                if (!manual_aim)
+                if (key.hotkey == "LOAD_TUBE_" + string(n+1))
+                    target_spaceship->commandLoadTube(n, load_type);
+                if (key.hotkey == "UNLOAD_TUBE_" + string(n+1))
+                    target_spaceship->commandUnloadTube(n);
+                if (key.hotkey == "FIRE_TUBE_" + string(n+1))
                 {
-                    target_angle = target_spaceship->weapon_tube[n].calculateFiringSolution(target_spaceship->getTarget());
-                    if (target_angle == std::numeric_limits<float>::infinity())
-                        target_angle = target_spaceship->getRotation() + target_spaceship->weapon_tube[n].getDirection();
+                    float target_angle = missile_target_angle;
+                    if (!manual_aim)
+                    {
+                        target_angle = target_spaceship->weapon_tube[n].calculateFiringSolution(target_spaceship->getTarget(PreferencesManager::get("weapons_specific_station", "0").toInt()));
+                        if (target_angle == std::numeric_limits<float>::infinity())
+                            target_angle = target_spaceship->getRotation() + target_spaceship->weapon_tube[n].getDirection();
+                    }
+                    target_spaceship->commandFireTube(n, target_angle);
                 }
-                target_spaceship->commandFireTube(n, target_angle);
             }
         }
     }

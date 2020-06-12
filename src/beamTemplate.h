@@ -52,6 +52,9 @@ public:
     float getHeatPerFire();
     void setHeatPerFire(float heat);
     
+    int getStation();
+    void setStation(int station);
+    
     BeamTemplate& operator=(const BeamTemplate& other);
 
 protected:
@@ -66,6 +69,7 @@ protected:
     float damage;
     float energy_per_beam_fire;
     float heat_per_beam_fire;
+    int station;
 };
 
 #endif//BEAM_TEMPLATE_H

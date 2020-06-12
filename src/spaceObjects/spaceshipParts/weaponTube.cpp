@@ -5,6 +5,7 @@
 #include "spaceObjects/missiles/nuke.h"
 #include "spaceObjects/missiles/hvli.h"
 #include "spaceObjects/spaceship.h"
+#include "preferenceManager.h"
 
 WeaponTube::WeaponTube()
 {
@@ -18,6 +19,7 @@ WeaponTube::WeaponTube()
     delay = 0.0;
     tube_index = 0;
     size = MS_Medium;
+    station = 0;
 }
 
 void WeaponTube::setParent(SpaceShip* parent)
@@ -29,6 +31,7 @@ void WeaponTube::setParent(SpaceShip* parent)
     parent->registerMemberReplication(&type_allowed_mask);
     parent->registerMemberReplication(&direction);
     parent->registerMemberReplication(&size);
+    parent->registerMemberReplication(&station);
     
     parent->registerMemberReplication(&type_loaded);
     parent->registerMemberReplication(&state);
@@ -58,6 +61,16 @@ void WeaponTube::setDirection(float direction)
 float WeaponTube::getDirection()
 {
     return direction;
+}
+
+void WeaponTube::setStation(int station)
+{
+    this->station = station;
+}
+
+int WeaponTube::getStation()
+{
+    return station;
 }
 
 void WeaponTube::startLoad(EMissileWeapons type)
@@ -130,7 +143,7 @@ void WeaponTube::spawnProjectile(float target_angle)
             P<HomingMissile> missile = new HomingMissile();
             missile->owner = parent;
             missile->setFactionId(parent->getFactionId());
-            missile->target_id = parent->target_id;
+            missile->target_id = parent->target_id[station];
             missile->setPosition(fireLocation);
             missile->setRotation(parent->getRotation() + direction);
             missile->target_angle = target_angle;
@@ -142,7 +155,7 @@ void WeaponTube::spawnProjectile(float target_angle)
             P<Nuke> missile = new Nuke();
             missile->owner = parent;
             missile->setFactionId(parent->getFactionId());
-            missile->target_id = parent->target_id;
+            missile->target_id = parent->target_id[station];
             missile->setPosition(fireLocation);
             missile->setRotation(parent->getRotation() + direction);
             missile->target_angle = target_angle;
@@ -175,7 +188,7 @@ void WeaponTube::spawnProjectile(float target_angle)
             P<EMPMissile> missile = new EMPMissile();
             missile->owner = parent;
             missile->setFactionId(parent->getFactionId());
-            missile->target_id = parent->target_id;
+            missile->target_id = parent->target_id[station];
             missile->setPosition(fireLocation);
             missile->setRotation(parent->getRotation() + direction);
             missile->target_angle = target_angle;

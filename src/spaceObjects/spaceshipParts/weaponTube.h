@@ -29,6 +29,9 @@ public:
     void setDirection(float direction);
     float getDirection();
     
+    void setStation(int station);
+    int getStation();
+    
     /*!
      * Load a missile tube.
      * \param type Weapon type that is loaded.
@@ -80,7 +83,8 @@ private:
     float load_time;
     uint32_t type_allowed_mask;
     float direction;
-
+    int station;
+    
     //Runtime state
     EMissileWeapons type_loaded;
     

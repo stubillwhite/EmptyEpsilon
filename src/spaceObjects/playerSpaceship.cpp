@@ -1252,7 +1252,11 @@ void PlayerSpaceship::onReceiveClientCommand(int32_t client_id, sf::Packet& pack
         break;
     case CMD_SET_TARGET:
         {
-            packet >> target_id;
+            int32_t target;
+            int8_t station;
+            packet >> target >> station;
+            if (station >= 0 && station < 10) 
+                target_id[station] = target;
         }
         break;
     case CMD_LOAD_TUBE:
@@ -1801,13 +1805,13 @@ void PlayerSpaceship::commandJump(float distance)
     sendClientCommand(packet);
 }
 
-void PlayerSpaceship::commandSetTarget(P<SpaceObject> target)
+void PlayerSpaceship::commandSetTarget(P<SpaceObject> target, int8_t station)
 {
     sf::Packet packet;
     if (target)
-        packet << CMD_SET_TARGET << target->getMultiplayerId();
+        packet << CMD_SET_TARGET << target->getMultiplayerId() << station;
     else
-        packet << CMD_SET_TARGET << int32_t(-1);
+        packet << CMD_SET_TARGET << int32_t(-1) << station;
     sendClientCommand(packet);
 }
 

@@ -75,6 +75,7 @@ public:
         uint32_t type_allowed_mask;
         float direction;
         EMissileSizes size;
+        int station;
     };
 private:
     static std::unordered_map<string, P<ShipTemplate> > templateMap;
@@ -172,8 +173,8 @@ public:
     void setBeam(int index, float arc, float direction, float range, float cycle_time, float damage);
     void setBeamWeapon(int index, float arc, float direction, float range, float cycle_time, float damage);
     void setBeamWeaponTurret(int index, float arc, float direction, float rotation_rate);
+    void setBeamStation(int index, int station);
     void setTractorBeam(float max_range, float drag_per_second);
-    
     /**
      * Convenience function to set the texture of a beam by index.
      */
@@ -187,7 +188,8 @@ public:
     void weaponTubeDisallowMissle(int index, EMissileWeapons type);
     void setWeaponTubeExclusiveFor(int index, EMissileWeapons type);
     void setTubeSize(int index, EMissileSizes size);
-    
+    void setTubeStation(int index, int station);
+
     void setTubeDirection(int index, float direction);
     void setHull(float amount) { hull = amount; }
     void setShields(std::vector<float> values);

@@ -38,6 +38,7 @@ REGISTER_SCRIPT_CLASS(ShipTemplate)
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setBeamTexture);
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setBeamWeaponEnergyPerFire);
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setBeamWeaponHeatPerFire);
+    REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setBeamStation);
     
     /// Set the amount of missile tubes, limited to a maximum of 16.
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setTubes);
@@ -49,6 +50,8 @@ REGISTER_SCRIPT_CLASS(ShipTemplate)
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setWeaponTubeExclusiveFor);
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setTubeDirection);
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setTubeSize);
+    REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setTubeStation);
+
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setHasReactor);
     /// Set the amount of starting hull
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setHull);
@@ -115,6 +118,7 @@ ShipTemplate::ShipTemplate()
         weapon_tube[n].type_allowed_mask = (1 << MW_Count) - 1;
         weapon_tube[n].direction = 0;
         weapon_tube[n].size = MS_Medium;
+        weapon_tube[n].station = 0;
     }
     hull = 70;
     shield_count = 0;
@@ -142,15 +146,6 @@ ShipTemplate::ShipTemplate()
     repair_dock_count = 0;
     stock_dock_count = 0;
     isShipCargo = false;
-}
-
-void ShipTemplate::setBeamTexture(int index, string texture)
-
-{
-    if (index >= 0 && index < max_beam_weapons)
-    {
-        beams[index].setBeamTexture(texture);
-    }
 }
 
 void ShipTemplate::setTubes(int amount, float load_time)
@@ -200,6 +195,13 @@ void ShipTemplate::setTubeSize(int index, EMissileSizes size)
     if (index < 0 || index >= max_weapon_tubes)
         return;
     weapon_tube[index].size = size;
+}
+
+void ShipTemplate::setTubeStation(int index, int station)
+{
+    if (index < 0 || index >= 10)
+        return;
+    weapon_tube[index].station = station;
 }
 
 void ShipTemplate::setType(TemplateType type)
@@ -270,6 +272,22 @@ void ShipTemplate::setBeamWeaponTurret(int index, float arc, float direction, fl
     beams[index].setTurretArc(arc);
     beams[index].setTurretDirection(direction);
     beams[index].setTurretRotationRate(rotation_rate);
+}
+
+void ShipTemplate::setBeamTexture(int index, string texture)
+
+{
+    if (index >= 0 && index < max_beam_weapons)
+    {
+        beams[index].setBeamTexture(texture);
+    }
+}
+
+void ShipTemplate::setBeamStation(int index, int station)
+{
+    if (index < 0 || index >= 10)
+        return;
+    beams[index].setStation(station);
 }
 
 sf::Vector2i ShipTemplate::interiorSize()

@@ -9,6 +9,7 @@
 #include "particleEffect.h"
 #include "spaceObjects/warpJammer.h"
 #include "gameGlobalInfo.h"
+#include "preferenceManager.h"
 #include "shipCargo.h"
 
 #include "scriptInterface.h"
@@ -84,11 +85,13 @@ REGISTER_SCRIPT_SUBCLASS_NO_CREATE(SpaceShip, ShipTemplateBasedObject)
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getBeamWeaponDamage);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getBeamWeaponEnergyPerFire);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getBeamWeaponHeatPerFire);
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getBeamWeaponStation);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setBeamWeapon);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setBeamWeaponTurret);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setBeamWeaponTexture);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setBeamWeaponEnergyPerFire);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setBeamWeaponHeatPerFire);
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setBeamWeaponStation);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setTractorBeam);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setWeaponTubeCount);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getWeaponTubeCount);
@@ -104,6 +107,8 @@ REGISTER_SCRIPT_SUBCLASS_NO_CREATE(SpaceShip, ShipTemplateBasedObject)
     /// Returns the size of the tube
     /// Example: local size = ship:getTubeSize(0)
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getTubeSize);
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setWeaponTubeStation);
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getWeaponTubeStation);
     /// Set the icon to be used for this ship on the radar.
     /// For example, ship:setRadarTrace("RadarBlip.png") will show a dot instead of an arrow for this ship.
     /// Note: Icon is only shown after scanning, before the ship is scanned it is always shown as an arrow.
@@ -151,7 +156,6 @@ SpaceShip::SpaceShip(string multiplayerClassName, float multiplayer_significant_
     combat_maneuver_strafe_active = 0.0;
     combat_maneuver_boost_speed = 0.0f;
     combat_maneuver_strafe_speed = 0.0f;
-    target_id = -1;
     beam_frequency = irandom(0, max_frequency);
     beam_system_target = SYS_None;
     shield_frequency = irandom(0, max_frequency);
@@ -176,7 +180,6 @@ SpaceShip::SpaceShip(string multiplayerClassName, float multiplayer_significant_
     registerMemberReplication(&jump_drive_max_distance);
     registerMemberReplication(&wormhole_alpha, 0.5);
     registerMemberReplication(&weapon_tube_count);
-    registerMemberReplication(&target_id);
     registerMemberReplication(&turn_speed);
     registerMemberReplication(&impulse_max_speed);
     registerMemberReplication(&impulse_acceleration);
@@ -192,6 +195,12 @@ SpaceShip::SpaceShip(string multiplayerClassName, float multiplayer_significant_
     registerMemberReplication(&combat_maneuver_boost_speed);
     registerMemberReplication(&combat_maneuver_strafe_speed);
     registerMemberReplication(&radar_trace);
+    
+    for(int n=0; n<max_target_id; n++)
+    {
+        target_id[n] = -1;
+        registerMemberReplication(&target_id[n]);
+    }
 
     for(int n=0; n<SYS_COUNT; n++)
     {
@@ -212,6 +221,7 @@ SpaceShip::SpaceShip(string multiplayerClassName, float multiplayer_significant_
     for(int n = 0; n < max_beam_weapons; n++)
     {
         beam_weapons[n].setParent(this);
+        beam_weapons[n].setStation(0);
     }
 
     tractor_beam.setParent(this);
@@ -220,6 +230,7 @@ SpaceShip::SpaceShip(string multiplayerClassName, float multiplayer_significant_
     {
         weapon_tube[n].setParent(this);
         weapon_tube[n].setIndex(n);
+        weapon_tube[n].setStation(0);
     }
 
     for(int n = 0; n < MW_Count; n++)
@@ -267,6 +278,7 @@ void SpaceShip::applyTemplateValues()
         beam_weapons[n].setBeamTexture(ship_template->beams[n].getBeamTexture());
         beam_weapons[n].setEnergyPerFire(ship_template->beams[n].getEnergyPerFire());
         beam_weapons[n].setHeatPerFire(ship_template->beams[n].getHeatPerFire());
+        beam_weapons[n].setStation(ship_template->beams[n].getStation());
     }
 
     tractor_beam.setMaxArea(ship_template->tractor_beam.getMaxArea());
@@ -291,6 +303,7 @@ void SpaceShip::applyTemplateValues()
         weapon_tube[n].setLoadTimeConfig(ship_template->weapon_tube[n].load_time);
         weapon_tube[n].setDirection(ship_template->weapon_tube[n].direction);
         weapon_tube[n].setSize(ship_template->weapon_tube[n].size);
+        weapon_tube[n].setStation(ship_template->weapon_tube[n].station);
         for(int m=0; m<MW_Count; m++)
         {
             if (ship_template->weapon_tube[n].type_allowed_mask & (1 << m))
@@ -481,6 +494,10 @@ void SpaceShip::drawOnRadar(sf::RenderTarget& window, sf::Vector2f position, flo
             // Color beam arcs red.
             // TODO: Make this color configurable.
             sf::Color color = sf::Color::Red;
+            
+            // Draw beam arcs only if the specific weapons station is ok
+            if (PreferencesManager::get("weapons_specific_station", "0").toInt() != 0 && my_spaceship == this && beam_weapons[n].getStation() != PreferencesManager::get("weapons_specific_station", "0").toInt())
+                color.a = 64;
 
             // If the beam is cooling down, flash and fade the arc color.
             if (beam_weapons[n].getCooldown() > 0)
@@ -852,11 +869,11 @@ float SpaceShip::getShieldRechargeRate(int shield_index)
     return rate;
 }
 
-P<SpaceObject> SpaceShip::getTarget()
+P<SpaceObject> SpaceShip::getTarget(int station)
 {
     if (game_server)
-        return game_server->getObjectById(target_id);
-    return game_client->getObjectById(target_id);
+        return game_server->getObjectById(target_id[station]);
+    return game_client->getObjectById(target_id[station]);
 }
 
 void SpaceShip::executeJump(float distance)
@@ -1324,6 +1341,20 @@ EMissileSizes SpaceShip::getTubeSize(int index)
     if (index < 0 || index >= max_weapon_tubes)
         return MS_Medium;
     return weapon_tube[index].getSize();
+}
+
+void SpaceShip::setWeaponTubeStation(int index, int station)
+{
+    if (index < 0 || index >= max_weapon_tubes)
+        return;
+    weapon_tube[index].setStation(station);
+}
+
+int SpaceShip::getWeaponTubeStation(int index)
+{
+    if (index < 0 || index >= max_weapon_tubes)
+        return 0;
+    return weapon_tube[index].getStation();
 }
 
 void SpaceShip::addBroadcast(int threshold, string message)

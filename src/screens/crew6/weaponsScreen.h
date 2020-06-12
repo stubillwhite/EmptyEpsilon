@@ -21,6 +21,7 @@ private:
     GuiKeyValueDisplay* energy_display;
     GuiKeyValueDisplay* front_shield_display;
     GuiKeyValueDisplay* rear_shield_display;
+    GuiKeyValueDisplay* station_display;
     GuiRadarView* radar;
     GuiMissileTubeControls* tube_controls;
     GuiRotationDial* missile_aim;
