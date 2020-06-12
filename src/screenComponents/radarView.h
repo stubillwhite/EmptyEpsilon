@@ -126,7 +126,7 @@ public:
 
 protected:
     virtual sf::Vector2f getCenterPosition();
-
+    
 private:
     void updateGhostDots();
 
