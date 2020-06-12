@@ -56,6 +56,8 @@ GameGlobalInfo::GameGlobalInfo()
     registerMemberReplication(&allow_main_screen_long_range_radar);
     registerMemberReplication(&gm_control_code);
     registerMemberReplication(&elapsed_time, 0.1);
+    registerMemberReplication(&gm_callback_names);
+    registerMemberReplication(&intercept_all_comms_to_gm);
     registerMemberReplication(&locals_name, 1.0);
 
     for(unsigned int n=0; n<factionInfo.size(); n++)
@@ -326,6 +328,15 @@ static int addLocalName(lua_State* L)
 /// addLocalName(string,string)
 /// Personalize the name of a sector/area/region.
 REGISTER_SCRIPT_FUNCTION(addLocalName);
+
+static int setGMControlCode(lua_State* L)
+{
+    gameGlobalInfo->gm_control_code = luaL_checkstring(L, 1);
+    return 0;
+}
+/// setGMControlCode(string)
+/// Show a password to allow access to spectator or GM screens.
+REGISTER_SCRIPT_FUNCTION(setGMControlCode);
 
 static int victory(lua_State* L)
 {
