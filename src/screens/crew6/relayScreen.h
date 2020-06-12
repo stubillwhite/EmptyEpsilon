@@ -7,6 +7,7 @@
 class GuiRadarView;
 class GuiKeyValueDisplay;
 class GuiAutoLayout;
+class GuiSelector;
 class GuiButton;
 class GuiToggleButton;
 class GuiSlider;
@@ -27,8 +28,11 @@ private:
     EMode mode;
     TargetsContainer targets;
     int drag_waypoint_index;
+    int drag_route_index;
+    int route_index = 0;
     GuiRadarView* radar;
 
+    GuiKeyValueDisplay* info_distance;
     GuiKeyValueDisplay* info_callsign;
     GuiKeyValueDisplay* info_faction;
 
@@ -37,6 +41,7 @@ private:
     GuiAutoLayout* option_buttons;
     GuiButton* hack_target_button;
     GuiToggleButton* link_to_science_button;
+    GuiSelector* route_selector;
     GuiButton* delete_waypoint_button;
     GuiButton* launch_probe_button;
 

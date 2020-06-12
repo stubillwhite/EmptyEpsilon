@@ -4,6 +4,7 @@
 #include "spaceship.h"
 #include "commsScriptInterface.h"
 #include "playerInfo.h"
+#include "spaceshipParts/dock.h"
 #include <iostream>
 
 enum ECommsState
@@ -36,6 +37,10 @@ public:
     constexpr static float energy_warp_per_second = 1.0f;
     constexpr static float system_heatup_per_second = 0.05f;
     constexpr static float system_power_level_change_per_second = 0.3;
+    constexpr static float energy_transfer_per_second = 5;
+    constexpr static float heat_transfer_per_second = 0.1;
+    constexpr static float cargo_repair_per_second = 0.1;
+
     // Coolant change rate
     constexpr static float system_coolant_level_change_per_second = 1.2;
     // Total coolant
@@ -52,6 +57,10 @@ public:
     constexpr static int max_self_destruct_codes = 3;
     // Subsystem effectiveness base rates
     static float system_power_user_factor[];
+    // Waypoints and routes
+    constexpr static int max_routes = 7;
+    constexpr static int max_waypoints_in_route = 20;
+    constexpr static int max_waypoints = 99;
     
     constexpr static int16_t CMD_PLAY_CLIENT_SOUND = 0x0001;
 
@@ -114,12 +123,13 @@ private:
     // Ship's log container
     std::vector<ShipLogEntry> ships_log;
 
-    float long_range_radar_range = 50000.0f;
+    float far_range_radar_range = 50000.0f;
+    float long_range_radar_range = 30000.0f;
     float short_range_radar_range = 5000.0f;
 public:
     std::vector<CustomShipFunction> custom_functions;
 
-    std::vector<sf::Vector2f> waypoints;
+    sf::Vector2f waypoints[max_routes][max_waypoints_in_route];
 
     // Ship functionality
     // Capable of scanning a target
@@ -167,7 +177,6 @@ public:
     EAlertLevel alert_level;
 
     int32_t linked_science_probe_id;
-
     PlayerSpaceship();
     virtual ~PlayerSpaceship();
 
@@ -267,20 +276,29 @@ public:
     void commandSetBeamFrequency(int32_t frequency);
     void commandSetBeamSystemTarget(ESystem system);
     void commandSetShieldFrequency(int32_t frequency);
-    void commandAddWaypoint(sf::Vector2f position);
-    void commandRemoveWaypoint(int32_t index);
-    void commandMoveWaypoint(int32_t index, sf::Vector2f position);
+    void commandAddWaypoint(sf::Vector2f position, int route = 0);
+    void commandRemoveWaypoint(int index, int route = 0);
+    void commandMoveWaypoint(int index, sf::Vector2f position, int route = 0);
     void commandActivateSelfDestruct();
     void commandCancelSelfDestruct();
     void commandConfirmDestructCode(int8_t index, uint32_t code);
     void commandCombatManeuverBoost(float amount);
     void commandCombatManeuverStrafe(float strafe);
     void commandLaunchProbe(sf::Vector2f target_position);
+    void commandLaunchCargo(int index);
+    void commandMoveCargo(int index);
+    void commandCancelMoveCargo(int index);
+    void commandSetDockMoveTarget(int srcIdx, int destIdx);
+    void commandSetDockEnergyRequest(int index, float value);
     void commandScanDone();
     void commandScanCancel();
     void commandSetAlertLevel(EAlertLevel level);
     void commandHackingFinished(P<SpaceObject> target, string target_system);
     void commandCustomFunction(string name);
+    void commandSetTractorBeamDirection(float direction);
+    void commandSetTractorBeamArc(float arc);
+    void commandSetTractorBeamRange(float range);
+    void commandSetTractorBeamMode(ETractorBeamMode range);
 
     virtual void onReceiveServerCommand(sf::Packet& packet) override;
 
@@ -323,8 +341,8 @@ public:
     void setShieldsActive(bool active) { shields_active = active; }
 
     // Waypoint functions
-    int getWaypointCount() { return waypoints.size(); }
-    sf::Vector2f getWaypoint(int index) { if (index > 0 && index <= int(waypoints.size())) return waypoints[index - 1]; return sf::Vector2f(0, 0); }
+    int getWaypointCount(int route = 0);
+    sf::Vector2f getWaypoint(int index, int route = 0) { if (route > 0 && route <= max_routes && index > 0 && index <= max_waypoints_in_route) return waypoints[route][index - 1]; return sf::Vector2f(0, 0); }
 
     // Ship control code/password setter
     void setControlCode(string code) { control_code = code; }
@@ -333,8 +351,10 @@ public:
     virtual void drawOnGMRadar(sf::RenderTarget& window, sf::Vector2f position, float scale, float rotation, bool long_range) override;
 
     // Radar range
+    float getFarRangeRadarRange();
     float getLongRangeRadarRange();
     float getShortRangeRadarRange();
+    void setFarRangeRadarRange(float range);
     void setLongRangeRadarRange(float range);
     void setShortRangeRadarRange(float range);
 
@@ -351,6 +371,12 @@ static inline sf::Packet& operator >> (sf::Packet& packet, PlayerSpaceship::Cust
 
 string alertLevelToString(EAlertLevel level);
 string alertLevelToLocaleString(EAlertLevel level);
+
+static const sf::Vector2f empty_waypoint = sf::Vector2f(FLT_MAX, FLT_MAX);
+static const sf::Color routeColors[PlayerSpaceship::max_routes] = {
+    sf::Color::Blue, sf::Color::White, sf::Color::Green, 
+    sf::Color::Red, sf::Color::Yellow, sf::Color::Magenta, 
+    sf::Color::Cyan};
 
 #ifdef _MSC_VER
 #include "playerSpaceship.hpp"

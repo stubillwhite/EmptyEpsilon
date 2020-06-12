@@ -3,7 +3,7 @@
 
 #include "spaceObjects/playerSpaceship.h"
 #include "script.h"
-#include "GMScriptCallback.h"
+//#include "GMScriptCallback.h"
 #include "GMMessage.h"
 #include "gameStateLogger.h"
 
@@ -53,6 +53,10 @@ public:
      * \brief Maximum number of visual background nebulas.
      */
     static const int max_nebulas = 32;
+    /*!
+     * \size of a sector.
+     */
+    static const int sector_size = 20000;
 private:
     int victory_faction;
     int32_t playerShipId[max_player_ships];
@@ -83,15 +87,18 @@ public:
     string scenario;
     string variation = "None";
 
-    //List of script functions that can be called from the GM interface (Server only!)
-    std::list<GMScriptCallback> gm_callback_functions;
+    //List of script functions that can be called from the GM interface
     std::list<GMMessage> gm_messages;
+    std::vector<ScriptSimpleCallback> gm_callback_functions;
+    //List of names of gm_callback_functions scripts (replicated to clients)
+    std::vector<string> gm_callback_names;
     //When active, all comms request goto the GM as chat, and normal scripted converstations are disabled. This does not disallow player<->player ship comms.
     bool intercept_all_comms_to_gm;
 
     //Callback called when a new player ship is created on the ship selection screen.
     ScriptSimpleCallback on_new_player_ship;
     bool allow_new_player_ships = true;
+    std::function<void(sf::Vector2f)> on_gm_click;
 
     GameGlobalInfo();
     virtual ~GameGlobalInfo();
@@ -119,12 +126,15 @@ public:
 
     virtual void update(float delta);
     virtual void destroy();
+    
+    // Local sector name
+    std::vector<std::pair<string, string> > locals_name;
 
     string getNextShipCallsign();
 };
 
 string playerWarpJumpDriveToString(EPlayerWarpJumpDrive player_warp_jump_drive);
-string getSectorName(sf::Vector2f position);
+string getSectorName(sf::Vector2f position, int scale_magnitude = 0);
 
 REGISTER_MULTIPLAYER_ENUM(EScanningComplexity);
 REGISTER_MULTIPLAYER_ENUM(EHackingGames);
