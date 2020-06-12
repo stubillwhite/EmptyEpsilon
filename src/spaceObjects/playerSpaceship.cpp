@@ -358,7 +358,13 @@ PlayerSpaceship::PlayerSpaceship()
     registerMemberReplication(&comms_target_name);
     registerMemberReplication(&comms_incomming_message);
     registerMemberReplication(&ships_log);
-    registerMemberReplication(&waypoints);
+    //registerMemberReplication(&waypoints);
+    for(int r = 0; r < max_routes; r++) {
+        for(int wp = 0; wp < max_waypoints_in_route; wp++) {
+            waypoints[r][wp] = empty_waypoint;
+            registerMemberReplication(&waypoints[r][wp]);
+        }
+    }
     registerMemberReplication(&scan_probe_stock);
     registerMemberReplication(&activate_self_destruct);
     registerMemberReplication(&self_destruct_countdown, 0.2);
@@ -1534,27 +1540,34 @@ void PlayerSpaceship::onReceiveClientCommand(int32_t client_id, sf::Packet& pack
         break;
     case CMD_ADD_WAYPOINT:
         {
+            int route;
             sf::Vector2f position;
-            packet >> position;
-            if (waypoints.size() < 9)
-                waypoints.push_back(position);
+            packet >> route >> position;
+            for (int i = 0; i < max_waypoints_in_route; i++){
+                if (waypoints[route][i] >= empty_waypoint){
+                    waypoints[route][i] = position;
+                    break;
+                }
+            }
         }
         break;
     case CMD_REMOVE_WAYPOINT:
         {
-            int32_t index;
-            packet >> index;
-            if (index >= 0 && index < int(waypoints.size()))
-                waypoints.erase(waypoints.begin() + index);
+            int route;
+            int index;
+            packet >> route >> index;
+            if (index >= 0 && index < max_waypoints_in_route)
+                waypoints[route][index] = empty_waypoint;
         }
         break;
     case CMD_MOVE_WAYPOINT:
         {
-            int32_t index;
+            int route;
+            int index;
             sf::Vector2f position;
-            packet >> index >> position;
-            if (index >= 0 && index < int(waypoints.size()))
-                waypoints[index] = position;
+            packet >> route >> index >> position;
+            if (index >= 0 && index < max_waypoints_in_route)
+                waypoints[route][index] = position;
         }
         break;
     case CMD_ACTIVATE_SELF_DESTRUCT:
@@ -1964,24 +1977,24 @@ void PlayerSpaceship::commandSetShieldFrequency(int32_t frequency)
     sendClientCommand(packet);
 }
 
-void PlayerSpaceship::commandAddWaypoint(sf::Vector2f position)
+void PlayerSpaceship::commandAddWaypoint(sf::Vector2f position, int route)
 {
     sf::Packet packet;
-    packet << CMD_ADD_WAYPOINT << position;
+    packet << CMD_ADD_WAYPOINT << route << position;
     sendClientCommand(packet);
 }
 
-void PlayerSpaceship::commandRemoveWaypoint(int32_t index)
+void PlayerSpaceship::commandRemoveWaypoint(int index, int route)
 {
     sf::Packet packet;
-    packet << CMD_REMOVE_WAYPOINT << index;
+    packet << CMD_REMOVE_WAYPOINT << route << index;
     sendClientCommand(packet);
 }
 
-void PlayerSpaceship::commandMoveWaypoint(int32_t index, sf::Vector2f position)
+void PlayerSpaceship::commandMoveWaypoint(int index, sf::Vector2f position, int route)
 {
     sf::Packet packet;
-    packet << CMD_MOVE_WAYPOINT << index << position;
+    packet << CMD_MOVE_WAYPOINT << route << index << position;
     sendClientCommand(packet);
 }
 
@@ -2210,6 +2223,16 @@ void PlayerSpaceship::setShortRangeRadarRange(float range)
     range = std::max(range, 100.0f);
     short_range_radar_range = range;
     long_range_radar_range = std::max(long_range_radar_range, range);
+}
+
+int PlayerSpaceship::getWaypointCount(int route)
+{
+    for (int i = 0; i < max_waypoints_in_route; i++){
+        if (waypoints[route][i] >= empty_waypoint){
+            return i;
+        }
+    }
+    return 0;
 }
 
 string PlayerSpaceship::getExportLine()

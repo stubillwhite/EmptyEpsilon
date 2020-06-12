@@ -63,6 +63,7 @@ private:
     bool show_ghost_dots;
     bool show_sectors;
     bool show_waypoints;
+    bool show_routes;
     bool show_target_projection;
     bool show_missile_tubes;
     bool show_callsigns;
