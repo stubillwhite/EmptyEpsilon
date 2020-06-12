@@ -31,7 +31,7 @@ void WeaponTube::setParent(SpaceShip* parent)
     parent->registerMemberReplication(&type_allowed_mask);
     parent->registerMemberReplication(&direction);
     parent->registerMemberReplication(&size);
-    parent->registerMemberReplication(&station, 1.0);
+    parent->registerMemberReplication(&station);
     
     parent->registerMemberReplication(&type_loaded);
     parent->registerMemberReplication(&state);
@@ -136,7 +136,6 @@ float WeaponTube::getSizeCategoryModifier()
 void WeaponTube::spawnProjectile(float target_angle)
 {
     sf::Vector2f fireLocation = parent->getPosition() + sf::rotateVector(parent->ship_template->model_data->getTubePosition2D(tube_index), parent->getRotation());
-    station = PreferencesManager::get("weapons_specific_station", "0").toInt();
     switch(type_loaded)
     {
     case MW_Homing:

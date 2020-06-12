@@ -100,7 +100,6 @@ void GuiMissileTubeControls::onDraw(sf::RenderTarget& window){
         
         if (PreferencesManager::get("weapons_specific_station", "0").toInt() != 0 && tube.getStation() != PreferencesManager::get("weapons_specific_station", "0").toInt())
         {
-            LOG(WARNING) << "TEST : " << tube.getStation() << PreferencesManager::get("weapons_specific_station", "0").toInt();
             rows[n].layout->hide();
             continue;
         }
