@@ -1,5 +1,16 @@
 # Change Log
 
+### In progress
+
+- weapons tube and beams specific by station
+- enable waypoints by route
+- dynamic texture files and texture color by player
+
+### EE LARP release 1.0-beta
+- GM access allowed from clients
+- Advanced sector system
+- Drones, fighters and docks system
+
 ## [...]
 
 ### Added

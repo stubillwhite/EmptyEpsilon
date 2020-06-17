@@ -35,6 +35,10 @@ REGISTER_SCRIPT_SUBCLASS(PlayerSpaceship, SpaceShip)
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, transferPlayersAtPositionToShip);
     /// Returns true if a station is occupied by a player, and false if not.
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, hasPlayerAtPosition);
+    /// Set background textures files for the player
+    REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, setTexture);
+    /// Set background textures color for the player
+    REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, setTextureColor);
 
     // Comms functions return Boolean values if true.
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, isCommsInactive);
@@ -312,6 +316,16 @@ PlayerSpaceship::PlayerSpaceship()
     // Initialize ship settings
     main_screen_setting = MSS_Front;
     main_screen_overlay = MSO_HideComms;
+    texture_front = "StarsFront";
+    texture_back = "StarsBack";
+    texture_left = "StarsLeft";
+    texture_right = "StarsRight";
+    texture_top = "StarsTop";
+    texture_bottom = "StarsBotttom";
+    texture_r = 1.0;
+    texture_g = 1.0;
+    texture_b = 1.0;
+    texture_a = 1.0;
     hull_damage_indicator = 0.0;
     jump_indicator = 0.0;
     comms_state = CS_Inactive;
@@ -375,6 +389,17 @@ PlayerSpaceship::PlayerSpaceship()
     registerMemberReplication(&long_range_radar_range);
     registerMemberReplication(&short_range_radar_range);
     registerMemberReplication(&custom_functions);
+    
+    registerMemberReplication(&texture_front);
+    registerMemberReplication(&texture_back);
+    registerMemberReplication(&texture_left);
+    registerMemberReplication(&texture_right);
+    registerMemberReplication(&texture_top);
+    registerMemberReplication(&texture_bottom);
+    registerMemberReplication(&texture_r);
+    registerMemberReplication(&texture_g);
+    registerMemberReplication(&texture_b);
+    registerMemberReplication(&texture_a);
 
     // Determine which stations must provide self-destruct confirmation codes.
     for(int n = 0; n < max_self_destruct_codes; n++)

@@ -173,6 +173,17 @@ public:
     EMainScreenSetting main_screen_setting;
     // Content overlaid on the main screen, such as comms
     EMainScreenOverlay main_screen_overlay;
+    
+    string texture_front;
+    string texture_back;
+    string texture_left;
+    string texture_right;
+    string texture_top;
+    string texture_bottom;
+    float texture_r;
+    float texture_g;
+    float texture_b;
+    float texture_a;
 
     EAlertLevel alert_level;
 
@@ -299,7 +310,22 @@ public:
     void commandSetTractorBeamArc(float arc);
     void commandSetTractorBeamRange(float range);
     void commandSetTractorBeamMode(ETractorBeamMode range);
-
+    
+    void setTexture(string t_front, string t_back, string t_left, string t_right, string t_top, string t_bottom){
+        texture_front = t_front;
+        texture_back = t_back;
+        texture_left = t_left;
+        texture_right = t_right;
+        texture_top = t_top;
+        texture_bottom = t_bottom;
+    };
+    void setTextureColor(float r, float g, float b, float a){
+        texture_r = r;
+        texture_g = g;
+        texture_b = b;
+        texture_a = a;
+    };
+    
     virtual void onReceiveServerCommand(sf::Packet& packet) override;
 
     // Template function

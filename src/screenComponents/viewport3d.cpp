@@ -52,7 +52,8 @@ void GuiViewport3D::onDraw(sf::RenderTarget& window)
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    _glPerspective(camera_fov, rect.width/rect.height, 1.f, 25000.f);
+    //_glPerspective(camera_fov, rect.width/rect.height, 1.f, 25000.f);
+	_glPerspective(camera_fov, rect.width/rect.height, 1.f, 1000000.f);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     
@@ -66,49 +67,58 @@ void GuiViewport3D::onDraw(sf::RenderTarget& window)
     glGetDoublev(GL_VIEWPORT, viewport);
 
     glDepthMask(false);
-    sf::Texture::bind(textureManager.getTexture("StarsBack"), sf::Texture::Normalized);
-    glBegin(GL_TRIANGLE_STRIP);
-    glTexCoord2f(0.0, 0.0); glVertex3f( 100, 100, 100);
-    glTexCoord2f(0.0, 1.0); glVertex3f( 100, 100,-100);
-    glTexCoord2f(1.0, 0.0); glVertex3f(-100, 100, 100);
-    glTexCoord2f(1.0, 1.0); glVertex3f(-100, 100,-100);
-    glEnd();
-    sf::Texture::bind(textureManager.getTexture("StarsLeft"), sf::Texture::Normalized);
-    glBegin(GL_TRIANGLE_STRIP);
-    glTexCoord2f(0.0, 0.0); glVertex3f(-100, 100, 100);
-    glTexCoord2f(0.0, 1.0); glVertex3f(-100, 100,-100);
-    glTexCoord2f(1.0, 0.0); glVertex3f(-100,-100, 100);
-    glTexCoord2f(1.0, 1.0); glVertex3f(-100,-100,-100);
-    glEnd();
-    sf::Texture::bind(textureManager.getTexture("StarsFront"), sf::Texture::Normalized);
-    glBegin(GL_TRIANGLE_STRIP);
-    glTexCoord2f(0.0, 0.0); glVertex3f(-100,-100, 100);
-    glTexCoord2f(0.0, 1.0); glVertex3f(-100,-100,-100);
-    glTexCoord2f(1.0, 0.0); glVertex3f( 100,-100, 100);
-    glTexCoord2f(1.0, 1.0); glVertex3f( 100,-100,-100);
-    glEnd();
-    sf::Texture::bind(textureManager.getTexture("StarsRight"), sf::Texture::Normalized);
-    glBegin(GL_TRIANGLE_STRIP);
-    glTexCoord2f(0.0, 0.0); glVertex3f( 100,-100, 100);
-    glTexCoord2f(0.0, 1.0); glVertex3f( 100,-100,-100);
-    glTexCoord2f(1.0, 0.0); glVertex3f( 100, 100, 100);
-    glTexCoord2f(1.0, 1.0); glVertex3f( 100, 100,-100);
-    glEnd();
-    sf::Texture::bind(textureManager.getTexture("StarsTop"), sf::Texture::Normalized);
-    glBegin(GL_TRIANGLE_STRIP);
-    glTexCoord2f(0.0, 0.0); glVertex3f(-100, 100, 100);
-    glTexCoord2f(0.0, 1.0); glVertex3f(-100,-100, 100);
-    glTexCoord2f(1.0, 0.0); glVertex3f( 100, 100, 100);
-    glTexCoord2f(1.0, 1.0); glVertex3f( 100,-100, 100);
-    glEnd();
-    sf::Texture::bind(textureManager.getTexture("StarsBottom"), sf::Texture::Normalized);
-    glBegin(GL_TRIANGLE_STRIP);
-    glTexCoord2f(1.0, 0.0); glVertex3f( 100,-100,-100);
-    glTexCoord2f(0.0, 0.0); glVertex3f(-100,-100,-100);
-    glTexCoord2f(1.0, 1.0); glVertex3f( 100, 100,-100);
-    glTexCoord2f(0.0, 1.0); glVertex3f(-100, 100,-100);
-    glEnd();
-
+	if (my_spaceship)
+	{
+        sf::Texture::bind(textureManager.getTexture(my_spaceship->texture_back), sf::Texture::Normalized);
+        glColor4f(my_spaceship->texture_r, my_spaceship->texture_g, my_spaceship->texture_b, my_spaceship->texture_a);
+        glBegin(GL_TRIANGLE_STRIP);
+        glTexCoord2f(0.0, 0.0); glVertex3f( 100, 100, 100);
+        glTexCoord2f(0.0, 1.0); glVertex3f( 100, 100,-100);
+        glTexCoord2f(1.0, 0.0); glVertex3f(-100, 100, 100);
+        glTexCoord2f(1.0, 1.0); glVertex3f(-100, 100,-100);
+        glEnd();
+        sf::Texture::bind(textureManager.getTexture(my_spaceship->texture_left), sf::Texture::Normalized);
+        glColor4f(my_spaceship->texture_r, my_spaceship->texture_g, my_spaceship->texture_b, my_spaceship->texture_a);
+        glBegin(GL_TRIANGLE_STRIP);
+        glTexCoord2f(0.0, 0.0); glVertex3f(-100, 100, 100);
+        glTexCoord2f(0.0, 1.0); glVertex3f(-100, 100,-100);
+        glTexCoord2f(1.0, 0.0); glVertex3f(-100,-100, 100);
+        glTexCoord2f(1.0, 1.0); glVertex3f(-100,-100,-100);
+        glEnd();
+        sf::Texture::bind(textureManager.getTexture(my_spaceship->texture_front), sf::Texture::Normalized);
+        glColor4f(my_spaceship->texture_r, my_spaceship->texture_g, my_spaceship->texture_b, my_spaceship->texture_a);
+        glBegin(GL_TRIANGLE_STRIP);
+        glTexCoord2f(0.0, 0.0); glVertex3f(-100,-100, 100);
+        glTexCoord2f(0.0, 1.0); glVertex3f(-100,-100,-100);
+        glTexCoord2f(1.0, 0.0); glVertex3f( 100,-100, 100);
+        glTexCoord2f(1.0, 1.0); glVertex3f( 100,-100,-100);
+        glEnd();
+        sf::Texture::bind(textureManager.getTexture(my_spaceship->texture_right), sf::Texture::Normalized);
+        glColor4f(my_spaceship->texture_r, my_spaceship->texture_g, my_spaceship->texture_b, my_spaceship->texture_a);
+        glBegin(GL_TRIANGLE_STRIP);
+        glTexCoord2f(0.0, 0.0); glVertex3f( 100,-100, 100);
+        glTexCoord2f(0.0, 1.0); glVertex3f( 100,-100,-100);
+        glTexCoord2f(1.0, 0.0); glVertex3f( 100, 100, 100);
+        glTexCoord2f(1.0, 1.0); glVertex3f( 100, 100,-100);
+        glEnd();
+        sf::Texture::bind(textureManager.getTexture(my_spaceship->texture_top), sf::Texture::Normalized);
+        glColor4f(my_spaceship->texture_r, my_spaceship->texture_g, my_spaceship->texture_b, my_spaceship->texture_a);
+        glBegin(GL_TRIANGLE_STRIP);
+        glTexCoord2f(0.0, 0.0); glVertex3f(-100, 100, 100);
+        glTexCoord2f(0.0, 1.0); glVertex3f(-100,-100, 100);
+        glTexCoord2f(1.0, 0.0); glVertex3f( 100, 100, 100);
+        glTexCoord2f(1.0, 1.0); glVertex3f( 100,-100, 100);
+        glEnd();
+        sf::Texture::bind(textureManager.getTexture(my_spaceship->texture_bottom), sf::Texture::Normalized);
+        glColor4f(my_spaceship->texture_r, my_spaceship->texture_g, my_spaceship->texture_b, my_spaceship->texture_a);
+        glBegin(GL_TRIANGLE_STRIP);
+        glTexCoord2f(1.0, 0.0); glVertex3f( 100,-100,-100);
+        glTexCoord2f(0.0, 0.0); glVertex3f(-100,-100,-100);
+        glTexCoord2f(1.0, 1.0); glVertex3f( 100, 100,-100);
+        glTexCoord2f(0.0, 1.0); glVertex3f(-100, 100,-100);
+        glEnd();
+    }
+    
     if (gameGlobalInfo)
     {
         //Render the background nebulas from the gameGlobalInfo. This ensures that all screens see the same background as it is replicated across clients.
@@ -180,7 +190,8 @@ void GuiViewport3D::onDraw(sf::RenderTarget& window)
         
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        _glPerspective(camera_fov, rect.width/rect.height, 1.f, 25000.f * (n + 1));
+        // _glPerspective(camera_fov, rect.width/rect.height, 1.f, 25000.f * (n + 1));
+        _glPerspective(camera_fov, rect.width/rect.height, 1.f, 1000000.f * (n + 1));
         glMatrixMode(GL_MODELVIEW);
         glDepthMask(true);
         glClear(GL_DEPTH_BUFFER_BIT);
