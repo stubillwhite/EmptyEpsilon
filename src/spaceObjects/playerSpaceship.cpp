@@ -321,7 +321,7 @@ PlayerSpaceship::PlayerSpaceship()
     texture_left = "StarsLeft";
     texture_right = "StarsRight";
     texture_top = "StarsTop";
-    texture_bottom = "StarsBotttom";
+    texture_bottom = "StarsBottom";
     texture_r = 1.0;
     texture_g = 1.0;
     texture_b = 1.0;

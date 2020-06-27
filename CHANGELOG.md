@@ -5,6 +5,8 @@
 - weapons tube and beams specific by station
 - enable waypoints by route
 - dynamic texture files and texture color by player
+- add autostationslist in options.ini to auto connect to many stations (separate stations by ; : example : "autostationslist = 1;2" to auto connect to helm and weapons )
+- add ship_mainscreen_flags to modify main screen (stardust, callsign, heading)
 
 ### EE LARP release 1.0-beta
 - GM access allowed from clients

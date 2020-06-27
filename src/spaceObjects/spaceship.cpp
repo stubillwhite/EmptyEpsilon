@@ -124,6 +124,8 @@ REGISTER_SCRIPT_SUBCLASS_NO_CREATE(SpaceShip, ShipTemplateBasedObject)
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setScanState);
     /// Set the scane state of this ship for a particular faction.
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setScanStateByFaction);
+    /// Add a drone into the dock manage
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, addDrone);
 }
 
 SpaceShip::SpaceShip(string multiplayerClassName, float multiplayer_significant_range)
@@ -1537,6 +1539,17 @@ string SpaceShip::getScriptExportModificationsOnTemplate()
         ret += ":setTractorBeam(" + getTractorBeamModeName(tractor_beam.getMode()) + ", " + string(tractor_beam.getArc(), 0) + ", " + string(tractor_beam.getDirection(), 0) + ", " + string(tractor_beam.getRange(), 0) + ", " + string(tractor_beam.getMaxArea(), 0) + ", " + string(tractor_beam.getDragPerSecond(), 0) + ")";
     }
     return ret;
+}
+
+void SpaceShip::addDrone(string drone){
+
+    P<ShipTemplate> drone_ship_template = ShipTemplate::getTemplate(drone);
+    Dock* dock = Dock::findOpenForDocking(docks, max_docks_count);
+    if (dock)
+    {
+        P<ShipCargo> cargo = new ShipCargo(drone_ship_template);
+        dock->dock(cargo);
+    }
 }
 
 bool SpaceShip::tryDockDrone(SpaceShip* other){

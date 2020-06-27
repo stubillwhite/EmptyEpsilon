@@ -22,3 +22,5 @@ require("shipTemplates_Dreadnaught.lua")
 --]]
 --For now, we add our old ship templates as well. These should be removed at some point.
 require("shipTemplates_OLD.lua")
+--To illustrate LARP function
+require("shipTemplates_Larp.lua")

@@ -472,6 +472,7 @@ public:
     // Return a string that can be appended to an object create function in the lua scripting.
     // This function is used in getScriptExport calls to adjust for tweaks done in the GM screen.
     string getScriptExportModificationsOnTemplate();
+    void addDrone(string drone);
     bool tryDockDrone(SpaceShip* other);
     float getDronesControlRange();
 };
