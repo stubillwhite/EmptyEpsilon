@@ -1,6 +1,6 @@
 # Change Log
 
-### In progress
+### EE LARP release 1.1-beta
 
 - weapons tube and beams specific by station
 - enable waypoints by route
