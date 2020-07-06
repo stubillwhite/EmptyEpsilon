@@ -869,6 +869,18 @@ GuiObjectTweakBase::GuiObjectTweakBase(GuiContainer* owner)
         target->setHeading(value);
     });
     heading_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 40);
+    
+    // Set object's z position.
+    (new GuiLabel(right_col, "", "Z Position:", 30))->setSize(GuiElement::GuiSizeMax, 50);
+    position_z_slider = new GuiSlider(right_col, "", -300.0, 300.0, 0.0, [this](float value) {
+        target->setPositionZ(value);
+    });
+    position_z_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 40);
+    position_z_slider->addSnapValue(-200.0, 0.01);
+    position_z_slider->addSnapValue(-100.0, 0.01);
+    position_z_slider->addSnapValue(0.0, 0.01);
+    position_z_slider->addSnapValue(100.0, 0.01);
+    position_z_slider->addSnapValue(200.0, 0.01);
 
     (new GuiLabel(right_col, "", "Scanning Complexity:", 30))->setSize(GuiElement::GuiSizeMax, 50);
     scanning_complexity_slider = new GuiSlider(right_col, "", 0, 4, 0, [this](float value) {
@@ -886,6 +898,7 @@ GuiObjectTweakBase::GuiObjectTweakBase(GuiContainer* owner)
 void GuiObjectTweakBase::onDraw(sf::RenderTarget& window)
 {
     heading_slider->setValue(target->getHeading());
+    position_z_slider->setValue(target->getPositionZ());
 
     // we probably dont need to set these each onDraw
     // but doing it forces the slider to round to a integer

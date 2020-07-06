@@ -16,6 +16,16 @@ REGISTER_SCRIPT_CLASS_NO_CREATE(SpaceObject)
     /// Returns x, y as meters from the origin.
     /// Example: local x, y = obj:getPosition()
     REGISTER_SCRIPT_CLASS_FUNCTION(Collisionable, getPosition);
+    /// Sets this object's position on the map on the Z axis, in meters from the origin.
+    /// Requires one numeric value
+    /// Allow a better 3D visualisation of space, without changing the game
+    /// Advice : Don't use value higher than +100 or -100 to keep game realistic
+    /// Example: obj:setPositionZ(z)
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceObject, setPositionZ);
+    /// Gets this object's position on the map on the Z axis.
+    /// Returns z as meters from the origin.
+    /// Example: local z = obj:getPositionZ()
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceObject, getPositionZ);
     /// Sets this object's absolute rotation, in degrees.
     /// Unlike setHeading, a value of 0 points to the right of the map.
     /// The value can also be unbounded; it can be negative, or greater than
@@ -264,6 +274,7 @@ SpaceObject::SpaceObject(float collision_range, string multiplayer_name, float m
     object_radius = collision_range;
     space_object_list.push_back(this);
     faction_id = 0;
+    position_z = 0;
 
     scanning_complexity_value = 0;
     scanning_depth_value = 0;
@@ -280,6 +291,7 @@ SpaceObject::SpaceObject(float collision_range, string multiplayer_name, float m
     registerMemberReplication(&radar_signature.biological);
     registerMemberReplication(&scanning_complexity_value);
     registerMemberReplication(&scanning_depth_value);
+    registerMemberReplication(&position_z);
     registerCollisionableReplication(multiplayer_significant_range);
 }
 
@@ -291,7 +303,7 @@ SpaceObject::~SpaceObject()
 void SpaceObject::draw3D()
 {
 #if FEATURE_3D_RENDERING
-    model_info.render(getPosition(), getRotation());
+    model_info.render(getPosition(), getRotation(), getPositionZ());
 #endif//FEATURE_3D_RENDERING
 }
 

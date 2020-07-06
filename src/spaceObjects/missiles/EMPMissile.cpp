@@ -17,6 +17,7 @@ void EMPMissile::hitObject(P<SpaceObject> object)
     P<ElectricExplosionEffect> e = new ElectricExplosionEffect();
     e->setSize(category_modifier * blast_range);
     e->setPosition(getPosition());
+    e->setPositionZ(getPositionZ());
     e->setOnRadar(true);
     e->setRadarSignatureInfo(0.0, 1.0, 0.0);
 }

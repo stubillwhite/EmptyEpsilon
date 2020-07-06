@@ -51,8 +51,8 @@ BeamEffect::~BeamEffect()
 #if FEATURE_3D_RENDERING
 void BeamEffect::draw3DTransparent()
 {
-    glTranslatef(-getPosition().x, -getPosition().y, 0);
-    sf::Vector3f startPoint(getPosition().x, getPosition().y, sourceOffset.z);
+    glTranslatef(-getPosition().x, -getPosition().y, -getPositionZ());
+    sf::Vector3f startPoint(getPosition().x, getPosition().y, getPositionZ() + sourceOffset.z);
     sf::Vector3f endPoint(targetLocation.x, targetLocation.y, targetOffset.z);
     sf::Vector3f eyeNormal = sf::normalize(sf::cross(camera_position - startPoint, endPoint - startPoint));
 
@@ -117,7 +117,10 @@ void BeamEffect::update(float delta)
         target = game_client->getObjectById(target_id);
     }
     if (source)
+    {
         setPosition(source->getPosition() + rotateVector(sf::Vector2f(sourceOffset.x, sourceOffset.y), source->getRotation()));
+        setPositionZ(source->getPositionZ());
+    }
     if (target)
         targetLocation = target->getPosition() + sf::Vector2f(targetOffset.x, targetOffset.y);
 
@@ -145,7 +148,7 @@ void BeamEffect::setTarget(P<SpaceObject> target, sf::Vector2f hitLocation)
     target_id = target->getMultiplayerId();
     float r = target->getRadius();
     hitLocation -= target->getPosition();
-    targetOffset = sf::Vector3f(hitLocation.x + random(-r/2.0, r/2.0), hitLocation.y + random(-r/2.0, r/2.0), random(-r/4.0, r/4.0));
+    targetOffset = sf::Vector3f(hitLocation.x + random(-r/2.0, r/2.0), hitLocation.y + random(-r/2.0, r/2.0), target->getPositionZ() + random(-r/4.0, r/4.0));
 
     if (target->hasShield())
         targetOffset = sf::normalize(targetOffset) * r;
@@ -154,6 +157,6 @@ void BeamEffect::setTarget(P<SpaceObject> target, sf::Vector2f hitLocation)
     update(0);
 
     sf::Vector3f hitPos(targetLocation.x, targetLocation.y, targetOffset.z);
-    sf::Vector3f targetPos(target->getPosition().x, target->getPosition().y, 0);
+    sf::Vector3f targetPos(target->getPosition().x, target->getPosition().y, target->getPositionZ());
     hitNormal = sf::normalize(targetPos - hitPos);
 }

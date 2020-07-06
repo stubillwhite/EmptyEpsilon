@@ -1194,6 +1194,7 @@ void SpaceShip::destroyedByDamage(DamageInfo& info)
     ExplosionEffect* e = new ExplosionEffect();
     e->setSize(getRadius() * 1.5);
     e->setPosition(getPosition());
+    e->setPositionZ(getPositionZ());
     e->setRadarSignatureInfo(0.0, 0.2, 0.2);
 
     if (info.instigator)

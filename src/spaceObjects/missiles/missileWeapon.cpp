@@ -54,7 +54,7 @@ void MissileWeapon::update(float delta)
 
     if (delta > 0)
     {
-        ParticleEngine::spawn(sf::Vector3f(getPosition().x, getPosition().y, 0), sf::Vector3f(getPosition().x, getPosition().y, 0), sf::Vector3f(1, 0.8, 0.8), sf::Vector3f(0, 0, 0), 5, 20, 5.0);
+        ParticleEngine::spawn(sf::Vector3f(getPosition().x, getPosition().y, getPositionZ()), sf::Vector3f(getPosition().x, getPosition().y, getPositionZ()), sf::Vector3f(1, 0.8, 0.8), sf::Vector3f(0, 0, 0), 5, 20, 5.0);
     }
 }
 
@@ -89,7 +89,22 @@ void MissileWeapon::updateMovement()
             {
                 target = game_client->getObjectById(target_id);
             }
-
+            
+            if (target)
+            {
+                if (position_z < target->position_z)
+                    setPositionZ(getPositionZ() + 0.5);
+                if (position_z > target->position_z)
+                    setPositionZ(getPositionZ() - 0.5);
+            }
+            else
+            {
+                if (position_z < 0)
+                    setPositionZ(getPositionZ() + 0.5);
+                if (position_z > 0)
+                    setPositionZ(getPositionZ() - 0.5);
+            }
+            
             if (target && (target->getPosition() - getPosition()) < data.homing_range + target->getRadius())
             {
                 target_angle = sf::vector2ToAngle(target->getPosition() - getPosition());

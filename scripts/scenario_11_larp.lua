@@ -6,9 +6,27 @@ function init()
     
     player = PlayerSpaceship():setFaction("Human Navy"):setTemplate("Battle docker")
     
-    ------------------
-    -- In progress ---
-    ------------------
+    -----------------
+    -- In progress --
+    -----------------
+    
+    -- Position Z for all object to simulate space
+    
+    -- player:setPositionZ(-500)
+    
+    station_z = SpaceStation():setPosition(5000, 0):setTemplate('Huge Station'):setFaction("Human Navy"):setPositionZ(500)
+
+    for n=1,20 do
+        CpuShip():setFaction("Human Navy"):setTemplate("Adv. Gunship"):setPosition(random(0,10000), random(-10000,10000)):setPositionZ(random(-500,500)):orderRoaming()
+        CpuShip():setFaction("Kraylor"):setTemplate("Adv. Gunship"):setPosition(random(0,10000), random(-10000,10000)):setPositionZ(random(-500,500)):orderRoaming()
+    end
+    
+    Nebula():setPosition(5000, 5000):setPositionZ(500)
+    Nebula():setPosition(5000, -5000):setPositionZ(-500)
+    
+    -----------------------------------
+    -- ### EE LARP release 1.0-beta ---
+    -----------------------------------
     
     ----
     -- weapons tube and beams specific by station
@@ -17,8 +35,8 @@ function init()
     -- the Battle docker have 3 beams and 5 tubes weapons. Example here : Beams are used only in station 1, the 2 first tubes are used only in station 2, the last 3 tubes are used only in station 3
     -- If there is noting in options.ini, weapons stations have all beams and tubes. You need to change options.ini to allow this feature.
     player:setBeamWeaponStation(0,1):setBeamWeaponStation(1,1):setBeamWeaponStation(2,1)
-    player:setWeaponTubeStation(0,2):setWeaponTubeStation(1,2)
-    player:setWeaponTubeStation(2,3):setWeaponTubeStation(3,3):setWeaponTubeStation(4,3)
+    --player:setWeaponTubeStation(0,2):setWeaponTubeStation(1,2)
+    --player:setWeaponTubeStation(2,3):setWeaponTubeStation(3,3):setWeaponTubeStation(4,3)
     
     ----
     -- enable waypoints by route
@@ -79,4 +97,8 @@ function update(delta)
     color_b = color_b + random(-10, 10) / 100
     color_a = color_a + random(-10, 10) / 100
     player:setTextureColor(color_r, color_g, color_b, color_a)
+    
+    -- Position Z for all object to simulate space
+    -- station_z:setPositionZ(station_z:getPositionZ() + random(-1, 1) )
+    
 end

@@ -19,7 +19,7 @@ void ModelInfo::setData(string name)
     }
 }
 
-void ModelInfo::render(sf::Vector2f position, float rotation)
+void ModelInfo::render(sf::Vector2f position, float rotation, float position_z)
 {
     if (!data)
         return;
@@ -35,7 +35,7 @@ void ModelInfo::render(sf::Vector2f position, float rotation)
                 sf::Vector3f offset = data->engine_emitters[n].position * data->scale;
                 sf::Vector2f pos2d = position + sf::rotateVector(sf::Vector2f(offset.x, offset.y), rotation);
                 sf::Vector3f color = data->engine_emitters[n].color;
-                sf::Vector3f pos3d = sf::Vector3f(pos2d.x, pos2d.y, offset.z);
+                sf::Vector3f pos3d = sf::Vector3f(pos2d.x, pos2d.y, position_z + offset.z);
                 float scale = data->scale * data->engine_emitters[n].scale * engine_scale;
                 ParticleEngine::spawn(pos3d, pos3d, color, color, scale, 0.0, 5.0);
             }
@@ -53,7 +53,7 @@ void ModelInfo::render(sf::Vector2f position, float rotation)
                 sf::Vector3f offset = (data->mesh->randomPoint() + data->mesh_offset) * data->scale;
                 sf::Vector2f pos2d = position + sf::rotateVector(sf::Vector2f(offset.x, offset.y), rotation);
                 sf::Vector3f color = sf::Vector3f(0.6, 0.6, 1);
-                sf::Vector3f pos3d = sf::Vector3f(pos2d.x, pos2d.y, offset.z);
+                sf::Vector3f pos3d = sf::Vector3f(pos2d.x, pos2d.y, position_z + offset.z);
                 ParticleEngine::spawn(pos3d, pos3d, color, color, data->getRadius() / 15.0f, 0.0, 3.0);
             }
             last_warp_particle_time = engine->getElapsedTime();

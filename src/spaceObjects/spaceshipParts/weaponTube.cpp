@@ -136,6 +136,11 @@ float WeaponTube::getSizeCategoryModifier()
 void WeaponTube::spawnProjectile(float target_angle)
 {
     sf::Vector2f fireLocation = parent->getPosition() + sf::rotateVector(parent->ship_template->model_data->getTubePosition2D(tube_index), parent->getRotation());
+    
+    int station_eff = station;
+    if (PreferencesManager::get("weapons_specific_station", "0").toInt() == 0)
+        station_eff = 0;
+        
     switch(type_loaded)
     {
     case MW_Homing:
@@ -143,8 +148,9 @@ void WeaponTube::spawnProjectile(float target_angle)
             P<HomingMissile> missile = new HomingMissile();
             missile->owner = parent;
             missile->setFactionId(parent->getFactionId());
-            missile->target_id = parent->target_id[station];
+            missile->target_id = parent->target_id[station_eff];
             missile->setPosition(fireLocation);
+            missile->setPositionZ(parent->getPositionZ());
             missile->setRotation(parent->getRotation() + direction);
             missile->target_angle = target_angle;
             missile->category_modifier = getSizeCategoryModifier();
@@ -155,8 +161,9 @@ void WeaponTube::spawnProjectile(float target_angle)
             P<Nuke> missile = new Nuke();
             missile->owner = parent;
             missile->setFactionId(parent->getFactionId());
-            missile->target_id = parent->target_id[station];
+            missile->target_id = parent->target_id[station_eff];
             missile->setPosition(fireLocation);
+            missile->setPositionZ(parent->getPositionZ());
             missile->setRotation(parent->getRotation() + direction);
             missile->target_angle = target_angle;
             missile->category_modifier = getSizeCategoryModifier();
@@ -168,6 +175,7 @@ void WeaponTube::spawnProjectile(float target_angle)
             missile->owner = parent;
             missile->setFactionId(parent->getFactionId());
             missile->setPosition(fireLocation);
+            missile->setPositionZ(parent->getPositionZ());
             missile->setRotation(parent->getRotation() + direction);
             missile->eject();
         }
@@ -178,6 +186,7 @@ void WeaponTube::spawnProjectile(float target_angle)
             missile->owner = parent;
             missile->setFactionId(parent->getFactionId());
             missile->setPosition(fireLocation);
+            missile->setPositionZ(parent->getPositionZ());
             missile->setRotation(parent->getRotation() + direction);
             missile->target_angle = parent->getRotation() + direction;
             missile->category_modifier = getSizeCategoryModifier();
@@ -188,8 +197,9 @@ void WeaponTube::spawnProjectile(float target_angle)
             P<EMPMissile> missile = new EMPMissile();
             missile->owner = parent;
             missile->setFactionId(parent->getFactionId());
-            missile->target_id = parent->target_id[station];
+            missile->target_id = parent->target_id[station_eff];
             missile->setPosition(fireLocation);
+            missile->setPositionZ(parent->getPositionZ());
             missile->setRotation(parent->getRotation() + direction);
             missile->target_angle = target_angle;
             missile->category_modifier = getSizeCategoryModifier();

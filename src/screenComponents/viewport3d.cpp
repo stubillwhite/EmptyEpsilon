@@ -2,6 +2,7 @@
 
 #include "main.h"
 #include "playerInfo.h"
+#include "preferenceManager.h"
 #include "gameGlobalInfo.h"
 #include "viewport3d.h"
 
@@ -177,7 +178,8 @@ void GuiViewport3D::onDraw(sf::RenderTarget& window)
             continue;
         if (depth > 0 && obj->getRadius() / depth < 1.0 / 500)
             continue;
-        int render_list_index = std::max(0, int((depth + obj->getRadius()) / 25000));
+        //int render_list_index = std::max(0, int((depth + obj->getRadius()) / 25000));
+        int render_list_index = std::max(0, int((depth + obj->getRadius()) / 1000000));
         while(render_list_index >= int(render_lists.size()))
             render_lists.emplace_back();
         render_lists[render_list_index].emplace_back(*obj, depth);
@@ -206,7 +208,7 @@ void GuiViewport3D::onDraw(sf::RenderTarget& window)
 
             glPushMatrix();
             glTranslatef(-camera_position.x,-camera_position.y, -camera_position.z);
-            glTranslatef(obj->getPosition().x, obj->getPosition().y, 0);
+            glTranslatef(obj->getPosition().x, obj->getPosition().y, obj->getPositionZ());
             glRotatef(obj->getRotation(), 0, 0, 1);
 
             obj->draw3D();
@@ -223,7 +225,7 @@ void GuiViewport3D::onDraw(sf::RenderTarget& window)
 
             glPushMatrix();
             glTranslatef(-camera_position.x,-camera_position.y, -camera_position.z);
-            glTranslatef(obj->getPosition().x, obj->getPosition().y, 0);
+            glTranslatef(obj->getPosition().x, obj->getPosition().y, obj->getPositionZ());
             glRotatef(obj->getRotation(), 0, 0, 1);
 
             obj->draw3DTransparent();
@@ -243,7 +245,7 @@ void GuiViewport3D::onDraw(sf::RenderTarget& window)
             space_dust.push_back(sf::Vector3f());
 
         sf::Vector2f dust_vector = my_spaceship->getVelocity() / 100.0f;
-        sf::Vector3f dust_center = sf::Vector3f(my_spaceship->getPosition().x, my_spaceship->getPosition().y, 0.0);
+        sf::Vector3f dust_center = sf::Vector3f(my_spaceship->getPosition().x, my_spaceship->getPosition().y, my_spaceship->getPositionZ());
         glColor4f(0.7, 0.5, 0.35, 0.07);
         
         for(unsigned int n=0; n<space_dust.size(); n++)
@@ -263,13 +265,13 @@ void GuiViewport3D::onDraw(sf::RenderTarget& window)
     }
     glPopMatrix();
 
-    if (my_spaceship && my_spaceship->getTarget())
+    if (my_spaceship && my_spaceship->getTarget() && show_callsigns)
     {
         P<SpaceObject> target = my_spaceship->getTarget();
         glDisable(GL_DEPTH_TEST);
         glPushMatrix();
         glTranslatef(-camera_position.x,-camera_position.y, -camera_position.z);
-        glTranslatef(target->getPosition().x, target->getPosition().y, 0);
+        glTranslatef(target->getPosition().x, target->getPosition().y, target->getPositionZ());
 
         ShaderManager::getShader("billboardShader")->setUniform("textureMap", *textureManager.getTexture("redicule2.png"));
         sf::Shader::bind(ShaderManager::getShader("billboardShader"));
@@ -299,7 +301,7 @@ void GuiViewport3D::onDraw(sf::RenderTarget& window)
     {
         glPushMatrix();
         glTranslatef(-camera_position.x,-camera_position.y, -camera_position.z);
-        glTranslatef(obj->getPosition().x, obj->getPosition().y, 0);
+        glTranslatef(obj->getPosition().x, obj->getPosition().y, obj->getPositionZ());
         glRotatef(obj->getRotation(), 0, 0, 1);
 
         std::vector<sf::Vector2f> collisionShape = obj->getCollisionShape();

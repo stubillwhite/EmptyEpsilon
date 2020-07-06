@@ -105,12 +105,16 @@ public:
     int scanning_complexity_value;
     int scanning_depth_value;
     string callsign;
+    float position_z;
 
     SpaceObject(float collisionRange, string multiplayerName, float multiplayer_significant_range=-1);
     virtual ~SpaceObject();
 
     float getRadius() { return object_radius; }
     void setRadius(float radius) { object_radius = radius; setCollisionRadius(radius); }
+    
+    float getPositionZ() { return position_z; }
+    void setPositionZ(float z) { position_z = z; }
 
     // Return the object's raw radar signature. The default signature is 0,0,0.
     virtual RawRadarSignatureInfo getRadarSignatureInfo() { return radar_signature; }

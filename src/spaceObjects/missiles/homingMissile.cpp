@@ -16,6 +16,7 @@ void HomingMissile::hitObject(P<SpaceObject> object)
     P<ExplosionEffect> e = new ExplosionEffect();
     e->setSize(category_modifier * 30);
     e->setPosition(getPosition());
+    e->setPositionZ(getPositionZ());
     e->setOnRadar(true);
     e->setRadarSignatureInfo(0.0, 0.0, 0.5);
 }
