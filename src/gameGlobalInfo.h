@@ -80,9 +80,11 @@ public:
     EHackingGames hacking_games;
     bool use_beam_shield_frequencies;
     bool use_system_damage;
+    bool use_complex_radar_signatures;
     bool allow_main_screen_tactical_radar;
     bool allow_main_screen_long_range_radar;
     string gm_control_code;
+    bool color_by_faction;
     float elapsed_time;
     string scenario;
     string variation = "None";
@@ -93,7 +95,7 @@ public:
     //List of names of gm_callback_functions scripts (replicated to clients)
     std::vector<string> gm_callback_names;
     //When active, all comms request goto the GM as chat, and normal scripted converstations are disabled. This does not disallow player<->player ship comms.
-    bool intercept_all_comms_to_gm;
+    bool intercept_all_comms_to_gm; 
 
     //Callback called when a new player ship is created on the ship selection screen.
     ScriptSimpleCallback on_new_player_ship;

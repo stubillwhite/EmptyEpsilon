@@ -27,9 +27,13 @@ function init()
     -- Change font
     -- You need to change the parameters font_main and font_bold in options.ini
     
-    -- Color by faction
-    -- You need to change the parameter color_by_faction in options.ini
+    -- Color by faction (in server only)
+    -- You need to change the parameter server_config_color_by_faction in options.ini
     -- Once done, ship and station icon will be colored by faction's color (once scanned)
+    
+    -- Complexity of radar signatures
+    -- You need to change the parameter server_config_use_complex_radar_signatures in options.ini
+    -- Once done to 0, radar signatures will be easier to understand : Gravity affect red bar, biologic affect green bar, electric affect blue bar
     
     -----------------------------------
     -- ### EE LARP release 1.0-beta ---

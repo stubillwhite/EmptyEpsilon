@@ -574,7 +574,7 @@ void SpaceShip::drawOnRadar(sf::RenderTarget& window, sf::Vector2f position, flo
     }
     if (my_spaceship == this)
     {
-        if (PreferencesManager::get("color_by_faction", "0").toInt() == 0)
+        if (!gameGlobalInfo->color_by_faction)
             objectSprite.setColor(sf::Color(192, 192, 255));
         else
             objectSprite.setColor(factionInfo[getFactionId()]->gm_color);
@@ -582,7 +582,7 @@ void SpaceShip::drawOnRadar(sf::RenderTarget& window, sf::Vector2f position, flo
     {
         if (getScannedStateFor(my_spaceship) != SS_NotScanned)
         {
-            if (PreferencesManager::get("color_by_faction", "0").toInt() == 0)
+            if (!gameGlobalInfo->color_by_faction)
             {
                 if (isEnemy(my_spaceship))
                     objectSprite.setColor(sf::Color::Red);

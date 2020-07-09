@@ -4,6 +4,7 @@
 #include "spaceObjects/playerSpaceship.h"
 #include "shipTemplate.h"
 #include "playerInfo.h"
+#include "gameGlobalInfo.h"
 #include "preferenceManager.h"
 #include "factionInfo.h"
 #include "mesh.h"
@@ -41,11 +42,11 @@ void SpaceStation::drawOnRadar(sf::RenderTarget& window, sf::Vector2f position, 
     }
     sprite_scale = std::max(0.15f, sprite_scale);
     objectSprite.setScale(sprite_scale, sprite_scale);
-    if (PreferencesManager::get("color_by_faction", "0").toInt() == 0)
+    if (!gameGlobalInfo->color_by_faction)
     {
         if (my_spaceship)
         {
-            if (PreferencesManager::get("color_by_faction", "0").toInt() == 0)
+            if (!gameGlobalInfo->color_by_faction)
             {
                 if (isEnemy(my_spaceship))
                     objectSprite.setColor(sf::Color::Red);

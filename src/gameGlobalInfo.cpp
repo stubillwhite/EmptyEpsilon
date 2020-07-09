@@ -37,11 +37,13 @@ GameGlobalInfo::GameGlobalInfo()
     hacking_games = HG_All;
     use_beam_shield_frequencies = true;
     use_system_damage = true;
+    use_complex_radar_signatures = true;
     allow_main_screen_tactical_radar = true;
     allow_main_screen_long_range_radar = true;
     gm_control_code = "";
     elapsed_time = 0.0f;
     intercept_all_comms_to_gm = false;
+    color_by_faction = false;
 
     registerMemberReplication(&scanning_complexity);
     registerMemberReplication(&hacking_difficulty);
@@ -52,12 +54,14 @@ GameGlobalInfo::GameGlobalInfo()
     registerMemberReplication(&victory_faction);
     registerMemberReplication(&use_beam_shield_frequencies);
     registerMemberReplication(&use_system_damage);
+    registerMemberReplication(&use_complex_radar_signatures);
     registerMemberReplication(&allow_main_screen_tactical_radar);
     registerMemberReplication(&allow_main_screen_long_range_radar);
     registerMemberReplication(&gm_control_code);
     registerMemberReplication(&elapsed_time, 0.1);
     registerMemberReplication(&gm_callback_names);
     registerMemberReplication(&intercept_all_comms_to_gm);
+    registerMemberReplication(&color_by_faction);
     registerMemberReplication(&locals_name, 1.0);
 
     for(unsigned int n=0; n<factionInfo.size(); n++)
