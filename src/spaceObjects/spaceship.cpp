@@ -574,20 +574,28 @@ void SpaceShip::drawOnRadar(sf::RenderTarget& window, sf::Vector2f position, flo
     }
     if (my_spaceship == this)
     {
-        objectSprite.setColor(sf::Color(192, 192, 255));
+        if (PreferencesManager::get("color_by_faction", "0").toInt() == 0)
+            objectSprite.setColor(sf::Color(192, 192, 255));
+        else
+            objectSprite.setColor(factionInfo[getFactionId()]->gm_color);
     }else if (my_spaceship)
     {
         if (getScannedStateFor(my_spaceship) != SS_NotScanned)
         {
-            if (isEnemy(my_spaceship))
-                objectSprite.setColor(sf::Color::Red);
-            else if (isFriendly(my_spaceship))
-                objectSprite.setColor(sf::Color(128, 255, 128));
-            else
-                objectSprite.setColor(sf::Color(128, 128, 255));
+            if (PreferencesManager::get("color_by_faction", "0").toInt() == 0)
+            {
+                if (isEnemy(my_spaceship))
+                    objectSprite.setColor(sf::Color::Red);
+                else if (isFriendly(my_spaceship))
+                    objectSprite.setColor(sf::Color(128, 255, 128));
+                else
+                    objectSprite.setColor(sf::Color(128, 128, 255));
+            }else{
+                objectSprite.setColor(factionInfo[getFactionId()]->gm_color);
+            }
         }else{
             objectSprite.setColor(sf::Color(192, 192, 192));
-        }
+        }    
     }else{
         objectSprite.setColor(factionInfo[getFactionId()]->gm_color);
     }

@@ -24,6 +24,13 @@ function init()
     Nebula():setPosition(5000, 5000):setPositionZ(500)
     Nebula():setPosition(5000, -5000):setPositionZ(-500)
     
+    -- Change font
+    -- You need to change the parameters font_main and font_bold in options.ini
+    
+    -- Color by faction
+    -- You need to change the parameter color_by_faction in options.ini
+    -- Once done, ship and station icon will be colored by faction's color (once scanned)
+    
     -----------------------------------
     -- ### EE LARP release 1.0-beta ---
     -----------------------------------
