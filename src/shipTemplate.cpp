@@ -31,15 +31,15 @@ REGISTER_SCRIPT_CLASS(ShipTemplate)
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setBeam);
     /// Setup a beam weapon.
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setBeamWeapon);
-<<<<<<< HEAD
+    /// Set the tractor beam
+    /// Requires the range of the beam and the drag par second
+    /// Example : obj:setTractorBeam(2000,100)
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setTractorBeam);
-=======
     /// Set a beam weapon's damage type.
     /// Requires an integer index and an integer damage type.
     /// 0 = Energy, 2 = EMP
     /// Example: obj:setBeamWEaponDamageType(0, 2)
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setBeamWeaponDamageType);
->>>>>>> 29ba7d786ebcae6e339ee9c0142ccbc6920d4dc9
     /// Setup a beam's turret.
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setBeamWeaponTurret);
     /// Setup a beam weapon texture
@@ -280,7 +280,7 @@ void ShipTemplate::setBeamWeaponDamageType(int index, int damage_type)
 {
     if (index < 0 || index > max_beam_weapons)
         return;
-    if (damage_type < 0 || damage_type > 2)
+    if (damage_type < 0 || damage_type > DT_Count)
         beams[index].setDamageType(0);
     else
         beams[index].setDamageType(damage_type);

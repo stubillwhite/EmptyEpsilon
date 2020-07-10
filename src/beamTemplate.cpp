@@ -1,4 +1,5 @@
 #include "beamTemplate.h"
+#include "spaceObjects/spaceObject.h"
 
 BeamTemplate::BeamTemplate()
 {
@@ -13,7 +14,8 @@ BeamTemplate::BeamTemplate()
     /*
     damage_type = 0; # DT_Energy,
     damage_type = 1; # DT_Kinetic,
-    damage_type = 2; # DT_EMP
+    damage_type = 2; # DT_EMP,
+    damage_type = 3; # DT_Hear
     */
     damage_type = 0;
     beam_texture = "beam_orange.png";
@@ -142,7 +144,7 @@ int BeamTemplate::getDamageType()
 
 void BeamTemplate::setDamageType(int damage_type)
 {
-    if (damage_type < 0 || damage_type > 2)
+    if (damage_type < 0 || damage_type > DT_Count)
         this->damage_type = 0;
     else
         this->damage_type = damage_type;

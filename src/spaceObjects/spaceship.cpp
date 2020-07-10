@@ -95,6 +95,7 @@ REGISTER_SCRIPT_SUBCLASS_NO_CREATE(SpaceShip, ShipTemplateBasedObject)
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setBeamWeaponHeatPerFire);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setBeamWeaponStation);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setTractorBeam);
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setTractorBeamMax);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setWeaponTubeCount);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getWeaponTubeCount);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getWeaponTubeLoadType);
@@ -496,7 +497,7 @@ void SpaceShip::drawOnRadar(sf::RenderTarget& window, sf::Vector2f position, flo
             // effectively doesn't exist; exit if that's the case.
             if (beam_weapons[n].getRange() == 0.0) continue;
 
-            // Color energy beam arcs red and EM arcs blue.
+            // Color energy beam arcs red, EM arcs blue and Heat arcs magenta.
             // TODO: Make this color configurable.
             sf::Color color = sf::Color::Red;
             
@@ -506,6 +507,8 @@ void SpaceShip::drawOnRadar(sf::RenderTarget& window, sf::Vector2f position, flo
 
             if (beam_weapons[n].getDamageType() == 2)
                 color = sf::Color::Blue;
+            if (beam_weapons[n].getDamageType() == 3)
+                color = sf::Color::Magenta;
 
             // If the beam is cooling down, flash and fade the arc color.
             if (beam_weapons[n].getCooldown() > 0)
@@ -1172,7 +1175,7 @@ void SpaceShip::takeHullDamage(float damage_amount, DamageInfo& info)
             systems[info.system_target].health -= system_damage;
             if (systems[info.system_target].health < -1.0)
                 systems[info.system_target].health = -1.0;
-
+            
             for(int n=0; n<2; n++)
             {
                 ESystem random_system = ESystem(irandom(0, SYS_COUNT - 1));
@@ -1200,6 +1203,46 @@ void SpaceShip::takeHullDamage(float damage_amount, DamageInfo& info)
     }
 
     ShipTemplateBasedObject::takeHullDamage(damage_amount, info);
+}
+
+void SpaceShip::takeHeatDamage(float damage_amount, DamageInfo& info)
+{
+    if (gameGlobalInfo->use_system_damage)
+    {
+        if (info.system_target != SYS_None)
+        {
+            //Target specific system
+            float system_damage = (damage_amount / hull_max) * 2.0;
+            systems[info.system_target].heat_level += system_damage;
+            if (systems[info.system_target].heat_level > 1.0)
+                systems[info.system_target].health -= systems[info.system_target].heat_level - 1.0;
+            if (systems[info.system_target].health < -1.0)
+                systems[info.system_target].health = -1.0;
+
+            for(int n=0; n<2; n++)
+            {
+                ESystem random_system = ESystem(irandom(0, SYS_COUNT - 1));
+                //Damage the system compared to the amount of hull damage you would do. If we have less hull strength you get more system damage.
+                float system_damage = (damage_amount / hull_max) * 1.0;
+                systems[random_system].heat_level += system_damage;
+                if (systems[random_system].heat_level > 1.0)
+                    systems[random_system].health -= systems[random_system].heat_level - 1.0;
+                if (systems[random_system].health < -1.0)
+                    systems[random_system].health = -1.0;
+            }
+            
+            damage_amount *= 0.5;
+        }else{
+            ESystem random_system = ESystem(irandom(0, SYS_COUNT - 1));
+            //Damage the system compared to the amount of hull damage you would do. If we have less hull strength you get more system damage.
+            float system_damage = (damage_amount / hull_max) * 3.0;
+            systems[random_system].heat_level += system_damage;
+            if (systems[random_system].heat_level > 1.0)
+                systems[random_system].health -= systems[random_system].heat_level - 1.0;
+            if (systems[random_system].health < -1.0)
+                systems[random_system].health = -1.0;
+        }
+    }
 }
 
 void SpaceShip::destroyedByDamage(DamageInfo& info)

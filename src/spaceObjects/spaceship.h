@@ -234,6 +234,14 @@ public:
     virtual void takeHullDamage(float damage_amount, DamageInfo& info) override;
 
     /*!
+     * Spaceship takes heat directly on hull.
+     * This is used when shields are down or by weapons that ignore shields.
+     * \param damage_amount Damage to be delt.
+     * \param info Information about damage type (usefull for damage reduction, etc)
+     */
+    virtual void takeHeatDamage(float damage_amount, DamageInfo& info) override;
+
+    /*!
      * Spaceship is destroyed by damage.
      * \param info Information about damage type
      */
@@ -458,6 +466,12 @@ public:
         tractor_beam.setDragPerSecond(drag_per_second);
     }
     
+    void setTractorBeamMax(float max_range, float drag_per_second)
+    {
+        tractor_beam.setMaxRange(max_range);
+        tractor_beam.setDragPerSecond(drag_per_second);
+    }
+    
     void setWeaponTubeCount(int amount);
     int getWeaponTubeCount();
     EMissileWeapons getWeaponTubeLoadType(int index);
@@ -498,6 +512,7 @@ REGISTER_MULTIPLAYER_ENUM(EScannedState);
 REGISTER_MULTIPLAYER_ENUM(EDockType);
 REGISTER_MULTIPLAYER_ENUM(EDockState);
 REGISTER_MULTIPLAYER_ENUM(ETractorBeamMode);
+REGISTER_MULTIPLAYER_ENUM(EDamageType);
 
 
 string frequencyToString(int frequency);

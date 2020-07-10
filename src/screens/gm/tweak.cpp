@@ -498,6 +498,18 @@ GuiShipTweakBeamweapons::GuiShipTweakBeamweapons(GuiContainer* owner)
         target->beam_weapons[beam_index].setDamage(value);
     });
     damage_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 30);
+    
+    (new GuiLabel(right_col, "", "Damage Type:", 20))->setSize(GuiElement::GuiSizeMax, 30);
+    damage_type_slider = new GuiSelector(right_col, "", [this](int index, string value)
+    {
+        target->beam_weapons[beam_index].setDamageType(EDamageType(index));
+    });
+    damage_type_slider->setSize(GuiElement::GuiSizeMax, 30);
+    damage_type_slider->addEntry("Energy",DT_Energy);
+    damage_type_slider->addEntry("Kinetic",DT_Kinetic);
+    damage_type_slider->addEntry("EMP",DT_EMP);
+    damage_type_slider->addEntry("Heat",DT_Heat);
+    damage_type_slider->setSelectionIndex(DT_Energy);
 }
 
 void GuiShipTweakBeamweapons::onDraw(sf::RenderTarget& window)
@@ -514,6 +526,7 @@ void GuiShipTweakBeamweapons::onDraw(sf::RenderTarget& window)
     turret_rotation_rate_overlay_label->setText(string(target->beam_weapons[beam_index].getTurretRotationRate()));
     cycle_time_slider->setValue(target->beam_weapons[beam_index].getCycleTime());
     damage_slider->setValue(target->beam_weapons[beam_index].getDamage());
+    damage_type_slider->setSelectionIndex(target->beam_weapons[beam_index].getDamageType());
 }
 
 void GuiShipTweakBeamweapons::open(P<SpaceObject> target)

@@ -35,8 +35,14 @@ function init()
     -- You need to change the parameter server_config_use_complex_radar_signatures in options.ini
     -- Once done to 0, radar signatures will be easier to understand : Gravity affect red bar, biologic affect green bar, electric affect blue bar
     
-    -- Configurable beam damage
-    
+    -- Configurable beam damage (0:energy, 1:kinetic, 2:emp or 3:heat)
+    -- Create a heat beam
+    -- setBeamWeapon (int index, float arc, float direction, float range, float cycle_time, float damage)
+    player:setBeamWeapon(0,360, 0, 1500.0, 0.5, 1)
+    player:setBeamWeaponDamageType(0, 3)
+    player:setBeamWeaponEnergyPerFire(0, 2)
+    player:setBeamWeaponHeatPerFire(0, 0)
+        
     -----------------------------------
     -- ### EE LARP release 1.0-beta ---
     -----------------------------------
@@ -98,6 +104,11 @@ function init()
     
     -- Example of adding a drone
     player:addDrone("L3 Mouse")
+    
+    -- Tractor Beam
+    -- Initial configuration can be into ship template
+    -- Can be changed into script
+    player:setTractorBeamMax(5000, 100)
     
 end
 

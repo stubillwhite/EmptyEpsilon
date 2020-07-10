@@ -590,6 +590,8 @@ template<> void convert<DamageInfo>::param(lua_State* L, int& idx, DamageInfo& d
         di.type = DT_Kinetic;
     else if (str == "emp")
         di.type = DT_EMP;
+    else if (str == "heat")
+        di.type = DT_Heat;
 
     if (!lua_isnumber(L, idx))
         return;
@@ -608,6 +610,22 @@ template<> void convert<DamageInfo>::param(lua_State* L, int& idx, DamageInfo& d
         return;
 
     convert<ESystem>::param(L, idx, di.system_target);
+}
+
+template<> void convert<EDamageType>::param(lua_State* L, int& idx, EDamageType& dt)
+{
+    dt = DT_Energy;
+    if (!lua_isstring(L, idx))
+        return;
+    string str = string(luaL_checkstring(L, idx++)).lower();
+    if (str == "energy")
+        dt = DT_Energy;
+    else if (str == "kinetic")
+        dt = DT_Kinetic;
+    else if (str == "emp")
+        dt = DT_EMP;
+    else if (str == "heat")
+        dt = DT_Heat;
 }
 
 template<> void convert<EScannedState>::param(lua_State* L, int& idx, EScannedState& ss)

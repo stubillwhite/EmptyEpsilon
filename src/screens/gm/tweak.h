@@ -147,6 +147,7 @@ private:
     GuiLabel* turret_rotation_rate_overlay_label;
     GuiSlider* cycle_time_slider;
     GuiSlider* damage_slider;
+    GuiSelector* damage_type_slider;
 public:
     GuiShipTweakBeamweapons(GuiContainer* owner);
 

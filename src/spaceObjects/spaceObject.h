@@ -9,9 +9,11 @@
 
 enum EDamageType
 {
-    DT_Energy,
+    DT_Energy = 0,
     DT_Kinetic,
-    DT_EMP
+    DT_EMP,
+    DT_Heat,
+    DT_Count
 };
 
 class DamageInfo
@@ -236,6 +238,8 @@ protected:
 
 // Define a script conversion function for the DamageInfo structure.
 template<> void convert<DamageInfo>::param(lua_State* L, int& idx, DamageInfo& di);
+// Define a script conversion function for the structure
+template<> void convert<EDamageType>::param(lua_State* L, int& idx, EDamageType& dt);
 // Function to convert a lua parameter to a scan state.
 template<> void convert<EScannedState>::param(lua_State* L, int& idx, EScannedState& ss);
 

@@ -263,7 +263,11 @@ bool ShipTemplateBasedObject::hasShield()
 
 void ShipTemplateBasedObject::takeDamage(float damage_amount, DamageInfo info)
 {
-    if (shield_count > 0 && getShieldsActive())
+    // Heat damage are not blocked by shields
+    if (info.type == DT_Heat)
+    {
+        takeHeatDamage(damage_amount, info);
+    } else if (shield_count > 0 && getShieldsActive())
     {
         float angle = sf::angleDifference(getRotation(), sf::vector2ToAngle(info.location - getPosition()));
         if (angle < 0)
@@ -286,8 +290,8 @@ void ShipTemplateBasedObject::takeDamage(float damage_amount, DamageInfo info)
             damage_amount = 0.0;
         }
     }
-    
-    if (info.type != DT_EMP && damage_amount > 0.0)
+
+    if (info.type != DT_EMP && info.type != DT_Heat && damage_amount > 0.0)
     {
         takeHullDamage(damage_amount, info);
     }
@@ -327,6 +331,11 @@ void ShipTemplateBasedObject::takeHullDamage(float damage_amount, DamageInfo& in
         }
         destroy();
     }
+}
+
+void ShipTemplateBasedObject::takeHeatDamage(float damage_amount, DamageInfo& info)
+{
+    // Only in spaceship
 }
 
 float ShipTemplateBasedObject::getShieldDamageFactor(DamageInfo& info, int shield_index)
