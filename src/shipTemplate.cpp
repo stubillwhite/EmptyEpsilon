@@ -31,7 +31,15 @@ REGISTER_SCRIPT_CLASS(ShipTemplate)
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setBeam);
     /// Setup a beam weapon.
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setBeamWeapon);
+<<<<<<< HEAD
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setTractorBeam);
+=======
+    /// Set a beam weapon's damage type.
+    /// Requires an integer index and an integer damage type.
+    /// 0 = Energy, 2 = EMP
+    /// Example: obj:setBeamWEaponDamageType(0, 2)
+    REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setBeamWeaponDamageType);
+>>>>>>> 29ba7d786ebcae6e339ee9c0142ccbc6920d4dc9
     /// Setup a beam's turret.
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setBeamWeaponTurret);
     /// Setup a beam weapon texture
@@ -268,6 +276,16 @@ void ShipTemplate::setTractorBeam(float max_range, float drag_per_second)
     tractor_beam.setDragPerSecond(drag_per_second);
 }
 
+void ShipTemplate::setBeamWeaponDamageType(int index, int damage_type)
+{
+    if (index < 0 || index > max_beam_weapons)
+        return;
+    if (damage_type < 0 || damage_type > 2)
+        beams[index].setDamageType(0);
+    else
+        beams[index].setDamageType(damage_type);
+}
+
 void ShipTemplate::setBeamWeaponTurret(int index, float arc, float direction, float rotation_rate)
 {
     if (index < 0 || index > max_beam_weapons)
@@ -485,9 +503,7 @@ void ShipTemplate::setCloaking(bool enabled)
 void ShipTemplate::setWeaponStorage(EMissileWeapons weapon, int amount)
 {
     if (weapon != MW_None)
-    {
         weapon_storage[weapon] = amount;
-    }
 }
 
 void ShipTemplate::addRoom(sf::Vector2i position, sf::Vector2i size)
@@ -577,7 +593,7 @@ P<ShipTemplate> ShipTemplate::copy(string new_name)
     for(int n=0; n<max_beam_weapons; n++)
         result->beams[n] = beams[n];
     result->weapon_tube_count = weapon_tube_count;
-    for(int n=0; n<max_beam_weapons; n++)
+    for(int n=0; n<max_weapon_tubes; n++)
         result->weapon_tube[n] = weapon_tube[n];
     result->hull = hull;
     result->shield_count = shield_count;

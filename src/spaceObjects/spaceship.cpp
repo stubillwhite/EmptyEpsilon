@@ -83,10 +83,12 @@ REGISTER_SCRIPT_SUBCLASS_NO_CREATE(SpaceShip, ShipTemplateBasedObject)
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getBeamWeaponTurretDirection);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getBeamWeaponCycleTime);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getBeamWeaponDamage);
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getBeamWeaponDamageType);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getBeamWeaponEnergyPerFire);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getBeamWeaponHeatPerFire);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getBeamWeaponStation);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setBeamWeapon);
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setBeamWeaponDamageType);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setBeamWeaponTurret);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setBeamWeaponTexture);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setBeamWeaponEnergyPerFire);
@@ -277,6 +279,7 @@ void SpaceShip::applyTemplateValues()
         beam_weapons[n].setTurretRotationRate(ship_template->beams[n].getTurretRotationRate());
         beam_weapons[n].setCycleTime(ship_template->beams[n].getCycleTime());
         beam_weapons[n].setDamage(ship_template->beams[n].getDamage());
+        beam_weapons[n].setDamageType(static_cast<EDamageType>(ship_template->beams[n].getDamageType()));
         beam_weapons[n].setBeamTexture(ship_template->beams[n].getBeamTexture());
         beam_weapons[n].setEnergyPerFire(ship_template->beams[n].getEnergyPerFire());
         beam_weapons[n].setHeatPerFire(ship_template->beams[n].getHeatPerFire());
@@ -493,7 +496,7 @@ void SpaceShip::drawOnRadar(sf::RenderTarget& window, sf::Vector2f position, flo
             // effectively doesn't exist; exit if that's the case.
             if (beam_weapons[n].getRange() == 0.0) continue;
 
-            // Color beam arcs red.
+            // Color energy beam arcs red and EM arcs blue.
             // TODO: Make this color configurable.
             sf::Color color = sf::Color::Red;
             
@@ -501,9 +504,12 @@ void SpaceShip::drawOnRadar(sf::RenderTarget& window, sf::Vector2f position, flo
             if (PreferencesManager::get("weapons_specific_station", "0").toInt() != 0 && my_spaceship == this && beam_weapons[n].getStation() != PreferencesManager::get("weapons_specific_station", "0").toInt())
                 color.a = 64;
 
+            if (beam_weapons[n].getDamageType() == 2)
+                color = sf::Color::Blue;
+
             // If the beam is cooling down, flash and fade the arc color.
             if (beam_weapons[n].getCooldown() > 0)
-                color = sf::Color(255, 255 * (beam_weapons[n].getCooldown() / beam_weapons[n].getCycleTime()), 0);
+                color += sf::Color(0, 255 * (beam_weapons[n].getCooldown() / beam_weapons[n].getCycleTime()), 0);
 
             // Initialize variables from the beam's data.
             float beam_direction = beam_weapons[n].getDirection();
@@ -1125,11 +1131,10 @@ void SpaceShip::hackFinished(P<SpaceObject> source, string target)
 float SpaceShip::getShieldDamageFactor(DamageInfo& info, int shield_index)
 {
     float frequency_damage_factor = 1.0;
-    if (info.type == DT_Energy && gameGlobalInfo->use_beam_shield_frequencies)
-    {
-        frequency_damage_factor = frequencyVsFrequencyDamageFactor(info.frequency, shield_frequency);
-    }
     ESystem system = getShieldSystemForShieldIndex(shield_index);
+
+    if (info.type == DT_Energy && gameGlobalInfo->use_beam_shield_frequencies)
+        frequency_damage_factor = frequencyVsFrequencyDamageFactor(info.frequency, shield_frequency);
 
     //Shield damage reduction curve. Damage reduction gets slightly exponetial effective with power.
     // This also greatly reduces the ineffectiveness at low power situations.
@@ -1531,10 +1536,24 @@ string SpaceShip::getScriptExportModificationsOnTemplate()
          || beam_weapons[n].getTurretDirection() != ship_template->beams[n].getTurretDirection()
          || beam_weapons[n].getTurretRotationRate() != ship_template->beams[n].getTurretRotationRate()
          || beam_weapons[n].getCycleTime() != ship_template->beams[n].getCycleTime()
-         || beam_weapons[n].getDamage() != ship_template->beams[n].getDamage())
+         || beam_weapons[n].getDamage() != ship_template->beams[n].getDamage()
+         || beam_weapons[n].getDamageType() != static_cast<EDamageType>(ship_template->beams[n].getDamageType()))
         {
-            ret += ":setBeamWeapon(" + string(n) + ", " + string(beam_weapons[n].getArc(), 0) + ", " + string(beam_weapons[n].getDirection(), 0) + ", " + string(beam_weapons[n].getRange(), 0) + ", " + string(beam_weapons[n].getCycleTime(), 1) + ", " + string(beam_weapons[n].getDamage(), 1) + ")";
-            ret += ":setBeamWeaponTurret(" + string(n) + ", " + string(beam_weapons[n].getTurretArc(), 0) + ", " + string(beam_weapons[n].getTurretDirection(), 0) + ", " + string(beam_weapons[n].getTurretRotationRate(), 0) + ")";
+            ret += ":setBeamWeapon(" + string(n) + ", " +
+                string(beam_weapons[n].getArc(), 0) + ", " +
+                string(beam_weapons[n].getDirection(), 0) + ", " +
+                string(beam_weapons[n].getRange(), 0) + ", " +
+                string(beam_weapons[n].getCycleTime(), 1) + ", " +
+                string(beam_weapons[n].getDamage(), 1) +
+            ")";
+            ret += ":setBeamWeaponDamageType(" + string(n) + ", " +
+                string(beam_weapons[n].getDamageType(), 0) +
+            ")";
+            ret += ":setBeamWeaponTurret(" + string(n) + ", " +
+                string(beam_weapons[n].getTurretArc(), 0) + ", " +
+                string(beam_weapons[n].getTurretDirection(), 0) + ", " +
+                string(beam_weapons[n].getTurretRotationRate(), 0) +
+            ")";
         }
     }
 
