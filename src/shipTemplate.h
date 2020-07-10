@@ -174,6 +174,7 @@ public:
 
     void setBeam(int index, float arc, float direction, float range, float cycle_time, float damage);
     void setBeamWeapon(int index, float arc, float direction, float range, float cycle_time, float damage);
+    void setBeamWeaponDamageType(int index, int damage_type);
     void setBeamWeaponTurret(int index, float arc, float direction, float rotation_rate);
     void setBeamStation(int index, int station);
     void setTractorBeam(float max_range, float drag_per_second);

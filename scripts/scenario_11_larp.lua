@@ -35,6 +35,8 @@ function init()
     -- You need to change the parameter server_config_use_complex_radar_signatures in options.ini
     -- Once done to 0, radar signatures will be easier to understand : Gravity affect red bar, biologic affect green bar, electric affect blue bar
     
+    -- Configurable beam damage
+    
     -----------------------------------
     -- ### EE LARP release 1.0-beta ---
     -----------------------------------
