@@ -11,6 +11,7 @@
 #include "gameGlobalInfo.h"
 #include "preferenceManager.h"
 #include "shipCargo.h"
+#include "gui/colorConfig.h"
 
 #include "scriptInterface.h"
 
@@ -88,13 +89,25 @@ REGISTER_SCRIPT_SUBCLASS_NO_CREATE(SpaceShip, ShipTemplateBasedObject)
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getBeamWeaponHeatPerFire);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getBeamWeaponStation);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setBeamWeapon);
+    /// Set a beam weapon's damage type.
+    /// Requires an integer index and an integer damage type.
+    /// 0 = Energy, 1 = Kinetic,  2 = EMP, 3 = Heat
+    /// Example: ship:setBeamWEaponDamageType(0, 2)
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setBeamWeaponDamageType);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setBeamWeaponTurret);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setBeamWeaponTexture);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setBeamWeaponEnergyPerFire);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setBeamWeaponHeatPerFire);
+    /// Set the beam weapon station. If it not set to 0, and weapons_station in options is not set to 0 too, beam is only available if it is set to the good station.
+    /// Example: ship:setBeamWeaponStation(0, 1)
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setBeamWeaponStation);
+    /// Set the actual tractor beam
+    /// Not very useful, use by EE during players actions.
+    /// Usage : ship:(ETractorBeamMode mode, float arc, float direction, float range, float max_area, float drag_per_second)
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setTractorBeam);
+    /// Set the tractor beam maximum range
+    /// Requires the maximal range of the beam
+    /// Example : ship:setTractorBeamMax(2000)
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setTractorBeamMax);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setWeaponTubeCount);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getWeaponTubeCount);
@@ -110,6 +123,8 @@ REGISTER_SCRIPT_SUBCLASS_NO_CREATE(SpaceShip, ShipTemplateBasedObject)
     /// Returns the size of the tube
     /// Example: local size = ship:getTubeSize(0)
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getTubeSize);
+    /// Set the tube station. If it not set to 0, and weapons_station in options is not set to 0 too, tube is only available if it is set to the good station.
+    /// Example: ship:setWeaponTubeStation(0, 1)
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setWeaponTubeStation);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getWeaponTubeStation);
     /// Set the icon to be used for this ship on the radar.
@@ -497,22 +512,30 @@ void SpaceShip::drawOnRadar(sf::RenderTarget& window, sf::Vector2f position, flo
             // effectively doesn't exist; exit if that's the case.
             if (beam_weapons[n].getRange() == 0.0) continue;
 
-            // Color energy beam arcs red, EM arcs blue and Heat arcs magenta.
+            // Color energy beam arcs red, Kinetic arcs white, EM arcs blue and Heat arcs magenta.
             // TODO: Make this color configurable.
-            sf::Color color = sf::Color::Red;
+            sf::Color color = colorConfig.beam_arc_energy;
+
+            if (beam_weapons[n].getDamageType() == 1)
+                color = colorConfig.beam_arc_kinetic;
+            if (beam_weapons[n].getDamageType() == 2)
+                color = colorConfig.beam_arc_emp;
+            if (beam_weapons[n].getDamageType() == 3)
+                color = colorConfig.beam_arc_heat;
             
             // Draw beam arcs only if the specific weapons station is ok
             if (PreferencesManager::get("weapons_specific_station", "0").toInt() != 0 && my_spaceship == this && beam_weapons[n].getStation() != PreferencesManager::get("weapons_specific_station", "0").toInt())
                 color.a = 64;
 
-            if (beam_weapons[n].getDamageType() == 2)
-                color = sf::Color::Blue;
-            if (beam_weapons[n].getDamageType() == 3)
-                color = sf::Color::Magenta;
-
             // If the beam is cooling down, flash and fade the arc color.
             if (beam_weapons[n].getCooldown() > 0)
-                color += sf::Color(0, 255 * (beam_weapons[n].getCooldown() / beam_weapons[n].getCycleTime()), 0);
+            {
+                if (color.g < 128)
+                    color.g += 255 * (beam_weapons[n].getCooldown() / beam_weapons[n].getCycleTime());
+                else
+                    color.g += 255 * (beam_weapons[n].getCooldown() / beam_weapons[n].getCycleTime());
+            }
+                // color += sf::Color(0, 255 * (beam_weapons[n].getCooldown() / beam_weapons[n].getCycleTime()), 0);
 
             // Initialize variables from the beam's data.
             float beam_direction = beam_weapons[n].getDirection();

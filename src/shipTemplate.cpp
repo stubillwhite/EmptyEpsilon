@@ -37,7 +37,7 @@ REGISTER_SCRIPT_CLASS(ShipTemplate)
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setTractorBeam);
     /// Set a beam weapon's damage type.
     /// Requires an integer index and an integer damage type.
-    /// 0 = Energy, 2 = EMP
+    /// 0 = Energy, 1 = Kinetic,  2 = EMP, 3 = Heat
     /// Example: obj:setBeamWEaponDamageType(0, 2)
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setBeamWeaponDamageType);
     /// Setup a beam's turret.

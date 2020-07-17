@@ -38,10 +38,11 @@ function init()
     -- Configurable beam damage (0:energy, 1:kinetic, 2:emp or 3:heat)
     -- Create a heat beam
     -- setBeamWeapon (int index, float arc, float direction, float range, float cycle_time, float damage)
-    player:setBeamWeapon(0,360, 0, 1500.0, 0.5, 1)
-    player:setBeamWeaponDamageType(0, 3)
-    player:setBeamWeaponEnergyPerFire(0, 2)
-    player:setBeamWeaponHeatPerFire(0, 0)
+    player:setBeamWeapon(0,90, 0  , 1500, 4, 3):setBeamWeaponDamageType(0, 0)
+    player:setBeamWeapon(1,90, 90 , 1500, 4, 3):setBeamWeaponDamageType(1, 1)
+    player:setBeamWeapon(2,90, 180, 1500, 4, 3):setBeamWeaponDamageType(2, 2)
+    player:setBeamWeapon(3,90, 270, 1500, 4, 3):setBeamWeaponDamageType(3, 3)
+    -- Color of beams arc can be changed with colors.ini
         
     -----------------------------------
     -- ### EE LARP release 1.0-beta ---

@@ -50,6 +50,11 @@ public:
     
     sf::Color ship_waypoint_background;
     sf::Color ship_waypoint_text;
+
+    sf::Color beam_arc_energy;
+    sf::Color beam_arc_kinetic;
+    sf::Color beam_arc_emp;
+    sf::Color beam_arc_heat;
     
     void load();
 };
