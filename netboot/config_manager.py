@@ -292,6 +292,20 @@ class ConfigCmd(cmd.Cmd):
         for client in self._getClients(args[0]):
             client.runOnClient(args[1])
 
+    def do_switch_web(self, args):
+        'Switch client to Chromium web browser.'
+        for client in self._getClients(args):
+            client.runOnClient("systemctl stop emptyepsilon")
+            time.sleep(3)
+            client.runOnClient("systemctl start chromium")
+
+    def do_switch_ee(self, args):
+        'Switch client to Empty Epsilon.'
+        for client in self._getClients(args):
+            client.runOnClient("systemctl stop chromium")
+            time.sleep(3)
+            client.runOnClient("systemctl start emptyepsilon")
+
     def complete_exec(self, text, line, begidx, endidx):
         return self.complete_edit(text, line, begidx, endidx)
 
