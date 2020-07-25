@@ -139,6 +139,11 @@ public:
     float warp_speed_per_warp_level;
 
     /*!
+     * [config] Enabled Fire
+     */
+    bool lock_fire;
+
+    /*!
      * [output] How much charge there is in the combat maneuvering system (0.0-1.0)
      */
     float combat_maneuver_charge;

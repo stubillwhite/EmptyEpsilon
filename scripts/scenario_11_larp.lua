@@ -4,7 +4,7 @@
 
 function init()
     
-    player = PlayerSpaceship():setFaction("Human Navy"):setTemplate("Battle docker")
+    player = PlayerSpaceship():setFaction("Human Navy"):setTemplate("Battle docker"):setPosition(-10000, 0)
     
     -----------------
     -- In progress --
@@ -16,10 +16,10 @@ function init()
     
     station_z = SpaceStation():setPosition(5000, 0):setTemplate('Huge Station'):setFaction("Human Navy"):setPositionZ(500)
 
-    for n=1,20 do
-        CpuShip():setFaction("Human Navy"):setTemplate("Adv. Gunship"):setPosition(random(0,10000), random(-10000,10000)):setPositionZ(random(-500,500)):orderRoaming()
-        CpuShip():setFaction("Kraylor"):setTemplate("Adv. Gunship"):setPosition(random(0,10000), random(-10000,10000)):setPositionZ(random(-500,500)):orderRoaming()
-    end
+    --for n=1,20 do
+    --    CpuShip():setFaction("Human Navy"):setTemplate("Adv. Gunship"):setPosition(random(0,10000), random(-10000,10000)):setPositionZ(random(-500,500)):orderRoaming()
+    --    CpuShip():setFaction("Kraylor"):setTemplate("Adv. Gunship"):setPosition(random(0,10000), random(-10000,10000)):setPositionZ(random(-500,500)):orderRoaming()
+    --end
     
     Nebula():setPosition(5000, 5000):setPositionZ(500)
     Nebula():setPosition(5000, -5000):setPositionZ(-500)
@@ -41,8 +41,15 @@ function init()
     player:setBeamWeapon(0,90, 0  , 1500, 4, 3):setBeamWeaponDamageType(0, 0)
     player:setBeamWeapon(1,90, 90 , 1500, 4, 3):setBeamWeaponDamageType(1, 1)
     player:setBeamWeapon(2,90, 180, 1500, 4, 3):setBeamWeaponDamageType(2, 2)
-    player:setBeamWeapon(3,90, 270, 1500, 4, 3):setBeamWeaponDamageType(3, 3)
+    player:setBeamWeapon(3,90, 270, 1500, 4, 3):setBeamWeaponDamageType(3, 1)
     -- Color of beams arc can be changed with colors.ini
+    
+    ----
+    -- Test Missiles
+    ----
+    
+    CpuShip():setFaction("Kraylor"):setTemplate("Adv. Gunship"):setPosition(-10000, 5000):orderRoaming()
+    CpuShip():setFaction("Kraylor"):setTemplate("Adv. Gunship"):setPosition(-10000, -5000):orderRoaming()
         
     -----------------------------------
     -- ### EE LARP release 1.0-beta ---

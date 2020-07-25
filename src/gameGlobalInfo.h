@@ -85,6 +85,7 @@ public:
     bool allow_main_screen_long_range_radar;
     string gm_control_code;
     bool color_by_faction;
+    bool all_can_be_targeted;
     float elapsed_time;
     string scenario;
     string variation = "None";

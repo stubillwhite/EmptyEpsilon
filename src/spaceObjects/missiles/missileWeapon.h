@@ -2,6 +2,7 @@
 #define MISSILE_WEAPON_H
 
 #include "spaceObjects/spaceObject.h"
+#include "spaceObjects/spaceship.h"
 
 /* Base class for all the missile weapons. Handles missile generic stuff like targeting, lifetime, etc... */
 class MissileWeapon : public SpaceObject, public Updatable
@@ -27,10 +28,7 @@ public:
     virtual void update(float delta) override;
 
     virtual void collide(Collisionable* target, float force) override;
-    virtual void takeDamage(float damage_amount, DamageInfo info) override {
-        // Energy and EMP damage can destroy a missile.
-        if (info.type != DT_Kinetic) destroy();
-    }
+    virtual void takeDamage(float damage_amount, DamageInfo info) override;
 
     //Called when the missile hits something (could be the target, or something else). Missile is destroyed afterwards.
     virtual void hitObject(P<SpaceObject> object) = 0;

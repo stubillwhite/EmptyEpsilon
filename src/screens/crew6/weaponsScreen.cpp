@@ -6,6 +6,7 @@
 
 #include "screenComponents/missileTubeControls.h"
 #include "screenComponents/aimLock.h"
+#include "screenComponents/fireLock.h"
 #include "screenComponents/beamFrequencySelector.h"
 #include "screenComponents/beamTargetSelector.h"
 #include "screenComponents/powerDamageIndicator.h"
@@ -57,7 +58,13 @@ WeaponsScreen::WeaponsScreen(GuiContainer* owner)
 
     lock_aim = new AimLockButton(this, "LOCK_AIM", tube_controls, missile_aim, my_spaceship);
     lock_aim->setPosition(250, 20, ATopCenter)->setSize(130, 50);
-
+    
+    if (gameGlobalInfo->all_can_be_targeted)
+    {
+        lock_fire = new FireLockButton(this, "LOCK_FIRE", my_spaceship);
+        lock_fire->setPosition(-250, 20, ATopCenter)->setSize(130, 50);
+    }
+    
     if (gameGlobalInfo->use_beam_shield_frequencies || gameGlobalInfo->use_system_damage)
     {
         GuiElement* beam_info_box = new GuiElement(this, "BEAM_INFO_BOX");

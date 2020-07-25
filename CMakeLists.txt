@@ -147,6 +147,7 @@ set(SOURCES
 	src/screens/extra/dockMasterScreen.cpp
 	src/screens/extra/tractorBeamScreen.cpp
 	src/screenComponents/aimLock.cpp
+	src/screenComponents/fireLock.cpp
 	src/screenComponents/alertOverlay.cpp
 	src/screenComponents/helpOverlay.cpp
 	src/screenComponents/missileTubeControls.cpp

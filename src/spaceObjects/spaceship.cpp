@@ -184,6 +184,7 @@ SpaceShip::SpaceShip(string multiplayerClassName, float multiplayer_significant_
     energy_level = 1000;
     max_energy_level = 1000;
     turnSpeed = 0.0f;
+    lock_fire = true;
 
     registerMemberReplication(&target_rotation, 1.5);
     registerMemberReplication(&turnSpeed, 0.1);
@@ -215,6 +216,7 @@ SpaceShip::SpaceShip(string multiplayerClassName, float multiplayer_significant_
     registerMemberReplication(&combat_maneuver_boost_speed);
     registerMemberReplication(&combat_maneuver_strafe_speed);
     registerMemberReplication(&radar_trace);
+    registerMemberReplication(&lock_fire);
     
     for(int n=0; n<max_target_id; n++)
     {

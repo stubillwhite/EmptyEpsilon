@@ -108,6 +108,7 @@ public:
     int scanning_depth_value;
     string callsign;
     float position_z;
+    float hull;
 
     SpaceObject(float collisionRange, string multiplayerName, float multiplayer_significant_range=-1);
     virtual ~SpaceObject();

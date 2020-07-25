@@ -9,6 +9,7 @@ MissileWeapon::MissileWeapon(string multiplayer_name, const MissileWeaponData& d
     target_angle = 0;
     category_modifier = 1;
     lifetime = data.lifetime;
+    hull = 5;
     
     registerMemberReplication(&target_id);
     registerMemberReplication(&target_angle);
@@ -69,8 +70,30 @@ void MissileWeapon::collide(Collisionable* target, float force)
     {
         return;
     }
+    if (P<MissileWeapon>(object))
+    {
+        return;
+    }
+    P<SpaceShip> ship = object;
+    if (owner = ship->getDockedWith())
+    {
+        return;
+    }
 
     hitObject(object);
+    destroy();
+}
+
+void MissileWeapon::takeDamage(float damage_amount, DamageInfo info)
+{
+    // If no hull, then it could no be destroyed
+    if (hull <= 0)
+        return;
+    if (info.type == DT_Heat)
+        return;
+    if (random(1,100)<50)
+        return;
+
     destroy();
 }
 

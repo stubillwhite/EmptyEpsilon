@@ -275,12 +275,14 @@ SpaceObject::SpaceObject(float collision_range, string multiplayer_name, float m
     space_object_list.push_back(this);
     faction_id = 0;
     position_z = 0;
+    hull = 0;
 
     scanning_complexity_value = 0;
     scanning_depth_value = 0;
 
     registerMemberReplication(&callsign);
     registerMemberReplication(&faction_id);
+    registerMemberReplication(&hull);
     registerMemberReplication(&scanned_by_faction);
     registerMemberReplication(&object_description.not_scanned);
     registerMemberReplication(&object_description.friend_of_foe_identified);
@@ -323,7 +325,7 @@ void SpaceObject::destroy()
 
 bool SpaceObject::canBeTargetedBy(P<SpaceObject> other)
 {
-    return false;
+    return gameGlobalInfo->all_can_be_targeted;
 }
 
 bool SpaceObject::canBeSelectedBy(P<SpaceObject> other)

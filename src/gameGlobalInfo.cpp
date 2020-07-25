@@ -44,6 +44,7 @@ GameGlobalInfo::GameGlobalInfo()
     elapsed_time = 0.0f;
     intercept_all_comms_to_gm = false;
     color_by_faction = false;
+    all_can_be_targeted = false;
 
     registerMemberReplication(&scanning_complexity);
     registerMemberReplication(&hacking_difficulty);
