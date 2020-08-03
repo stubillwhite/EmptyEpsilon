@@ -553,9 +553,7 @@ void GuiRadarView::drawTargetProjections(sf::RenderTarget& window)
                 continue;
 
             sf::Vector2f fire_position = target_spaceship->getPosition() + sf::rotateVector(target_spaceship->ship_template->model_data->getTubePosition2D(n), target_spaceship->getRotation());
-            sf::Vector2f fire_draw_position = worldToScreen(fire_position);
-
-            // sf::Vector2f fire_position = my_spaceship->getPosition() + sf::rotateVector(my_spaceship->ship_template->model_data->getTubePosition2D(n), my_spaceship->getRotation());
+            //sf::Vector2f fire_draw_position = worldToScreen(fire_position);
 
             const MissileWeaponData& data = MissileWeaponData::getDataFor(target_spaceship->weapon_tube[n].getLoadType());
             float fire_angle = target_spaceship->weapon_tube[n].getDirection() + (target_spaceship->getRotation());
