@@ -1,5 +1,21 @@
 # Change Log
 
+### EE LARP release 1.2-beta
+
+- Position Z for all object to simulate space
+  - `setPositionZ` to change objet position on the Z axis
+- Capacity to Change font 
+  - You need to change the parameters font_main and font_bold in options.ini
+- Color by faction (in server only)
+  - change server_config_color_by_faction in options.ini. Once done, ship and station icon will be colored by faction's color (once scanned)
+- Complexity of radar signatures
+  - You need to change the parameter server_config_use_complex_radar_signatures in options.ini
+  - Once done to 0, radar signatures will be easier to understand : Gravity affect red bar, biologic affect green bar, electric affect blue bar
+- Configurable beam damage 
+  - Add a capacity to change beam damage type (0:energy, 1:kinetic, 2:emp or 3:heat)
+  - `setBeamWeaponDamageType` to change damage type of a beam
+  - Color of beams arc can be changed with colors.ini
+
 ### EE LARP release 1.1-beta
 
 - weapons tube and beams specific by station
@@ -9,9 +25,12 @@
 - add ship_mainscreen_flags to modify main screen (stardust, callsign, heading)
 
 ### EE LARP release 1.0-beta
+
 - GM access allowed from clients
 - Advanced sector system
 - Drones, fighters and docks system
+
+### Daid Empty Epsilon Update on 03/08/2020
 
 ## [...]
 

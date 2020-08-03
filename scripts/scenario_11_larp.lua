@@ -6,9 +6,9 @@ function init()
     
     player = PlayerSpaceship():setFaction("Human Navy"):setTemplate("Battle docker"):setPosition(-10000, 0)
     
-    -----------------
-    -- In progress --
-    -----------------
+    -----------------------------------
+    -- ### EE LARP release 1.2-beta ---
+    -----------------------------------
     
     -- Position Z for all object to simulate space
     
@@ -24,7 +24,7 @@ function init()
     Nebula():setPosition(5000, 5000):setPositionZ(500)
     Nebula():setPosition(5000, -5000):setPositionZ(-500)
     
-    -- Change font
+    -- Capacity to Change font
     -- You need to change the parameters font_main and font_bold in options.ini
     
     -- Color by faction (in server only)
@@ -43,16 +43,9 @@ function init()
     player:setBeamWeapon(2,90, 180, 1500, 4, 3):setBeamWeaponDamageType(2, 2)
     player:setBeamWeapon(3,90, 270, 1500, 4, 3):setBeamWeaponDamageType(3, 1)
     -- Color of beams arc can be changed with colors.ini
-    
-    ----
-    -- Test Missiles
-    ----
-    
-    CpuShip():setFaction("Kraylor"):setTemplate("Adv. Gunship"):setPosition(-10000, 5000):orderRoaming()
-    CpuShip():setFaction("Kraylor"):setTemplate("Adv. Gunship"):setPosition(-10000, -5000):orderRoaming()
         
     -----------------------------------
-    -- ### EE LARP release 1.0-beta ---
+    -- ### EE LARP release 1.1-beta ---
     -----------------------------------
     
     ----
