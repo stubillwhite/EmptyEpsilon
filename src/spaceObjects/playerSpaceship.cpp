@@ -567,6 +567,9 @@ void PlayerSpaceship::update(float delta)
 
             // Add heat to overpowered subsystems.
             addHeat(ESystem(n), delta * systems[n].getHeatingDelta() * system_heatup_per_second);
+            
+            // update Instability subsystems
+            updateInstability(ESystem(n));
         }
 
         // If reactor health is worse than -90% and overheating, it explodes,
@@ -861,6 +864,41 @@ void PlayerSpaceship::addHeat(ESystem system, float amount)
 
     if (systems[system].heat_level < 0.0)
         systems[system].heat_level = 0.0;
+}
+
+void PlayerSpaceship::updateInstability(ESystem system)
+{     
+
+    //if (previous_time == 0.0)
+    //    previous_time = engine->getElapsedTime();
+    //    
+    //delta_t = engine->getElapsedTime() - previous_time;
+    //if (delta_t > 0.5)
+    //{
+     //   previous_time = engine->getElapsedTime();
+     //   if (my_spaceship)
+        
+    // Update Instability to a subsystem if it's present.
+    if (!hasSystem(system)) return;
+    
+    // New target
+    if (random(0.0, 1.0) < systems[system].instability_factor)
+    {
+        // Change orientation of instability
+        if (random(0.0, 1.0) < 0.02 || std::abs(systems[system].instability_x_target) > 0.95)
+            systems[system].instability_x_orientation = -systems[system].instability_x_orientation;
+        if (random(0.0, 1.0) < 0.02 || std::abs(systems[system].instability_y_target) > 0.95)
+            systems[system].instability_y_orientation = -systems[system].instability_y_orientation;
+        
+        systems[system].instability_x_target += random(0.00,0.005) * systems[system].instability_x_orientation;
+        systems[system].instability_y_target += random(0.00,0.005) * systems[system].instability_y_orientation;
+        
+        // Limit of target
+        systems[system].instability_x_target = std::min(1.0f, std::max(-1.0f, systems[system].instability_x_target));
+        systems[system].instability_y_target = std::min(1.0f, std::max(-1.0f, systems[system].instability_y_target));
+    }
+    
+    systems[system].instability_level = systems[system].getInstabilityLevel();
 }
 
 void PlayerSpaceship::playSoundOnMainScreen(string sound_name)

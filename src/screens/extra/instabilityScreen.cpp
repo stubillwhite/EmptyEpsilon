@@ -37,12 +37,12 @@ InstabilityScreen::InstabilityScreen(GuiContainer* owner)
         (new GuiLabel(box, "", "Instability", 30))->setVertical()->setAlignment(ACenterLeft)->setPosition(180, 50, ATopLeft)->setSize(30, 340);
 
         systems[n].stability_x_slider = new GuiSlider(box, "", -1.0, 1.0, 0.0, [this, n](float value) {
-            this->systems[n].x = value;
+            if (my_spaceship) my_spaceship->systems[n].instability_x_value = value;
         });        
         systems[n].stability_x_slider->setPosition(50, 50, ATopLeft)->setSize(55, 340);
 
         systems[n].stability_y_slider = new GuiSlider(box, "", -1.0, 1.0, 0.0, [this, n](float value) {
-            this->systems[n].y = value;
+            if (my_spaceship) my_spaceship->systems[n].instability_y_value = value;
         });
         systems[n].stability_y_slider->setPosition(130, 50, ATopLeft)->setSize(55, 340);
 
@@ -61,54 +61,13 @@ InstabilityScreen::InstabilityScreen(GuiContainer* owner)
 void InstabilityScreen::onDraw(sf::RenderTarget& window)
 {
     GuiOverlay::onDraw(window);
-    
-    for(int n=0; n<SYS_COUNT; n++)
-        systems[n].box->setVisible(my_spaceship->hasSystem(ESystem(n)));
 
-    if (previous_time == 0.0)
-        previous_time = engine->getElapsedTime();
-        
-    delta_t = engine->getElapsedTime() - previous_time;
-    if (delta_t > 0.5)
-    {
-        previous_time = engine->getElapsedTime();
-        if (my_spaceship)
-        {
-            for(int n=0; n<SYS_COUNT; n++)
-            {     
-                // New instability
-                if (random(0.0, 1.0) < my_spaceship->systems[n].instability_factor)
-                {
-                    // Change orientation of instability
-                    if (random(0.0, 1.0) < 0.02 || std::abs(systems[n].x_target) > 0.95)
-                        systems[n].x_pos = -systems[n].x_pos;
-                    if (random(0.0, 1.0) < 0.02 || std::abs(systems[n].y_target) > 0.95)
-                        systems[n].y_pos = -systems[n].y_pos;
-                    
-                    systems[n].x_target += random(0.00,0.005) * systems[n].x_pos;
-                    systems[n].y_target += random(0.00,0.005) * systems[n].y_pos;
-                    
-                    // Limit of target
-                    systems[n].x_target = std::min(1.0f, std::max(-1.0f, systems[n].x_target));
-                    systems[n].y_target = std::min(1.0f, std::max(-1.0f, systems[n].y_target));
-                }
-            }
-        }
-    }
-    
-    float instability = 0.0;
     for(int n=0; n<SYS_COUNT; n++)
     {
-        instability = 0.0;
-        instability += std::abs(systems[n].x_target - systems[n].x) / 2;
-        instability += std::abs(systems[n].y_target - systems[n].y) / 2;
-        
-        instability = std::min(1.0f, std::max(0.0f, instability));
-        
-        if (my_spaceship)
-            my_spaceship->systems[n].instability_level = instability;
+	systems[n].box->setVisible(my_spaceship->hasSystem(ESystem(n)));
+	float instability = my_spaceship->getSystemInstabilityLevel(ESystem(n));
         systems[n].instability_bar->setValue(instability)->setColor(sf::Color(128, 128 * (1.0 - instability), 0));
+        systems[n].stability_x_slider->setValue(my_spaceship->systems[n].instability_x_value);
+        systems[n].stability_y_slider->setValue(my_spaceship->systems[n].instability_y_value);
     }
-    
-    LOG(INFO) << "TEST : x= " << systems[0].x << " ; x_target= " << systems[0].x_target << " ; y= " << systems[0].y << " ; y_target= " << systems[0].y_target << " ; instability= " <<  my_spaceship->systems[0].instability_level;
 }

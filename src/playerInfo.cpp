@@ -18,6 +18,7 @@
 #include "screens/extra/damcon.h"
 #include "screens/extra/powerManagement.h"
 #include "screens/extra/instabilityScreen.h"
+#include "screens/extra/systemScreen.h"
 #include "screens/extra/databaseScreen.h"
 #include "screens/extra/commsScreen.h"
 #include "screens/extra/shipLogScreen.h"
@@ -183,6 +184,8 @@ void PlayerInfo::spawnUI()
             screen->addStationTab(new PowerManagementScreen(container), powerManagement, getCrewPositionName(powerManagement), getCrewPositionIcon(powerManagement));
         if (crew_position[instability])
             screen->addStationTab(new InstabilityScreen(container), instability, getCrewPositionName(instability), getCrewPositionIcon(instability));
+        if (crew_position[systemControl])
+            screen->addStationTab(new SystemScreen(container), systemControl, getCrewPositionName(systemControl), getCrewPositionIcon(systemControl));
         if (crew_position[databaseView])
             screen->addStationTab(new DatabaseScreen(container), databaseView, getCrewPositionName(databaseView), getCrewPositionIcon(databaseView));
         if (crew_position[altRelay])
@@ -234,6 +237,7 @@ string getCrewPositionName(ECrewPosition position)
     case damageControl: return tr("station","Damage Control");
     case powerManagement: return tr("station","Power Management");
     case instability: return tr("station","Instability");
+    case systemControl: return tr("station","System Control");
     case databaseView: return tr("station","Database");
     case altRelay: return tr("station","Strategic Map");
     case commsOnly: return tr("station","Comms");
@@ -258,6 +262,7 @@ string getCrewPositionIcon(ECrewPosition position)
     case damageControl: return "";
     case powerManagement: return "";
     case instability: return "";
+    case systemControl: return "";
     case databaseView: return "";
     case altRelay: return "";
     case commsOnly: return "";
@@ -302,6 +307,8 @@ template<> void convert<ECrewPosition>::param(lua_State* L, int& idx, ECrewPosit
         cp = powerManagement;
     else if (str == "instability" || str == "instabilityscreen")
         cp = instability;
+    else if (str == "systemcontrol" || str == "systemscreen")
+        cp = systemControl;
     else if (str == "database" || str == "databaseview")
         cp = databaseView;
     else if (str == "altrelay")

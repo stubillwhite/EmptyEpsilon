@@ -21,6 +21,7 @@ enum ECrewPosition
     damageControl,
     powerManagement,
     instability,
+    systemControl,
     databaseView,
     altRelay,
     commsOnly,

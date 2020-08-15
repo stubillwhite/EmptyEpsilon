@@ -302,6 +302,7 @@ public:
     virtual void update(float delta) override;
     virtual bool useEnergy(float amount) override;
     virtual void addHeat(ESystem system, float amount) override;
+    virtual void updateInstability(ESystem system);
     
     // Call on the server to play a sound on the main screen.
     void playSoundOnMainScreen(string sound_name);

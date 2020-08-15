@@ -45,10 +45,13 @@ REGISTER_SCRIPT_SUBCLASS_NO_CREATE(SpaceShip, ShipTemplateBasedObject)
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setSystemPower);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getSystemCoolant);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setSystemCoolant);
-    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getSystemInstability);
-    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setSystemInstability);
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getSystemInstabilityLevel);
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setSystemInstabilityLevel);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getSystemInstabilityFactor);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setSystemInstabilityFactor);
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setSystemInstabilityLabel);
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getSystemInstabilityXLabel);
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getSystemInstabilityYLabel);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getImpulseMaxSpeed);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setImpulseMaxSpeed);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getRotationMaxSpeed);
@@ -202,11 +205,23 @@ SpaceShip::SpaceShip(string multiplayerClassName, float multiplayer_significant_
         systems[n].hacked_level = 0.0;
         systems[n].instability_level = 0.0;
         systems[n].instability_factor = 0.0;
+        systems[n].instability_x_value = 0.0;
+        systems[n].instability_y_value = 0.0;
+        systems[n].instability_x_target = 0.0;
+        systems[n].instability_y_target = 0.0;
+        systems[n].instability_x_orientation = 1;
+        systems[n].instability_y_orientation = 1;
+        systems[n].instability_x_label = "";
+        systems[n].instability_y_label = "";
 
         registerMemberReplication(&systems[n].health, 0.1);
         registerMemberReplication(&systems[n].health_max, 0.1);
         registerMemberReplication(&systems[n].hacked_level, 0.1);
         registerMemberReplication(&systems[n].instability_level, 0.1);
+        registerMemberReplication(&systems[n].instability_x_value, 0.1);
+        registerMemberReplication(&systems[n].instability_y_value, 0.1);
+        registerMemberReplication(&systems[n].instability_x_label, 0.1);
+        registerMemberReplication(&systems[n].instability_y_label, 0.1);
     }
 
     for(int n = 0; n < max_beam_weapons; n++)
