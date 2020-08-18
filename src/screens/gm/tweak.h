@@ -197,6 +197,9 @@ private:
     P<PlayerSpaceship> target;
 
     GuiSlider* coolant_slider;
+    GuiSlider* coolant_per_system_slider;
+    GuiSlider* repair_slider;
+    GuiSlider* repair_per_system_slider;
     GuiSlider* short_range_radar_slider;
     GuiSlider* long_range_radar_slider;
     GuiToggleButton* can_scan;

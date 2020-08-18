@@ -57,6 +57,9 @@ REGISTER_SCRIPT_SUBCLASS(PlayerSpaceship, SpaceShip)
     /// Set the maximum coolant available to engineering. Default is 10.
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, setMaxCoolant);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, getMaxCoolant);
+    /// Set the maximum coolant availbale for each system. Default is 10
+    REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, setMaxCoolantPerSystem);
+    REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, getMaxCoolantPerSystem);
 
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, setScanProbeCount);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, getScanProbeCount);
@@ -90,6 +93,7 @@ REGISTER_SCRIPT_SUBCLASS(PlayerSpaceship, SpaceShip)
     /// Set power of the system to e.g. 1.5 ("150 percent")
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandSetSystemPowerRequest);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandSetSystemCoolantRequest);
+    REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandSetSystemRepairRequest);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandDock);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandUndock);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandAbortDock);
@@ -121,6 +125,9 @@ REGISTER_SCRIPT_SUBCLASS(PlayerSpaceship, SpaceShip)
     /// than the number of repair crews, this function removes repair crews.
     /// If the value is greater, it adds new repair crews at random locations.
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, setRepairCrewCount);
+    /// Set the maximum nano repair crew available to engineering. Default is 3.
+    REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, setMaxRepairPerSystem);
+    REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, getMaxRepairPerSystem);
     /// Sets whether automatic coolant distribution is enabled. This sets the
     /// amount of coolant proportionally to the amount of heat in that system.
     /// Use this command on ships to require less player interaction, especially
@@ -258,6 +265,7 @@ static const int16_t CMD_SET_MAIN_SCREEN_OVERLAY = 0x0027;
 static const int16_t CMD_HACKING_FINISHED = 0x0028;
 static const int16_t CMD_CUSTOM_FUNCTION = 0x0029;
 static const int16_t CMD_TURN_SPEED = 0x002A;
+static const int16_t CMD_SET_SYSTEM_REPAIR_REQUEST = 0x002B;
 
 string alertLevelToString(EAlertLevel level)
 {
@@ -304,6 +312,7 @@ PlayerSpaceship::PlayerSpaceship()
     auto_repair_enabled = false;
     auto_coolant_enabled = false;
     max_coolant = max_coolant_per_system;
+    max_repair = max_repair_per_system;
     scan_probe_stock = max_scan_probes;
     alert_level = AL_Normal;
     shields_active = false;
@@ -335,6 +344,9 @@ PlayerSpaceship::PlayerSpaceship()
     registerMemberReplication(&shield_calibration_delay, 0.5);
     registerMemberReplication(&auto_repair_enabled);
     registerMemberReplication(&max_coolant);
+    registerMemberReplication(&max_coolant_per_system);
+    registerMemberReplication(&max_repair);
+    registerMemberReplication(&max_repair_per_system);
     registerMemberReplication(&auto_coolant_enabled);
     registerMemberReplication(&beam_system_target);
     registerMemberReplication(&comms_state);
@@ -374,13 +386,17 @@ PlayerSpaceship::PlayerSpaceship()
         systems[n].power_level = 1.0;
         systems[n].power_request = 1.0;
         systems[n].coolant_level = 0.0;
-        systems[n].coolant_level = 0.0;
+        systems[n].coolant_request = 0.0;
+        systems[n].repair_level = 0.0;
+        systems[n].repair_request = 0.0;
         systems[n].heat_level = 0.0;
 
         registerMemberReplication(&systems[n].power_level);
         registerMemberReplication(&systems[n].power_request);
         registerMemberReplication(&systems[n].coolant_level);
         registerMemberReplication(&systems[n].coolant_request);
+        registerMemberReplication(&systems[n].repair_level);
+        registerMemberReplication(&systems[n].repair_request);
         registerMemberReplication(&systems[n].heat_level, 1.0);
     }
 
@@ -480,6 +496,27 @@ void PlayerSpaceship::update(float delta)
             }
         }
     }
+    
+    // Automate repair if auto_repair_enabled is true. Distributes repair to
+    // subsystems proportionally to their share of the total generated health.
+    if (auto_repair_enabled)
+    {
+        float total_damage = 0.0;
+
+        for(int n = 0; n < SYS_COUNT; n++)
+        {
+            if (!hasSystem(ESystem(n))) continue;
+            total_damage += (1.0 - systems[n].health);
+        }
+        if (total_damage > 0.0)
+        {
+            for(int n = 0; n < SYS_COUNT; n++)
+            {
+                if (!hasSystem(ESystem(n))) continue;
+                systems[n].repair_request = max_repair * (1.0 - systems[n].health) / total_damage;
+            }
+        }
+    }
 
     // Actions performed on the server only.
     if (game_server)
@@ -564,9 +601,33 @@ void PlayerSpaceship::update(float delta)
                 if (systems[n].coolant_level < systems[n].coolant_request)
                     systems[n].coolant_level = systems[n].coolant_request;
             }
+            
+            if (systems[n].repair_request > systems[n].repair_level)
+            {
+                systems[n].repair_level += delta * system_repair_level_change_per_second;
+                if (systems[n].repair_level > systems[n].repair_request)
+                    systems[n].repair_level = systems[n].repair_request;
+            }
+            else if (systems[n].repair_request < systems[n].repair_level)
+            {
+                systems[n].repair_level -= delta * system_repair_level_change_per_second;
+                if (systems[n].repair_level < systems[n].repair_request)
+                    systems[n].repair_level = systems[n].repair_request;
+            }
 
             // Add heat to overpowered subsystems.
             addHeat(ESystem(n), delta * systems[n].getHeatingDelta() * system_heatup_per_second);
+            
+            // Repair if nano repair crew
+            if (gameGlobalInfo->use_nano_repair_crew)
+            {
+                systems[n].health += system_repair_effect_per_second * systems[n].repair_level * delta;
+                if (systems[n].health > 1.0)
+                    systems[n].health = 1.0;
+                systems[n].hacked_level -= system_repair_effect_per_second * systems[n].repair_level * delta;;
+                if (systems[n].hacked_level < 0.0)
+                    systems[n].hacked_level = 0.0;
+            }
         }
 
         // If reactor health is worse than -90% and overheating, it explodes,
@@ -823,6 +884,45 @@ void PlayerSpaceship::setSystemCoolantRequest(ESystem system, float request)
     systems[system].coolant_request = request;
 }
 
+void PlayerSpaceship::setSystemRepairRequest(ESystem system, float request)
+{
+    request = std::max(0.0f, std::min(request, std::min((float) max_repair_per_system, max_repair)));
+    // Set coolant levels on a system.
+    float total_repair = 0;
+    int cnt = 0;
+    for(int n = 0; n < SYS_COUNT; n++)
+    {
+        if (!hasSystem(ESystem(n))) continue;
+        if (n == system) continue;
+
+        total_repair += systems[n].repair_request;
+        cnt++;
+    }
+    if (total_repair > max_repair - request)
+    {
+        for(int n = 0; n < SYS_COUNT; n++)
+        {
+            if (!hasSystem(ESystem(n))) continue;
+            if (n == system) continue;
+
+            systems[n].repair_request *= (max_repair - request) / total_repair;
+        }
+    }else{
+        for(int n = 0; n < SYS_COUNT; n++)
+        {
+            if (!hasSystem(ESystem(n))) continue;
+            if (n == system) continue;
+
+            if (total_repair > 0)
+                systems[n].repair_request = std::min(systems[n].repair_request * (max_repair - request) / total_repair, (float) max_repair_per_system);
+            else
+                systems[n].repair_request = std::min((max_repair - request) / float(cnt), float(max_repair_per_system));
+        }
+    }
+
+    systems[system].repair_request = request;
+}
+
 bool PlayerSpaceship::useEnergy(float amount)
 {
     // Try to consume an amount of energy. If it works, return true.
@@ -931,6 +1031,9 @@ void PlayerSpaceship::setRepairCrewCount(int amount)
         P<RepairCrew> rc = new RepairCrew();
         rc->ship_id = getMultiplayerId();
     }
+    
+    // For nano repair Crew
+    max_repair = (float) amount;
 }
 
 void PlayerSpaceship::addToShipLog(string message, sf::Color color)
@@ -1325,6 +1428,15 @@ void PlayerSpaceship::onReceiveClientCommand(int32_t client_id, sf::Packet& pack
             packet >> system >> request;
             if (system < SYS_COUNT && request >= 0.0 && request <= 10.0)
                 setSystemCoolantRequest(system, request);
+        }
+        break;
+    case CMD_SET_SYSTEM_REPAIR_REQUEST:
+        {
+            ESystem system;
+            float request;
+            packet >> system >> request;
+            if (system < SYS_COUNT && request >= 0.0 && request <= 10.0)
+                setSystemRepairRequest(system, request);
         }
         break;
     case CMD_DOCK:
@@ -1772,6 +1884,14 @@ void PlayerSpaceship::commandSetSystemCoolantRequest(ESystem system, float coola
     sf::Packet packet;
     systems[system].coolant_request = coolant_request;
     packet << CMD_SET_SYSTEM_COOLANT_REQUEST << system << coolant_request;
+    sendClientCommand(packet);
+}
+
+void PlayerSpaceship::commandSetSystemRepairRequest(ESystem system, float repair_request)
+{
+    sf::Packet packet;
+    systems[system].repair_request = repair_request;
+    packet << CMD_SET_SYSTEM_REPAIR_REQUEST << system << repair_request;
     sendClientCommand(packet);
 }
 

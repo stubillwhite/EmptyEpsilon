@@ -33,6 +33,7 @@ ServerCreationScreen::ServerCreationScreen()
     gameGlobalInfo->use_system_damage = PreferencesManager::get("server_config_use_system_damage", "1").toInt();
     gameGlobalInfo->allow_main_screen_tactical_radar = PreferencesManager::get("server_config_allow_main_screen_tactical_radar", "1").toInt();
     gameGlobalInfo->allow_main_screen_long_range_radar = PreferencesManager::get("server_config_allow_main_screen_long_range_radar", "1").toInt();
+    gameGlobalInfo->use_nano_repair_crew = PreferencesManager::get("server_use_nano_repair_crew", "0").toInt();
     gameGlobalInfo->gm_control_code = PreferencesManager::get("server_config_gm_control_code", "").upper();
 
     // Create a two-column layout.
