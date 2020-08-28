@@ -733,13 +733,30 @@ GuiShipTweakPlayer2::GuiShipTweakPlayer2(GuiContainer* owner)
     right_col->setPosition(-25, 25, ATopRight)->setSize(300, GuiElement::GuiSizeMax);
 
     // Left column
-    (new GuiLabel(left_col, "", "Coolant:", 30))->setSize(GuiElement::GuiSizeMax, 50);
+    (new GuiLabel(left_col, "", "Coolant (per system / max):", 30))->setSize(GuiElement::GuiSizeMax, 50);
+    
+    coolant_per_system_slider = new GuiSlider(left_col, "", 0.0, 50.0, 0.0, [this](float value) {
+        target->setMaxCoolantPerSystem(value);
+    });
+    coolant_per_system_slider->addSnapValue(10,1)->addOverlay()->setSize(GuiElement::GuiSizeMax, 40);
 
     coolant_slider = new GuiSlider(left_col, "", 0.0, 50.0, 0.0, [this](float value) {
         target->setMaxCoolant(value);
     });
     coolant_slider->addSnapValue(10,1)->addOverlay()->setSize(GuiElement::GuiSizeMax, 40);
+    
+    (new GuiLabel(left_col, "", "Repair (per system / max):", 30))->setSize(GuiElement::GuiSizeMax, 50);
+    
+    repair_per_system_slider = new GuiSlider(left_col, "", 0, 10, 0, [this](int value) {
+        target->setMaxRepairPerSystem(value);
+    });
+    repair_per_system_slider->addSnapValue(2,1)->addOverlay()->setSize(GuiElement::GuiSizeMax, 40);
 
+    repair_slider = new GuiSlider(left_col, "", 0, 10, 2, [this](int value) {
+        target->setRepairCrewCount(value);
+    });
+    repair_slider->addSnapValue(2,1)->addOverlay()->setSize(GuiElement::GuiSizeMax, 40);
+    
     (new GuiLabel(left_col, "", "Short range radar:", 30))->setSize(GuiElement::GuiSizeMax, 50);
     short_range_radar_slider = new GuiSlider(left_col, "", 100.0, 20000.0, 0.0, [this](float value) {
         target->setShortRangeRadarRange(value);
@@ -809,6 +826,9 @@ GuiShipTweakPlayer2::GuiShipTweakPlayer2(GuiContainer* owner)
 void GuiShipTweakPlayer2::onDraw(sf::RenderTarget& window)
 {
     coolant_slider->setValue(target->max_coolant);
+    coolant_per_system_slider->setValue(target->max_coolant_per_system);
+    repair_slider->setValue(target->max_repair);
+    repair_per_system_slider->setValue(target->max_repair_per_system);
     short_range_radar_slider->setValue(target->getShortRangeRadarRange());
     long_range_radar_slider->setValue(target->getLongRangeRadarRange());
     far_range_radar_slider->setValue(target->getFarRangeRadarRange());

@@ -43,9 +43,16 @@ public:
 
     // Coolant change rate
     constexpr static float system_coolant_level_change_per_second = 1.2;
+    // Repair change rate
+    constexpr static float system_repair_level_change_per_second = 1.2;
+    // Repair effectiveness
+    constexpr static float system_repair_effect_per_second = 0.005;
     // Total coolant
-    constexpr static float max_coolant_per_system = 10.0f;
+    float max_coolant_per_system = 10.0f;
     float max_coolant;
+    // Total repair
+    float max_repair_per_system = 3.0f;
+    float max_repair;
     // Overheat subsystem damage rate
     constexpr static float damage_per_second_on_overheat = 0.08f;
     // Base time it takes to perform an action
@@ -278,6 +285,7 @@ public:
     void commandScan(P<SpaceObject> object);
     void commandSetSystemPowerRequest(ESystem system, float power_level);
     void commandSetSystemCoolantRequest(ESystem system, float coolant_level);
+    void commandSetSystemRepairRequest(ESystem system, float repair_level);
     void commandDock(P<SpaceObject> station);
     void commandUndock();
     void commandAbortDock();
@@ -341,6 +349,14 @@ public:
     void setMaxCoolant(float coolant);
     float getMaxCoolant() { return max_coolant; }
     void setAutoCoolant(bool active) { auto_coolant_enabled = active; }
+    void setMaxCoolantPerSystem(float coolant){ max_coolant_per_system = coolant; }
+    float getMaxCoolantPerSystem() { return max_coolant_per_system; }
+    void setSystemRepairRequest(ESystem system, float request);
+    void setMaxRepair(float repair);
+    float getMaxRepair() { return max_repair; }
+    void setMaxRepairPerSystem(int amount){ max_repair_per_system = (float) amount; }
+    float getMaxRepairPerSystem() { return max_repair_per_system; }
+    void setAutoRepair(bool active) { auto_repair_enabled = active; }
     int getRepairCrewCount();
     void setRepairCrewCount(int amount);
     EAlertLevel getAlertLevel() { return alert_level; }
