@@ -2,7 +2,7 @@
 #include "gui2_overlay.h"
 
 GuiOverlay::GuiOverlay(GuiContainer* owner, string id, sf::Color color)
-: GuiElement(owner, id), color(color)
+: GuiElement(owner, id), color(color), blocking(false)
 {
     texture_mode = TM_None;
     setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
@@ -21,7 +21,7 @@ void GuiOverlay::onDraw(sf::RenderTarget& window)
             break;
         case TM_Centered:
             overlay.setTexture(textureManager.getTexture(texture));
-            overlay.setSize(sf::Vector2f(overlay.getTextureRect().width, overlay.getTextureRect().height)); 
+            overlay.setSize(sf::Vector2f(overlay.getTextureRect().width, overlay.getTextureRect().height));
             overlay.setPosition(rect.left + rect.width / 2.0 - overlay.getSize().x / 2.0, rect.top + rect.height / 2.0 - overlay.getSize().y / 2.0);
             break;
         case TM_Tiled:
@@ -66,4 +66,9 @@ GuiOverlay* GuiOverlay::setTextureNone()
     this->texture = nullptr;
     this->texture_mode = TM_None;
     return this;
+}
+
+bool GuiOverlay::onMouseDown(sf::Vector2f position)
+{
+    return blocking;
 }

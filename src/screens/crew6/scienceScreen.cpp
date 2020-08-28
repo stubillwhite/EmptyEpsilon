@@ -42,7 +42,7 @@ ScienceScreen::ScienceScreen(GuiContainer* owner, ECrewPosition crew_position)
     radar_view->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
 
     // Draw the science radar.
-    science_radar = new GuiRadarView(radar_view, "SCIENCE_RADAR", my_spaceship ? my_spaceship->getLongRangeRadarRange() : 30000.0, &targets);
+    science_radar = new GuiRadarView(radar_view, "SCIENCE_RADAR", my_spaceship ? my_spaceship->getLongRangeRadarRange() : 30000.0, &targets, my_spaceship);
     science_radar->setPosition(-270, 0, ACenterRight)->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
     science_radar->setRangeIndicatorStepSize(5000.0)->longRange()->enableWaypoints()->enableCallsigns()->enableHeadingIndicators()->setStyle(GuiRadarView::Circular)->setFogOfWarStyle(GuiRadarView::NebulaFogOfWar);
     science_radar->setCallbacks(
@@ -57,7 +57,7 @@ ScienceScreen::ScienceScreen(GuiContainer* owner, ECrewPosition crew_position)
     new RawScannerDataRadarOverlay(science_radar, "", my_spaceship ? my_spaceship->getLongRangeRadarRange() : 30000.0f);
 
     // Draw and hide the probe radar.
-    probe_radar = new GuiRadarView(radar_view, "PROBE_RADAR", 5000, &targets);
+    probe_radar = new GuiRadarView(radar_view, "PROBE_RADAR", 5000, &targets, my_spaceship);
     probe_radar->setPosition(-270, 0, ACenterRight)->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax)->hide();
     probe_radar->setAutoCentering(false)->longRange()->enableWaypoints()->enableCallsigns()->enableHeadingIndicators()->setStyle(GuiRadarView::Circular)->setFogOfWarStyle(GuiRadarView::NoFogOfWar);
     probe_radar->setCallbacks(
@@ -72,7 +72,7 @@ ScienceScreen::ScienceScreen(GuiContainer* owner, ECrewPosition crew_position)
 
     sidebar_selector = new GuiSelector(radar_view, "", [this](int index, string value)
     {
-        info_sidebar->setVisible(index == 0);    
+        info_sidebar->setVisible(index == 0);
         custom_function_sidebar->setVisible(index == 1);
     });
     sidebar_selector->setOptions({"Scanning", "Other"});
@@ -83,7 +83,7 @@ ScienceScreen::ScienceScreen(GuiContainer* owner, ECrewPosition crew_position)
     info_sidebar = new GuiAutoLayout(radar_view, "SIDEBAR", GuiAutoLayout::LayoutVerticalTopToBottom);
     info_sidebar->setPosition(-20, 170, ATopRight)->setSize(250, GuiElement::GuiSizeMax);
 
-    custom_function_sidebar = new GuiCustomShipFunctions(radar_view, crew_position, "");
+    custom_function_sidebar = new GuiCustomShipFunctions(radar_view, crew_position, "", my_spaceship);
     custom_function_sidebar->setPosition(-20, 170, ATopRight)->setSize(250, GuiElement::GuiSizeMax)->hide();
 
     // Scan button.
@@ -180,7 +180,7 @@ ScienceScreen::ScienceScreen(GuiContainer* owner, ECrewPosition crew_position)
             probe = game_server->getObjectById(my_spaceship->linked_science_probe_id);
         else
             probe = game_client->getObjectById(my_spaceship->linked_science_probe_id);
-        
+
         if (value && probe)
         {
             sf::Vector2f probe_position = probe->getPosition();
@@ -254,7 +254,7 @@ void ScienceScreen::onDraw(sf::RenderTarget& window)
         if (targets.get() && Nebula::blockedByNebula(my_spaceship->getPosition(), targets.get()->getPosition()))
             targets.clear();
     }
-    
+
     sidebar_selector->setVisible(sidebar_selector->getSelectionIndex() > 0 || custom_function_sidebar->hasEntries());
 
     info_callsign->setValue("-");
@@ -369,7 +369,7 @@ void ScienceScreen::onDraw(sf::RenderTarget& window)
                     {
                         info_system[n]->show();
                     }
-                    
+
                     info_description->hide();
                 }
                 else if (sidebar_pager_selection == "Description")
@@ -396,7 +396,7 @@ void ScienceScreen::onDraw(sf::RenderTarget& window)
                     info_shield_frequency->setFrequency(ship->shield_frequency);
                     info_beam_frequency->setFrequency(ship->beam_frequency);
                 }
-                
+
                 // Show the status of each subsystem.
                 for(int n = 0; n < SYS_COUNT; n++)
                 {
@@ -427,7 +427,7 @@ void ScienceScreen::onDraw(sf::RenderTarget& window)
     else if (targets.getWaypointIndex() >= 0)
     {
         sidebar_pager->hide();
-        sf::Vector2f position_diff = my_spaceship->waypoints[targets.getWaypointIndex()] - my_spaceship->getPosition();
+        sf::Vector2f position_diff = my_spaceship->waypoints[targets.getRouteIndex()][targets.getWaypointIndex()] - my_spaceship->getPosition();
         float distance = sf::length(position_diff);
         float heading = sf::vector2ToAngle(position_diff) - 270;
 

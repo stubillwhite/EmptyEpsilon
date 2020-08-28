@@ -3,6 +3,7 @@
 #include "spaceObjects/playerSpaceship.h"
 
 #include "screenComponents/radarView.h"
+#include "GMActions.h"
 
 #include "gui/gui2_textentry.h"
 #include "gui/gui2_scrolltext.h"
@@ -12,26 +13,21 @@ GameMasterChatDialog::GameMasterChatDialog(GuiContainer* owner, GuiRadarView* ra
 {
     this->player_index = index;
     this->radar = radar;
-    
+
     text_entry = new GuiTextEntry(contents, "", "");
     text_entry->setTextSize(23)->setPosition(0, 0, ABottomLeft)->setSize(GuiElement::GuiSizeMax, 30);
     text_entry->enterCallback([this](string text){
         if (this->player)
-        {
-            if (this->player->isCommsChatOpenToGM())
-                this->player->addCommsIncommingMessage(text_entry->getText());
-            else
-                this->player->hailCommsByGM(text_entry->getText());
-        }
+            gameMasterActions->commandSendCommToPlayerShip(this->player, text_entry->getText());
         text_entry->setText("");
     });
-    
+
     chat_text = new GuiScrollText(contents, "", "");
     chat_text->setTextSize(20)->setPosition(0, -30, ABottomLeft)->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
     chat_text->enableAutoScrollDown()->setScrollbarWidth(30);
 
     min_size.y += 100;
-    
+
     notification = false;
 }
 
@@ -46,10 +42,10 @@ void GameMasterChatDialog::onDraw(sf::RenderTarget& window)
         disableComms("Target - Destroyed");
         return;
     }
-    
+
     if (!isMinimized())
         notification = false;
-    
+
     switch(player->getCommsState())
     {
     case CS_Inactive:
@@ -102,7 +98,7 @@ void GameMasterChatDialog::onClose()
 {
     if (player && (player->isCommsChatOpenToGM() || player->isCommsBeingHailedByGM()))
     {
-        player->closeComms();
+        player->commandCloseTextComm();
     }
     hide();
 }

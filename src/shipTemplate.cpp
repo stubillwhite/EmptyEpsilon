@@ -31,22 +31,36 @@ REGISTER_SCRIPT_CLASS(ShipTemplate)
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setBeam);
     /// Setup a beam weapon.
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setBeamWeapon);
+    /// Set the tractor beam
+    /// Requires the range of the beam and the drag par second
+    /// Example : obj:setTractorBeam(2000,100)
+    REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setTractorBeam);
+    /// Set a beam weapon's damage type.
+    /// Requires an integer index and an integer damage type.
+    /// 0 = Energy, 1 = Kinetic,  2 = EMP, 3 = Heat
+    /// Example: obj:setBeamWEaponDamageType(0, 2)
+    REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setBeamWeaponDamageType);
     /// Setup a beam's turret.
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setBeamWeaponTurret);
     /// Setup a beam weapon texture
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setBeamTexture);
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setBeamWeaponEnergyPerFire);
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setBeamWeaponHeatPerFire);
-    
+    REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setBeamStation);
+
     /// Set the amount of missile tubes, limited to a maximum of 16.
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setTubes);
+    /// set the amount of docks (launcher, energy)
+    REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setDocks);
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setTubeLoadTime);
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, weaponTubeAllowMissle);
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, weaponTubeDisallowMissle);
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setWeaponTubeExclusiveFor);
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setTubeDirection);
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setTubeSize);
-    
+    REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setTubeStation);
+
+    REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setHasReactor);
     /// Set the amount of starting hull
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setHull);
     /// Set the shield levels, amount of parameters defines the amount of shields. (Up to a maximum of 8 shields)
@@ -77,7 +91,10 @@ REGISTER_SCRIPT_CLASS(ShipTemplate)
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, addRoom);
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, addRoomSystem);
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, addDoor);
+    REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, addDrones);
+    REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setIsShipCargo);
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setRadarTrace);
+    REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setFarRangeRadarRange);
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setLongRangeRadarRange);
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setShortRangeRadarRange);
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setImpulseSoundFile);
@@ -97,7 +114,7 @@ std::unordered_map<string, P<ShipTemplate> > ShipTemplate::templateMap;
 ShipTemplate::ShipTemplate()
 {
     if (game_server) { LOG(ERROR) << "ShipTemplate objects can not be created during a scenario."; destroy(); return; }
-    
+
     type = Ship;
     class_name = tr("No class");
     sub_class_name = tr("No sub-class");
@@ -114,6 +131,7 @@ ShipTemplate::ShipTemplate()
         weapon_tube[n].type_allowed_mask = (1 << MW_Count) - 1;
         weapon_tube[n].direction = 0;
         weapon_tube[n].size = MS_Medium;
+        weapon_tube[n].station = 0;
     }
     hull = 70;
     shield_count = 0;
@@ -133,15 +151,14 @@ ShipTemplate::ShipTemplate()
         weapon_storage[n] = 0;
     radar_trace = "RadarArrow.png";
     impulse_sound_file = "sfx/engine.wav";
-}
-
-void ShipTemplate::setBeamTexture(int index, string texture)
-
-{
-    if (index >= 0 && index < max_beam_weapons)
-    {
-        beams[index].setBeamTexture(texture);
-    }
+    has_reactor = true;
+    launcher_dock_count = 0;
+    energy_dock_count = 0;
+    weapons_dock_count = 0;
+    thermic_dock_count = 0;
+    repair_dock_count = 0;
+    stock_dock_count = 0;
+    isShipCargo = false;
 }
 
 void ShipTemplate::setTubes(int amount, float load_time)
@@ -193,6 +210,13 @@ void ShipTemplate::setTubeSize(int index, EMissileSizes size)
     weapon_tube[index].size = size;
 }
 
+void ShipTemplate::setTubeStation(int index, int station)
+{
+    if (index < 0 || index >= 10)
+        return;
+    weapon_tube[index].station = station;
+}
+
 void ShipTemplate::setType(TemplateType type)
 {
     if (radar_trace == "RadarArrow.png" && type == Station)
@@ -201,6 +225,8 @@ void ShipTemplate::setType(TemplateType type)
     }
     if (type == Station)
         repair_docked = true;
+    if (type == Drone)
+        isShipCargo = true;
     this->type = type;
 }
 
@@ -246,6 +272,22 @@ void ShipTemplate::setBeamWeapon(int index, float arc, float direction, float ra
     beams[index].setDamage(damage);
 }
 
+void ShipTemplate::setTractorBeam(float max_range, float drag_per_second)
+{
+    tractor_beam.setMaxRange(max_range);
+    tractor_beam.setDragPerSecond(drag_per_second);
+}
+
+void ShipTemplate::setBeamWeaponDamageType(int index, int damage_type)
+{
+    if (index < 0 || index > max_beam_weapons)
+        return;
+    if (damage_type < 0 || damage_type > DT_Count)
+        beams[index].setDamageType(0);
+    else
+        beams[index].setDamageType(damage_type);
+}
+
 void ShipTemplate::setBeamWeaponTurret(int index, float arc, float direction, float rotation_rate)
 {
     if (index < 0 || index > max_beam_weapons)
@@ -253,6 +295,22 @@ void ShipTemplate::setBeamWeaponTurret(int index, float arc, float direction, fl
     beams[index].setTurretArc(arc);
     beams[index].setTurretDirection(direction);
     beams[index].setTurretRotationRate(rotation_rate);
+}
+
+void ShipTemplate::setBeamTexture(int index, string texture)
+
+{
+    if (index >= 0 && index < max_beam_weapons)
+    {
+        beams[index].setBeamTexture(texture);
+    }
+}
+
+void ShipTemplate::setBeamStation(int index, int station)
+{
+    if (index < 0 || index >= 10)
+        return;
+    beams[index].setStation(station);
 }
 
 sf::Vector2i ShipTemplate::interiorSize()
@@ -344,6 +402,8 @@ string getSystemName(ESystem system)
     case SYS_JumpDrive: return "Jump Drive";
     case SYS_FrontShield: return "Front Shield Generator";
     case SYS_RearShield: return "Rear Shield Generator";
+    case SYS_Docks: return "Cargo Docks";
+    case SYS_Drones: return "Drones Control";
     default:
         return "UNKNOWN";
     }
@@ -362,6 +422,8 @@ string getLocaleSystemName(ESystem system)
     case SYS_JumpDrive: return tr("system", "Jump Drive");
     case SYS_FrontShield: return tr("system", "Front Shield Generator");
     case SYS_RearShield: return tr("system", "Rear Shield Generator");
+    case SYS_Docks: return tr("system", "Cargo Docks");
+    case SYS_Drones: return tr("system", "Drones Control");
     default:
         return "UNKNOWN";
     }
@@ -420,6 +482,11 @@ void ShipTemplate::setRestocksScanProbes(bool enabled)
     restocks_scan_probes = enabled;
 }
 
+void ShipTemplate::setHasReactor(bool hasReactor)
+{
+    has_reactor = hasReactor;
+}
+
 void ShipTemplate::setRestocksMissilesDocked(bool enabled)
 {
     restocks_missiles_docked = enabled;
@@ -438,9 +505,7 @@ void ShipTemplate::setCloaking(bool enabled)
 void ShipTemplate::setWeaponStorage(EMissileWeapons weapon, int amount)
 {
     if (weapon != MW_None)
-    {
         weapon_storage[weapon] = amount;
-    }
 }
 
 void ShipTemplate::addRoom(sf::Vector2i position, sf::Vector2i size)
@@ -458,9 +523,31 @@ void ShipTemplate::addDoor(sf::Vector2i position, bool horizontal)
     doors.push_back(ShipDoorTemplate(position, horizontal));
 }
 
+void ShipTemplate::addDrones(string template_name, int count)
+{
+    drones.push_back(DroneTemplate(template_name, count));
+}
+
+void ShipTemplate::setDocks(int launchers, int energy, int weapons, int thermic, int repair, int stock){
+    launcher_dock_count = launchers;
+    energy_dock_count = energy;
+    weapons_dock_count = weapons;
+    thermic_dock_count = thermic;
+    repair_dock_count = repair;
+    stock_dock_count = stock;
+}
+
 void ShipTemplate::setRadarTrace(string trace)
 {
     radar_trace = trace;
+}
+
+void ShipTemplate::setFarRangeRadarRange(float range)
+{
+    range = std::max(range, 100.0f);
+    far_range_radar_range = range;
+    long_range_radar_range = std::min(long_range_radar_range, range);
+    short_range_radar_range = std::min(short_range_radar_range, range);
 }
 
 void ShipTemplate::setLongRangeRadarRange(float range)
@@ -508,7 +595,7 @@ P<ShipTemplate> ShipTemplate::copy(string new_name)
     for(int n=0; n<max_beam_weapons; n++)
         result->beams[n] = beams[n];
     result->weapon_tube_count = weapon_tube_count;
-    for(int n=0; n<max_beam_weapons; n++)
+    for(int n=0; n<max_weapon_tubes; n++)
         result->weapon_tube[n] = weapon_tube[n];
     result->hull = hull;
     result->shield_count = shield_count;
@@ -532,7 +619,16 @@ P<ShipTemplate> ShipTemplate::copy(string new_name)
 
     result->rooms = rooms;
     result->doors = doors;
-    
+    result->drones = drones;
+    result->launcher_dock_count = launcher_dock_count;
+    result->energy_dock_count = energy_dock_count;
+    result->weapons_dock_count = weapons_dock_count;
+    result->thermic_dock_count = thermic_dock_count;
+    result->repair_dock_count = repair_dock_count;
+    result->stock_dock_count = stock_dock_count;
+    result->tractor_beam = tractor_beam;
+    result->isShipCargo = isShipCargo;
+
     return result;
 }
 

@@ -3,8 +3,8 @@
 #include "powerDamageIndicator.h"
 #include "spaceObjects/warpJammer.h"
 
-GuiPowerDamageIndicator::GuiPowerDamageIndicator(GuiContainer* owner, string name, ESystem system, EGuiAlign icon_align)
-: GuiElement(owner, name), system(system), text_size(30), icon_align(icon_align)
+GuiPowerDamageIndicator::GuiPowerDamageIndicator(GuiContainer* owner, string name, ESystem system, EGuiAlign icon_align, P<PlayerSpaceship> targetSpaceship)
+: GuiElement(owner, name), system(system), text_size(30), icon_align(icon_align), target_spaceship(targetSpaceship)
 {
 }
 
@@ -12,7 +12,7 @@ void GuiPowerDamageIndicator::onDraw(sf::RenderTarget& window)
 {
     if (!my_spaceship)
         return;
-    
+
     sf::Color color;
     string display_text;
 
@@ -59,7 +59,7 @@ void GuiPowerDamageIndicator::onDraw(sf::RenderTarget& window)
         return;
     }
     drawStretched(window, rect, "gui/damage_power_overlay", color);
-    
+
     if (rect.height > rect.width)
         drawVerticalText(window, rect, display_text, ACenter, text_size, bold_font, color);
     else
@@ -141,6 +141,6 @@ void GuiPowerDamageIndicator::drawIcon(sf::RenderTarget& window, string icon_nam
     icon.setPosition(icon_position);
     icon.setColor(color);
     window.draw(icon);
-    
+
     icon_position += icon_offset;
 }

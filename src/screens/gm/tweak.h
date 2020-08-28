@@ -37,7 +37,7 @@ class GuiObjectTweak : public GuiPanel
 {
 public:
     GuiObjectTweak(GuiContainer* owner, ETweakType tweak_type);
-    
+
     void open(P<SpaceObject> target);
 
     virtual void onDraw(sf::RenderTarget& window) override;
@@ -52,6 +52,7 @@ private:
     P<SpaceShip> target;
 
     GuiTextEntry* type_name;
+    GuiToggleButton* reactor_toggle;
     GuiToggleButton* warp_toggle;
     GuiToggleButton* jump_toggle;
     GuiSlider* impulse_speed_slider;
@@ -64,7 +65,7 @@ public:
     GuiTweakShip(GuiContainer* owner);
 
     virtual void onDraw(sf::RenderTarget& window) override;
-    
+
     virtual void open(P<SpaceObject> target) override;
 };
 
@@ -76,6 +77,8 @@ private:
     GuiSlider* jammer_range_slider;
 public:
     GuiJammerTweak(GuiContainer* owner);
+
+    virtual void onDraw(sf::RenderTarget& window) override;
 
     virtual void open(P<SpaceObject> target) override;
 };
@@ -91,7 +94,7 @@ public:
     GuiShipTweakMissileWeapons(GuiContainer* owner);
 
     virtual void onDraw(sf::RenderTarget& window) override;
-    
+
     virtual void open(P<SpaceObject> target) override;
 };
 
@@ -111,7 +114,7 @@ public:
     GuiShipTweakMissileTubes(GuiContainer* owner);
 
     virtual void onDraw(sf::RenderTarget& window) override;
-    
+
     virtual void open(P<SpaceObject> target) override;
 };
 
@@ -126,7 +129,7 @@ public:
     GuiShipTweakShields(GuiContainer* owner);
 
     virtual void onDraw(sf::RenderTarget& window) override;
-    
+
     virtual void open(P<SpaceObject> target) override;
 };
 
@@ -136,6 +139,7 @@ private:
     P<SpaceShip> target;
 
     int beam_index;
+    GuiSlider* tractor_range_slider;
     GuiSlider* arc_slider;
     GuiSlider* direction_slider;
     GuiSlider* range_slider;
@@ -145,6 +149,7 @@ private:
     GuiLabel* turret_rotation_rate_overlay_label;
     GuiSlider* cycle_time_slider;
     GuiSlider* damage_slider;
+    GuiSelector* damage_type_slider;
 public:
     GuiShipTweakBeamweapons(GuiContainer* owner);
 
@@ -202,6 +207,7 @@ private:
     GuiSlider* repair_per_system_slider;
     GuiSlider* short_range_radar_slider;
     GuiSlider* long_range_radar_slider;
+    GuiSlider* far_range_radar_slider;
     GuiToggleButton* can_scan;
     GuiToggleButton* can_hack;
     GuiToggleButton* can_dock;
@@ -229,6 +235,7 @@ private:
     GuiTextEntry* simple_scan_description;
     GuiTextEntry* full_scan_description;
     GuiSlider* heading_slider;
+    GuiSlider* position_z_slider;
     GuiSlider* scanning_complexity_slider;
     GuiSlider* scanning_depth_slider;
 public:

@@ -9,7 +9,10 @@ export MIRROR=http://ftp.debian.org/debian/
 export ETH=eth0
 
 # Install packages that we need on the host system to install our PXE environment, which includes dnsmasq as a dhcp-server and tftp-server and nfs for the network files system.
-apt-get -y install debootstrap zip coreutils util-linux e2fsprogs dnsmasq nfs-common nfs-kernel-server
+apt-get -y install sudo debootstrap zip coreutils util-linux e2fsprogs dnsmasq nfs-common nfs-kernel-server
+
+# rm -r ${TARGET_NFS_DIR}
+# rm -r ${TARGET_TFTP_DIR}
 
 mkdir -p ${TARGET_NFS_DIR}
 mkdir -p ${TARGET_TFTP_DIR}
@@ -19,14 +22,11 @@ debootstrap --arch i386 jessie ${TARGET_NFS_DIR} ${MIRROR}
 
 # Setup apt-get configuration on the new rootfs.
 cat > ${TARGET_NFS_DIR}/etc/apt/sources.list <<-EOT
-deb ${MIRROR} stable main contrib non-free
-deb-src ${MIRROR} stable main contrib non-free
+deb http://deb.debian.org/debian/ jessie main contrib non-free
+deb-src http://deb.debian.org/debian/ jessie main contrib non-free
 
-deb http://security.debian.org/ stable/updates main contrib non-free
-deb-src http://security.debian.org/ stable/updates main contrib non-free
-
-deb http://ftp.debian.org/ stable-updates main contrib non-free
-deb-src http://ftp.debian.org/ stable-updates main contrib non-free
+deb http://security.debian.org/ jessie/updates main contrib non-free
+deb-src http://security.debian.org/ jessie/updates main contrib non-free
 EOT
 
 # Setup the PXE network interfaces configuration. This is the configuration the clients will use to bring up their network.
@@ -34,7 +34,6 @@ EOT
 cat > ${TARGET_NFS_DIR}/etc/network/interfaces <<-EOT
 auto lo
 iface lo inet loopback
-
 allow-hotplug eth0
 iface eth0 inet dhcp
 EOT
@@ -101,7 +100,6 @@ EOT
 cat > /etc/network/interfaces <<-EOT
 auto lo
 iface lo inet loopback
-
 allow-hotplug ${ETH}
 auto ${ETH}
 iface ${ETH} inet static
@@ -114,14 +112,12 @@ EOT
 cat > /etc/dnsmasq.conf <<-EOT
 interface=${ETH}
 dhcp-range=192.168.55.10,192.168.55.254
-
 dhcp-boot=bios/pxelinux.0
 dhcp-match=set:efi32,option:client-arch,6
 dhcp-match=set:efi64,option:client-arch,7
 dhcp-match=set:efi64,option:client-arch,9
 dhcp-boot=tag:efi32,efi32/syslinux.efi
 dhcp-boot=tag:efi64,efi64/syslinux.efi
-
 enable-tftp
 tftp-root=${TARGET_TFTP_DIR}
 EOT
@@ -134,19 +130,24 @@ chroot ${TARGET_NFS_DIR} apt-get update
 chroot ${TARGET_NFS_DIR} apt-get -y install git build-essential libx11-dev cmake libxrandr-dev mesa-common-dev libglu1-mesa-dev libudev-dev libglew-dev libjpeg-dev libfreetype6-dev libopenal-dev libsndfile1-dev libxcb1-dev libxcb-image0-dev
 # Install basic X setup in NFS root to allow us to run EE later on.
 chroot ${TARGET_NFS_DIR} apt-get -y install xserver-xorg-core xserver-xorg-input-all xserver-xorg-video-all xinit alsa-base alsa-utils
+# Install chromium
+chroot ${TARGET_NFS_DIR} apt-get -y install chromium
 
 # Download&install SFML,EE,SP (This takes a while)
-chroot ${TARGET_NFS_DIR} git clone https://github.com/daid/EmptyEpsilon.git /root/EmptyEpsilon
+chroot ${TARGET_NFS_DIR} git clone https://github.com/tdelc/EmptyEpsilon.git /root/EmptyEpsilon
 chroot ${TARGET_NFS_DIR} git clone https://github.com/daid/SeriousProton.git /root/SeriousProton
-wget http://www.sfml-dev.org/files/SFML-2.3.2-sources.zip -O ${TARGET_NFS_DIR}/root/SFML-2.3.2-sources.zip
-unzip ${TARGET_NFS_DIR}/root/SFML-2.3.2-sources.zip -d ${TARGET_NFS_DIR}/root/
-chroot ${TARGET_NFS_DIR} sh -c 'cd /root/SFML-2.3.2 && cmake . && make -j 3 && make install && ldconfig'
+wget http://www.sfml-dev.org/files/SFML-2.5.1-sources.zip -O ${TARGET_NFS_DIR}/root/SFML-2.5.1-sources.zip
+unzip ${TARGET_NFS_DIR}/root/SFML-2.5.1-sources.zip -d ${TARGET_NFS_DIR}/root/
+chroot ${TARGET_NFS_DIR} sh -c 'cd /root/SFML-2.5.1 && cmake . && make -j 3 && make install && ldconfig'
 mkdir -p ${TARGET_NFS_DIR}/root/EmptyEpsilon/_build
 chroot ${TARGET_NFS_DIR} sh -c 'cd /root/EmptyEpsilon/_build && cmake .. -DSERIOUS_PROTON_DIR=$HOME/SeriousProton/ && make -j 3'
 # Create a symlink for the final executable.
 chroot ${TARGET_NFS_DIR} ln -s _build/EmptyEpsilon /root/EmptyEpsilon/EmptyEpsilon
 # Create a symlink to store the options.ini file in /tmp/, this so the client can load a custom file.
 chroot ${TARGET_NFS_DIR} ln -s /tmp/options.ini /root/EmptyEpsilon/options.ini
+
+# Create a directory to allow personal configs of clients
+chroot ${TARGET_NFS_DIR} mkdir /root/configs
 
 cat > ${TARGET_NFS_DIR}/root/setup_option_file.sh <<-EOT
 #!/bin/sh
@@ -165,18 +166,30 @@ ln -s ${TARGET_NFS_DIR}/root/EmptyEpsilon/netboot/config_manager.py ~/config_man
 cat > ${TARGET_NFS_DIR}/etc/systemd/system/emptyepsilon.service <<-EOT
 [Unit]
 Description=EmptyEpsilon
-
 [Service]
 Environment=XAUTHORITY=/tmp/.xauthority
 TimeoutStartSec=0
 WorkingDirectory=/root/EmptyEpsilon
 ExecStartPre=/root/setup_option_file.sh
 ExecStart=/usr/bin/startx /root/EmptyEpsilon/EmptyEpsilon -- -logfile /tmp/x.log
-
 [Install]
 WantedBy=multi-user.target
 EOT
 chroot ${TARGET_NFS_DIR} systemctl enable emptyepsilon.service
+
+# Create a systemd unit that runs chromium.
+cat > ${TARGET_NFS_DIR}/etc/systemd/system/chromium.service <<-EOT
+[Unit]
+Description=Chromium
+[Service]
+Environment=XAUTHORITY=/tmp/.xauthority
+TimeoutStartSec=0
+WorkingDirectory=/root/EmptyEpsilon
+ExecStartPre=/root/setup_option_file.sh
+ExecStart=/usr/bin/startx /usr/bin/chromium www.google.be --no-sandbox --start-fullscreen -- -logfile /tmp/x.log
+[Install]
+WantedBy=multi-user.target
+EOT
 
 # Disable screen standby/blanking
 mkdir -p ${TARGET_NFS_DIR}/etc/X11/xorg.conf.d
@@ -185,7 +198,6 @@ Section "Monitor"
     Identifier "LVDS0"
     Option "DPMS" "false"
 EndSection
-
 Section "ServerLayout"
     Identifier "ServerLayout0"
     Option "StandbyTime" "0"
@@ -201,7 +213,6 @@ cat > ${TARGET_NFS_DIR}/etc/systemd/system/shell_on_tty.service <<-EOT
 Description=Shell on TTY1
 After=getty.target
 Conflicts=getty@tty1.service
-
 [Service]
 Type=simple
 RemainAfterExit=yes
@@ -210,7 +221,6 @@ TimeoutStopSec=1
 StandardInput=tty-force
 StandardOutput=inherit
 StandardError=inherit
-
 [Install]
 WantedBy=graphical.target
 EOT
@@ -250,7 +260,6 @@ sed -ie 's/ZEROCONF="false"/ZEROCONF="true"/' ${TARGET_NFS_DIR}/etc/default/dist
 cat > /etc/network/interfaces.dhcp_client <<-EOT
 auto lo
 iface lo inet loopback
-
 allow-hotplug ${ETH}
 auto ${ETH}
 iface ${ETH} inet dhcp
@@ -282,10 +291,10 @@ mount -t proc none ${TARGET_NFS_DIR}/proc
 mount --bind /sys ${TARGET_NFS_DIR}/sys
 mount --bind /dev ${TARGET_NFS_DIR}/dev
 mount -t tmpfs none ${TARGET_NFS_DIR}/tmp
-
 cp /etc/resolv.conf ${TARGET_NFS_DIR}/etc/resolv.conf
 chroot ${TARGET_NFS_DIR} sh -c 'cd /root/SeriousProton/ && git pull'
 chroot ${TARGET_NFS_DIR} sh -c 'cd /root/EmptyEpsilon/ && git pull'
 chroot ${TARGET_NFS_DIR} sh -c 'cd /root/EmptyEpsilon/_build && cmake .. -DSERIOUS_PROTON_DIR=/root/SeriousProton/ && make -j 3'
 EOT
 chmod +x /root/update.sh
+

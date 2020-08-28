@@ -150,6 +150,8 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
     system_rows[SYS_JumpDrive].button->setIcon("gui/icons/system_jumpdrive");
     system_rows[SYS_FrontShield].button->setIcon("gui/icons/shields-fore");
     system_rows[SYS_RearShield].button->setIcon("gui/icons/shields-aft");
+    system_rows[SYS_Docks].button->setIcon("gui/icons/docking");
+    system_rows[SYS_Drones].button->setIcon("gui/icons/heading");
 
     if (gameGlobalInfo->use_nano_repair_crew)
     {
@@ -207,7 +209,7 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
         }
     }
 
-    (new GuiCustomShipFunctions(this, crew_position, ""))->setPosition(-20, 120, ATopRight)->setSize(250, GuiElement::GuiSizeMax);
+    (new GuiCustomShipFunctions(this, crew_position, "", my_spaceship))->setPosition(-20, 120, ATopRight)->setSize(250, GuiElement::GuiSizeMax);
 
     previous_energy_level = 0.0;
     average_energy_delta = 0.0;
@@ -395,13 +397,21 @@ void EngineeringScreen::onDraw(sf::RenderTarget& window)
                 {
                     DamageInfo di;
                     di.type = DT_Kinetic;
-                    float damage_negate = 1.0f - 
+                    float damage_negate = 1.0f -
 my_spaceship->getShieldDamageFactor(di, my_spaceship->shield_count - 1);
                     if (damage_negate < 0.0)
                         addSystemEffect(tr("Extra damage"), string(int(-damage_negate * 100)) + "%");
                     else
                         addSystemEffect(tr("Damage negate"), string(int(damage_negate * 100)) + "%");
                 }
+                break;
+            case SYS_Docks:
+                addSystemEffect("Cargo move speed", string(int(effectiveness * 100)) + "%");
+                addSystemEffect("Energy transfer speed", string(effectiveness * PlayerSpaceship::energy_transfer_per_second) + "/s");
+                addSystemEffect("Tractor beam drag speed", string(int(effectiveness * 100)) + "%");
+                break;
+            case SYS_Drones:
+                addSystemEffect("Drones control range", string(my_spaceship->getDronesControlRange(),1) + "U");
                 break;
             default:
                 break;
@@ -421,12 +431,12 @@ bool EngineeringScreen::onJoystickAxis(const AxisAction& axisAction){
                     power_slider->setValue((axisAction.value + 1) * 3.0 / 2.0);
                     my_spaceship->commandSetSystemPowerRequest(selected_system, power_slider->getValue());
                     return true;
-                } 
+                }
                 if (axisAction.action == "COOLANT" || axisAction.action == std::string("COOLANT_") + getSystemName(selected_system)){
                     coolant_slider->setValue((axisAction.value + 1) * 10.0 / 2.0);
                     my_spaceship->commandSetSystemCoolantRequest(selected_system, coolant_slider->getValue());
                     return true;
-                } 
+                }
             } else {
                 for(int n=0; n<SYS_COUNT; n++)
                 {
@@ -434,7 +444,7 @@ bool EngineeringScreen::onJoystickAxis(const AxisAction& axisAction){
                     if (axisAction.action == std::string("POWER_") + getSystemName(system)){
                         my_spaceship->commandSetSystemPowerRequest(system, (axisAction.value + 1) * 3.0 / 2.0);
                         return true;
-                    } 
+                    }
                     if (axisAction.action == std::string("COOLANT_") + getSystemName(system)){
                         my_spaceship->commandSetSystemCoolantRequest(system, (axisAction.value + 1) * 10.0 / 2.0);
                         return true;
@@ -459,7 +469,7 @@ void EngineeringScreen::onHotkey(const HotkeyResult& key)
         if (key.hotkey == "SELECT_JUMP_DRIVE") selectSystem(SYS_JumpDrive);
         if (key.hotkey == "SELECT_FRONT_SHIELDS") selectSystem(SYS_FrontShield);
         if (key.hotkey == "SELECT_REAR_SHIELDS") selectSystem(SYS_RearShield);
-        
+
         if (key.hotkey == "SELECT_NEXT_SYSTEM")
         {
             if (selected_system == SYS_None)
@@ -524,7 +534,7 @@ void EngineeringScreen::onHotkey(const HotkeyResult& key)
                 }
             }
         }
-        
+
         if (selected_system != SYS_None)
         {
             // Note the code duplication with extra/powerManagement
@@ -626,7 +636,7 @@ void EngineeringScreen::selectSystem(ESystem system)
 {
     if (my_spaceship && !my_spaceship->hasSystem(system))
         return;
-    
+
     for(int idx=0; idx<SYS_COUNT; idx++)
     {
         system_rows[idx].button->setValue(idx == system);

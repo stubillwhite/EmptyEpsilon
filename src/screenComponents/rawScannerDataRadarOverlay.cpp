@@ -1,4 +1,5 @@
 #include "rawScannerDataRadarOverlay.h"
+#include "gameGlobalInfo.h"
 #include "radarView.h"
 #include "playerInfo.h"
 #include "spaceObjects/playerSpaceship.h"
@@ -101,21 +102,28 @@ void RawScannerDataRadarOverlay::onDraw(sf::RenderTarget& window)
         float r = random(-1, 1);
         float g = random(-1, 1);
         float b = random(-1, 1);
+        
+        if (gameGlobalInfo->use_complex_radar_signatures)
+        {
+            // ... and then modify the bands' values based on the object's signature.
+            // Biological signatures amplify the red and green bands.
+            r += signatures[n].biological * 30;
+            g += signatures[n].biological * 30;
 
-        // ... and then modify the bands' values based on the object's signature.
-        // Biological signatures amplify the red and green bands.
-        r += signatures[n].biological * 30;
-        g += signatures[n].biological * 30;
+            // Electrical signatures amplify the red and blue bands.
+            r += random(-20, 20) * signatures[n].electrical;
+            b += random(-20, 20) * signatures[n].electrical;
 
-        // Electrical signatures amplify the red and blue bands.
-        r += random(-20, 20) * signatures[n].electrical;
-        b += random(-20, 20) * signatures[n].electrical;
-
-        // Gravitational signatures amplify all bands, but especially modify
-        // the green and blue bands.
-        r = r * (1.0f - signatures[n].gravity);
-        g = g * (1.0f - signatures[n].gravity) + 40 * signatures[n].gravity;
-        b = b * (1.0f - signatures[n].gravity) + 40 * signatures[n].gravity;
+            // Gravitational signatures amplify all bands, but especially modify
+            // the green and blue bands.
+            r = r * (1.0f - signatures[n].gravity);
+            g = g * (1.0f - signatures[n].gravity) + 40 * signatures[n].gravity;
+            b = b * (1.0f - signatures[n].gravity) + 40 * signatures[n].gravity;
+        }else{
+            r += signatures[n].gravity * 40;
+            g += signatures[n].biological * 30;
+            b += random(-20, 20) * signatures[n].electrical;
+        }
 
         // Apply the values to the radar bands.
         amp_r[n] = r;

@@ -19,7 +19,10 @@
 #include "screens/extra/powerManagement.h"
 #include "screens/extra/databaseScreen.h"
 #include "screens/extra/commsScreen.h"
+#include "screens/extra/droneOperatorScreen.h"
+#include "screens/extra/dockMasterScreen.h"
 #include "screens/extra/shipLogScreen.h"
+#include "screens/extra/tractorBeamScreen.h"
 
 #include "screenComponents/mainScreenControls.h"
 #include "screenComponents/selfDestructEntry.h"
@@ -41,7 +44,9 @@ PlayerInfo::PlayerInfo()
     ship_id = -1;
     client_id = -1;
     main_screen_control = false;
+    gm_access = false;
     registerMemberReplication(&client_id);
+    //registerMemberReplication(&gm_access);
 
     for(int n=0; n<max_crew_positions; n++)
     {
@@ -71,7 +76,7 @@ void PlayerInfo::commandSetCrewPosition(ECrewPosition position, bool active)
     sf::Packet packet;
     packet << CMD_UPDATE_CREW_POSITION << int32_t(position) << active;
     sendClientCommand(packet);
-    
+
     crew_position[position] = active;
 }
 
@@ -96,7 +101,7 @@ void PlayerInfo::commandSetMainScreenControl(bool control)
     sf::Packet packet;
     packet << CMD_UPDATE_MAIN_SCREEN_CONTROL << control;
     sendClientCommand(packet);
-    
+
     main_screen_control = control;
 }
 
@@ -162,7 +167,7 @@ void PlayerInfo::spawnUI()
             screen->addStationTab(new ScienceScreen(container), scienceOfficer, getCrewPositionName(scienceOfficer), getCrewPositionIcon(scienceOfficer));
         if (crew_position[relayOfficer])
             screen->addStationTab(new RelayScreen(container, true), relayOfficer, getCrewPositionName(relayOfficer), getCrewPositionIcon(relayOfficer));
-        
+
         //Crew 4/3
         if (crew_position[tacticalOfficer])
             screen->addStationTab(new TacticalScreen(container), tacticalOfficer, getCrewPositionName(tacticalOfficer), getCrewPositionIcon(tacticalOfficer));
@@ -188,7 +193,13 @@ void PlayerInfo::spawnUI()
             screen->addStationTab(new CommsScreen(container), commsOnly, getCrewPositionName(commsOnly), getCrewPositionIcon(commsOnly));
         if (crew_position[shipLog])
             screen->addStationTab(new ShipLogScreen(container), shipLog, getCrewPositionName(shipLog), getCrewPositionIcon(shipLog));
- 
+        if (crew_position[tractorView])
+            screen->addStationTab(new TractorBeamScreen(container), shipLog, getCrewPositionName(tractorView), getCrewPositionIcon(tractorView));
+        if (crew_position[dronePilot])
+            screen->addStationTab(new DroneOperatorScreen(container), dronePilot, getCrewPositionName(dronePilot), getCrewPositionIcon(dronePilot));
+        if (crew_position[dockMaster])
+            screen->addStationTab(new DockMasterScreen(container), dockMaster, getCrewPositionName(dockMaster), getCrewPositionIcon(dockMaster));
+
         GuiSelfDestructEntry* sde = new GuiSelfDestructEntry(container, "SELF_DESTRUCT_ENTRY");
         for(int n=0; n<max_crew_positions; n++)
             if (crew_position[n])
@@ -234,6 +245,9 @@ string getCrewPositionName(ECrewPosition position)
     case altRelay: return tr("station","Strategic Map");
     case commsOnly: return tr("station","Comms");
     case shipLog: return tr("station","Ship's Log");
+    case tractorView: return tr("station","Tractor Beam");
+    case dronePilot: return tr("station","Drone Pilot");
+    case dockMaster: return tr("station","Dock Master");
     default: return "ErrUnk: " + string(position);
     }
 }
@@ -257,6 +271,9 @@ string getCrewPositionIcon(ECrewPosition position)
     case altRelay: return "";
     case commsOnly: return "";
     case shipLog: return "";
+    case tractorView: return "";
+    case dronePilot: return "";
+    case dockMaster: return "";
     default: return "ErrUnk: " + string(position);
     }
 }
@@ -303,6 +320,12 @@ template<> void convert<ECrewPosition>::param(lua_State* L, int& idx, ECrewPosit
         cp = commsOnly;
     else if (str == "shiplog")
         cp = shipLog;
+    else if (str == "tractor" || str == "tractorview")
+        cp = tractorView;
+    else if (str == "dronepilot" || str == "dronepilotview")
+        cp = dronePilot;
+    else if (str == "dockmaster" || str == "dockmasterview")
+        cp = dockMaster;
     else
         luaL_error(L, "Unknown value for crew position: %s", str.c_str());
 }

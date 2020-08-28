@@ -46,12 +46,18 @@ public:
     float getDamage();
     void setDamage(float damage);
 
+    int getDamageType();
+    void setDamageType(int damage_type);
+
     float getEnergyPerFire();
     void setEnergyPerFire(float energy);
 
     float getHeatPerFire();
     void setHeatPerFire(float heat);
     
+    int getStation();
+    void setStation(int station);
+
     BeamTemplate& operator=(const BeamTemplate& other);
 
 protected:
@@ -64,8 +70,10 @@ protected:
     float turret_rotation_rate; // Value between 0 and 25 (degrees/tick)
     float cycle_time; // Value greater than 0
     float damage;
+    int damage_type;
     float energy_per_beam_fire;
     float heat_per_beam_fire;
+    int station;
 };
 
 #endif//BEAM_TEMPLATE_H

@@ -28,7 +28,7 @@ OperationScreen::OperationScreen(GuiContainer* owner)
             {
                 // ... and we select something near a waypoint, switch to move
                 // waypoint mode.
-                if (sf::length(my_spaceship->waypoints[science->targets.getWaypointIndex()] - position) < 1000.0)
+                if (sf::length(my_spaceship->waypoints[science->targets.getRouteIndex()][science->targets.getWaypointIndex()] - position) < 1000.0)
                 {
                     mode = MoveWaypoint;
                     drag_waypoint_index = science->targets.getWaypointIndex();
@@ -59,9 +59,10 @@ OperationScreen::OperationScreen(GuiContainer* owner)
             }
         }
     );
+
     science->science_radar->setAutoRotating(PreferencesManager::get("operations_radar_lock","0")=="1");
 
-    (new GuiOpenCommsButton(science->radar_view, "OPEN_COMMS_BUTTON", tr("Open Comms"), &science->targets))->setPosition(-270, -20, ABottomRight)->setSize(200, 50);
+    (new GuiOpenCommsButton(science->radar_view, "OPEN_COMMS_BUTTON", tr("Open Comms"), &science->targets, my_spaceship))->setPosition(-270, -20, ABottomRight)->setSize(200, 50);
 
     // Manage waypoints.
     place_waypoint_button = new GuiButton(science->radar_view, "WAYPOINT_PLACE_BUTTON", tr("Place Waypoint"), [this, science]() {
@@ -76,9 +77,9 @@ OperationScreen::OperationScreen(GuiContainer* owner)
         }
     });
     delete_waypoint_button->setPosition(-270, -120, ABottomRight)->setSize(200, 50);
-    
+
     mode = TargetSelection;
-    
+
     new ShipsLog(this);
     (new GuiCommsOverlay(this))->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
 }

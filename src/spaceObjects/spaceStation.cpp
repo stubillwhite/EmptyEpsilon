@@ -4,6 +4,8 @@
 #include "spaceObjects/playerSpaceship.h"
 #include "shipTemplate.h"
 #include "playerInfo.h"
+#include "gameGlobalInfo.h"
+#include "preferenceManager.h"
 #include "factionInfo.h"
 #include "mesh.h"
 #include "main.h"
@@ -40,14 +42,24 @@ void SpaceStation::drawOnRadar(sf::RenderTarget& window, sf::Vector2f position, 
     }
     sprite_scale = std::max(0.15f, sprite_scale);
     objectSprite.setScale(sprite_scale, sprite_scale);
-    if (my_spaceship)
+    if (!gameGlobalInfo->color_by_faction)
     {
-        if (isEnemy(my_spaceship))
-            objectSprite.setColor(sf::Color::Red);
-        else if (isFriendly(my_spaceship))
-            objectSprite.setColor(sf::Color(128, 255, 128));
-        else
-            objectSprite.setColor(sf::Color(128, 128, 255));
+        if (my_spaceship)
+        {
+            if (!gameGlobalInfo->color_by_faction)
+            {
+                if (isEnemy(my_spaceship))
+                    objectSprite.setColor(sf::Color::Red);
+                else if (isFriendly(my_spaceship))
+                    objectSprite.setColor(sf::Color(128, 255, 128));
+                else
+                    objectSprite.setColor(sf::Color(128, 128, 255));
+            }else{
+                objectSprite.setColor(factionInfo[getFactionId()]->gm_color);
+            }
+        }else{
+            objectSprite.setColor(factionInfo[getFactionId()]->gm_color);
+        }
     }else{
         objectSprite.setColor(factionInfo[getFactionId()]->gm_color);
     }
@@ -64,8 +76,9 @@ void SpaceStation::destroyedByDamage(DamageInfo& info)
     ExplosionEffect* e = new ExplosionEffect();
     e->setSize(getRadius());
     e->setPosition(getPosition());
+    e->setPositionZ(getPositionZ());
     e->setRadarSignatureInfo(0.0, 0.4, 0.4);
-    
+
     if (info.instigator)
     {
         float points = 0;

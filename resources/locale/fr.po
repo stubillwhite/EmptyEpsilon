@@ -265,6 +265,16 @@ msgctxt "system"
 msgid "Rear Shield Generator"
 msgstr "Générateur de bouclier avant"
 
+#: src/shipTemplate.cpp:348 src/shipTemplate.cpp:359
+msgctxt "system"
+msgid "Cargo Docks"
+msgstr "Gestion du dock"
+
+#: src/shipTemplate.cpp:348 src/shipTemplate.cpp:360
+msgctxt "system"
+msgid "Drones Control"
+msgstr "Controle des drones"
+
 #: src/tutorialGame.cpp:92
 msgid "Next"
 msgstr "Suivant"
