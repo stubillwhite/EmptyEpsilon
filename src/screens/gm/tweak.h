@@ -37,7 +37,7 @@ class GuiObjectTweak : public GuiPanel
 {
 public:
     GuiObjectTweak(GuiContainer* owner, ETweakType tweak_type);
-    
+
     void open(P<SpaceObject> target);
 
     virtual void onDraw(sf::RenderTarget& window) override;
@@ -65,7 +65,7 @@ public:
     GuiTweakShip(GuiContainer* owner);
 
     virtual void onDraw(sf::RenderTarget& window) override;
-    
+
     virtual void open(P<SpaceObject> target) override;
 };
 
@@ -77,6 +77,8 @@ private:
     GuiSlider* jammer_range_slider;
 public:
     GuiJammerTweak(GuiContainer* owner);
+
+    virtual void onDraw(sf::RenderTarget& window) override;
 
     virtual void open(P<SpaceObject> target) override;
 };
@@ -92,7 +94,7 @@ public:
     GuiShipTweakMissileWeapons(GuiContainer* owner);
 
     virtual void onDraw(sf::RenderTarget& window) override;
-    
+
     virtual void open(P<SpaceObject> target) override;
 };
 
@@ -112,7 +114,7 @@ public:
     GuiShipTweakMissileTubes(GuiContainer* owner);
 
     virtual void onDraw(sf::RenderTarget& window) override;
-    
+
     virtual void open(P<SpaceObject> target) override;
 };
 
@@ -127,7 +129,7 @@ public:
     GuiShipTweakShields(GuiContainer* owner);
 
     virtual void onDraw(sf::RenderTarget& window) override;
-    
+
     virtual void open(P<SpaceObject> target) override;
 };
 

@@ -611,8 +611,8 @@ void GuiRadarView::drawTargetProjections(sf::RenderTarget& window)
                     p = worldToScreen(fire_position + (turn_exit + sf::vector2FromAngle(missile_target_angle) * (offset - turn_distance)));
                     n = sf::vector2FromAngle(missile_target_angle + 90.0f);
                 }
-				n = sf::rotateVector(n, -view_rotation);
-				n = sf::normalize(n);
+                n = sf::rotateVector(n, -view_rotation);
+                n = sf::normalize(n);
                 sf::VertexArray a(sf::Lines, 2);
                 a[0].position = p - n * 10.0f;
                 a[1].position = p + n * 10.0f;
@@ -661,7 +661,7 @@ void GuiRadarView::drawMissileTubes(sf::RenderTarget& window)
             sf::Vector2f fire_draw_position = worldToScreen(fire_position);
 
             float fire_angle = target_spaceship->getRotation() + target_spaceship->weapon_tube[n].getDirection() - view_rotation;
-            
+
             a[n * 2].position = fire_draw_position;
             a[n * 2 + 1].position = fire_draw_position + (sf::vector2FromAngle(fire_angle) * 1000.0f) * scale;
             a[n * 2].color = sf::Color(128, 128, 128, 128);
@@ -877,7 +877,7 @@ sf::Vector2f GuiRadarView::screenToWorld(sf::Vector2f screen_position)
 {
     sf::Vector2f radar_screen_center(rect.left + rect.width / 2.0f, rect.top + rect.height / 2.0f);
     float scale = std::min(rect.width, rect.height) / 2.0f / distance;
-    
+
     sf::Vector2f radar_position = sf::rotateVector((screen_position - radar_screen_center) / scale, view_rotation);
     return view_position + radar_position;
 }

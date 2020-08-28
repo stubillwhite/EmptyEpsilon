@@ -18,7 +18,7 @@ private:
 public:
     GuiShieldFrequencySelect(GuiContainer* owner, string id, P<PlayerSpaceship> targetSpaceship);
     void setTargetSpaceship(P<PlayerSpaceship> targetSpaceship){target_spaceship = targetSpaceship;}
-    
+
     virtual void onDraw(sf::RenderTarget& window) override;
     virtual void onHotkey(const HotkeyResult& key) override;
 };

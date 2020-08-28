@@ -35,13 +35,13 @@ private:
     GuiPowerDamageIndicator* pdi;
 public:
     GuiMissileTubeControls(GuiContainer* owner, string id, P<PlayerSpaceship> targetSpaceship);
-    
+
     virtual void onDraw(sf::RenderTarget& window) override;
     virtual void onHotkey(const HotkeyResult& key) override;
-    
+
     void setMissileTargetAngle(float angle);
     float getMissileTargetAngle();
-    
+
     void setManualAim(bool manual);
     bool getManualAim();
     void setTargetSpaceship(P<PlayerSpaceship> targetSpaceship);

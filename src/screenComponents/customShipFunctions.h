@@ -7,28 +7,27 @@
 
 class GuiCustomShipFunctions : public GuiAutoLayout
 {
-private:    
+private:
+    P<PlayerSpaceship> target_spaceship;
+
     class Entry
     {
     public:
         string name;
         GuiElement* element;
     };
-    
+
     ECrewPosition position;
     std::vector<Entry> entries;
-    P<PlayerSpaceship> target_spaceship;
 public:
     GuiCustomShipFunctions(GuiContainer* owner, ECrewPosition position, string id, P<PlayerSpaceship> targetSpaceship);
-    
+
     virtual void onDraw(sf::RenderTarget& window) override;
 
     bool hasEntries();
-    void setTargetSpaceship(P<PlayerSpaceship> targetSpaceship);
-
-private:    
     void checkEntries();
     void createEntries();
+    void setTargetSpaceship(P<PlayerSpaceship> targetSpaceship);
 };
 
 #endif//CUSTOM_SHIP_FUNCTIONS_H

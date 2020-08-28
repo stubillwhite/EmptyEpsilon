@@ -57,7 +57,7 @@ public:
     
     int getStation();
     void setStation(int station);
-    
+
     BeamTemplate& operator=(const BeamTemplate& other);
 
 protected:

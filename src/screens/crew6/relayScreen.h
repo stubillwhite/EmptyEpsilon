@@ -50,7 +50,7 @@ private:
 
     GuiSlider* zoom_slider;
     GuiLabel* zoom_label;
-    
+
     GuiHackingDialog* hacking_dialog;
 
     sf::Vector2f mouse_down_position;

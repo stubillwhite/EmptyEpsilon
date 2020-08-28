@@ -71,7 +71,7 @@ void TargetsContainer::setToClosestTo(sf::Vector2f position, float max_range, ES
                 target = spaceObject;
         }
     }
-    
+
     if (my_spaceship && allow_waypoint_selection)
     {
         for(int r = 0; r < PlayerSpaceship::max_routes; r++)

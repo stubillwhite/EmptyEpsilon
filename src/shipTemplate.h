@@ -111,7 +111,7 @@ public:
     bool can_self_destruct = true;
     bool can_launch_probe = true;
     bool has_reactor;
-    
+
     float energy_storage_amount;
     int repair_crew_count;
     string default_ai_name;
@@ -192,7 +192,6 @@ public:
     void setWeaponTubeExclusiveFor(int index, EMissileWeapons type);
     void setTubeSize(int index, EMissileSizes size);
     void setTubeStation(int index, int station);
-
     void setTubeDirection(int index, float direction);
     void setHull(float amount) { hull = amount; }
     void setShields(std::vector<float> values);

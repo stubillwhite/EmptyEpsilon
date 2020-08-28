@@ -30,7 +30,6 @@ SinglePilotScreen::SinglePilotScreen(GuiContainer* owner)
 
     // Render the alert level color overlay.
     (new AlertLevelOverlay(this));
-
 }
 
 void SinglePilotScreen::onDraw(sf::RenderTarget& window)

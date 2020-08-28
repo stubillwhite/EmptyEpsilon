@@ -59,16 +59,16 @@ GuiMissileTubeControls::GuiMissileTubeControls(GuiContainer* owner, string id, P
         row.loading_bar->setColor(sf::Color(128, 128, 128))->setSize(200, 50);
         row.loading_label = new GuiLabel(row.loading_bar, id + "_" + string(n) + "_PROGRESS_LABEL", "Loading", 35);
         row.loading_label->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
-        
+
         rows[n] = row;
     }
-    
-    
+
+
     for (int n = MW_Count-1; n >= 0; n--)
     {
         load_type_rows[n].layout = new GuiAutoLayout(this, id + "_ROW_" + string(n), LayoutHorizontalLeftToRight);
         load_type_rows[n].layout->setSize(GuiElement::GuiSizeMax, 40);
-        
+
         load_type_rows[n].button = new GuiToggleButton(load_type_rows[n].layout, id + "_MW_" + string(n), getLocaleMissileWeaponName(EMissileWeapons(n)), [this, n](bool value) {
             if (value)
                 load_type = EMissileWeapons(n);
