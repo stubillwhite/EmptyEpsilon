@@ -94,6 +94,10 @@ HotkeyConfig::HotkeyConfig()
     newKey("SELECT_JUMP_DRIVE", std::make_tuple("Select jump drive system", "Num7"));
     newKey("SELECT_FRONT_SHIELDS", std::make_tuple("Select front shields system", "Num8"));
     newKey("SELECT_REAR_SHIELDS", std::make_tuple("Select rear shields system", "Num9"));
+    newKey("SELECT_NEXT_SYSTEM", std::make_tuple("Select rear shields system", "Add"));
+    newKey("SELECT_PREVIOUS_SYSTEM", std::make_tuple("Select rear shields system", "Subtract"));
+
+    newKey("RESET_SYSTEMS", std::make_tuple("Reset all systems setting", "Delete"));
     newKey("SET_POWER_000", std::make_tuple("Set system power to 0%", ""));
     newKey("SET_POWER_030", std::make_tuple("Set system power to 30%", ""));
     newKey("SET_POWER_050", std::make_tuple("Set system power to 50%", ""));
@@ -106,6 +110,12 @@ HotkeyConfig::HotkeyConfig()
     newKey("DECREASE_POWER", std::make_tuple("Decrease system power", "Down"));
     newKey("INCREASE_COOLANT", std::make_tuple("Increase system coolant", "Right"));
     newKey("DECREASE_COOLANT", std::make_tuple("Decrease system coolant", "Left"));
+    newKey("COOLANT_MAX", std::make_tuple("Set system coolant to max", ""));
+    newKey("COOLANT_MIN", std::make_tuple("Set system coolant to min", ""));
+    newKey("INCREASE_REPAIR", std::make_tuple("Increase system repair", "PageUp"));
+    newKey("DECREASE_REPAIR", std::make_tuple("Decrease system repair", "PageDown"));
+    newKey("REPAIR_MAX", std::make_tuple("Set system repair to max", ""));
+    newKey("REPAIR_MIN", std::make_tuple("Set system repair to min", ""));
     newKey("NEXT_REPAIR_CREW", std::make_tuple("Next repair crew", ""));
     newKey("REPAIR_CREW_MOVE_UP", std::make_tuple("Crew move up", ""));
     newKey("REPAIR_CREW_MOVE_DOWN", std::make_tuple("Crew move down", ""));

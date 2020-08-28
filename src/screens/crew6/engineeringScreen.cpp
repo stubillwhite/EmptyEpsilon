@@ -460,6 +460,71 @@ void EngineeringScreen::onHotkey(const HotkeyResult& key)
         if (key.hotkey == "SELECT_FRONT_SHIELDS") selectSystem(SYS_FrontShield);
         if (key.hotkey == "SELECT_REAR_SHIELDS") selectSystem(SYS_RearShield);
         
+        if (key.hotkey == "SELECT_NEXT_SYSTEM")
+        {
+            if (selected_system == SYS_None)
+                selectSystem(SYS_Reactor);
+            else
+            {
+                int n = ESystem(int(selected_system) + 1);
+
+                while (n<SYS_COUNT)                
+                {
+                    if (my_spaceship->hasSystem(ESystem(n)))
+                    {
+                        selectSystem(ESystem(n));
+                        break;
+                    }
+                    n++;
+                }
+                if (n == SYS_COUNT)
+                    selectSystem(SYS_Reactor);
+            }
+        }
+        if (key.hotkey == "SELECT_PREVIOUS_SYSTEM")
+        {
+            if (selected_system == SYS_None)
+                selectSystem(ESystem(SYS_COUNT-1));
+            else
+            {
+                int n = ESystem(int(selected_system) - 1);
+
+                while (n>=0)                
+                {
+                    if (my_spaceship->hasSystem(ESystem(n)))
+                    {
+                        selectSystem(ESystem(n));
+                        break;
+                    }
+                    n--;
+                }
+                if (n < 0)
+                    selectSystem(ESystem(SYS_COUNT-1));
+            }
+        }
+
+        if (key.hotkey == "RESET_SYSTEMS")
+        {
+            int n_systems = 0;
+            for(int n=0; n<SYS_COUNT; n++)
+                if (my_spaceship->hasSystem(ESystem(n)))
+                    n_systems ++;
+                    
+            for(int n=0; n<SYS_COUNT; n++)
+            {
+                ESystem system = ESystem(n);
+                power_slider->setValue(1.0f);
+                coolant_slider->setValue(0.0f);
+                my_spaceship->commandSetSystemPowerRequest(system, 1.0f);
+                my_spaceship->commandSetSystemCoolantRequest(system, my_spaceship->max_coolant / n_systems);
+                if (gameGlobalInfo->use_nano_repair_crew)
+                {
+                    repair_slider->setValue(0.0f);
+                    my_spaceship->commandSetSystemRepairRequest(system, my_spaceship->max_repair / n_systems);
+                }
+            }
+        }
+        
         if (selected_system != SYS_None)
         {
             // Note the code duplication with extra/powerManagement
@@ -522,6 +587,36 @@ void EngineeringScreen::onHotkey(const HotkeyResult& key)
             {
                 coolant_slider->setValue(my_spaceship->systems[selected_system].coolant_request - 0.5f);
                 my_spaceship->commandSetSystemCoolantRequest(selected_system, coolant_slider->getValue());
+            }
+            if (key.hotkey == "COOLANT_MAX")
+            {
+                coolant_slider->setValue(my_spaceship->max_coolant_per_system);
+                my_spaceship->commandSetSystemCoolantRequest(selected_system, coolant_slider->getValue());
+            }
+            if (key.hotkey == "COOLANT_MIN")
+            {
+                coolant_slider->setValue(0.0f);
+                my_spaceship->commandSetSystemCoolantRequest(selected_system, coolant_slider->getValue());
+            }
+            if (gameGlobalInfo->use_nano_repair_crew && key.hotkey == "INCREASE_REPAIR")
+            {
+                repair_slider->setValue(my_spaceship->systems[selected_system].repair_request + 0.5f);
+                my_spaceship->commandSetSystemRepairRequest(selected_system, repair_slider->getValue());
+            }
+            if (gameGlobalInfo->use_nano_repair_crew && key.hotkey == "DECREASE_REPAIR")
+            {
+                repair_slider->setValue(my_spaceship->systems[selected_system].repair_request - 0.5f);
+                my_spaceship->commandSetSystemRepairRequest(selected_system, repair_slider->getValue());
+            }
+            if (gameGlobalInfo->use_nano_repair_crew && key.hotkey == "REPAIR_MAX")
+            {
+                repair_slider->setValue(my_spaceship->max_repair_per_system);
+                my_spaceship->commandSetSystemRepairRequest(selected_system, repair_slider->getValue());
+            }
+            if (gameGlobalInfo->use_nano_repair_crew && key.hotkey == "REPAIR_MIN")
+            {
+                repair_slider->setValue(0.0f);
+                my_spaceship->commandSetSystemRepairRequest(selected_system, repair_slider->getValue());
             }
         }
     }
