@@ -8,7 +8,7 @@ class GuiBeamTargetSelector : public GuiSelector
 {
 public:
     GuiBeamTargetSelector(GuiContainer* owner, string id);
-    
+
     virtual void onHotkey(const HotkeyResult& key) override;
 };
 

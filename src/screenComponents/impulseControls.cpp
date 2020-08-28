@@ -14,10 +14,10 @@ GuiImpulseControls::GuiImpulseControls(GuiContainer* owner, string id, P<PlayerS
             target_spaceship->commandImpulse(value);
     });
     slider->addSnapValue(0.0, 0.1)->setPosition(0, 0, ATopLeft)->setSize(50, GuiElement::GuiSizeMax);
-    
+
     label = new GuiKeyValueDisplay(this, id, 0.5, tr("slider", "Impulse"), "0%");
     label->setTextSize(30)->setPosition(50, 0, ATopLeft)->setSize(40, GuiElement::GuiSizeMax);
-    
+
     pdi = new GuiPowerDamageIndicator(this, id + "_DPI", SYS_Impulse, ATopCenter, target_spaceship);
     pdi->setSize(50, GuiElement::GuiSizeMax);
 }

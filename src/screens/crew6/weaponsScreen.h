@@ -29,7 +29,7 @@ private:
     GuiToggleButton* lock_fire;
 public:
     WeaponsScreen(GuiContainer* owner);
-    
+
     virtual void onDraw(sf::RenderTarget& window) override;
     virtual void onHotkey(const HotkeyResult& key) override;
     virtual bool onJoystickAxis(const AxisAction& axisAction) override;

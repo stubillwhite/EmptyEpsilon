@@ -78,7 +78,7 @@ void SpaceStation::destroyedByDamage(DamageInfo& info)
     e->setPosition(getPosition());
     e->setPositionZ(getPositionZ());
     e->setRadarSignatureInfo(0.0, 0.4, 0.4);
-    
+
     if (info.instigator)
     {
         float points = 0;

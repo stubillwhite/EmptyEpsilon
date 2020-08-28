@@ -17,9 +17,9 @@ public:
         Targetable,
         Selectable
     };
-    
+
     TargetsContainer();
-    
+
     void setAllowWaypointSelection() { allow_waypoint_selection = true; }
 
     void clear();
@@ -33,7 +33,7 @@ public:
     void setRouteIndex(int index);
     int getRouteIndex();
     sf::Vector2f getWaypointPosition();
-    
+
     void setToClosestTo(sf::Vector2f position, float max_range, ESelectionType selection_type);
 };
 

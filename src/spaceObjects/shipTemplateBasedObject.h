@@ -56,10 +56,10 @@ public:
     virtual void takeHeatDamage(float damage_amount, DamageInfo& info);
     virtual void destroyedByDamage(DamageInfo& info) = 0;
     virtual float getShieldDamageFactor(DamageInfo& info, int shield_index);
-    
+
     void setCanBeDestroyed(bool enabled) { can_be_destroyed = enabled; }
     bool getCanBeDestroyed(){ return can_be_destroyed; }
-    
+
     virtual void applyTemplateValues() = 0;
     virtual float getShieldRechargeRate(int shield_index);
 

@@ -47,7 +47,7 @@ REGISTER_SCRIPT_CLASS(ShipTemplate)
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setBeamWeaponEnergyPerFire);
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setBeamWeaponHeatPerFire);
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setBeamStation);
-    
+
     /// Set the amount of missile tubes, limited to a maximum of 16.
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setTubes);
     /// set the amount of docks (launcher, energy)
@@ -114,7 +114,7 @@ std::unordered_map<string, P<ShipTemplate> > ShipTemplate::templateMap;
 ShipTemplate::ShipTemplate()
 {
     if (game_server) { LOG(ERROR) << "ShipTemplate objects can not be created during a scenario."; destroy(); return; }
-    
+
     type = Ship;
     class_name = tr("No class");
     sub_class_name = tr("No sub-class");
@@ -628,6 +628,7 @@ P<ShipTemplate> ShipTemplate::copy(string new_name)
     result->stock_dock_count = stock_dock_count;
     result->tractor_beam = tractor_beam;
     result->isShipCargo = isShipCargo;
+
     return result;
 }
 

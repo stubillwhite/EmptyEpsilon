@@ -107,7 +107,6 @@ RelayScreen::RelayScreen(GuiContainer* owner, bool allow_comms)
         (new GuiOpenCommsButton(option_buttons, "OPEN_COMMS_BUTTON", tr("Open Comms"), &targets, my_spaceship))->setSize(GuiElement::GuiSizeMax, 50);
     else
         (new GuiOpenCommsButton(option_buttons, "OPEN_COMMS_BUTTON", tr("Link to Comms"), &targets, my_spaceship))->setSize(GuiElement::GuiSizeMax, 50);
-    
 
     // Hack target
     hack_target_button = new GuiButton(option_buttons, "HACK_TARGET", tr("Start hacking"), [this](){

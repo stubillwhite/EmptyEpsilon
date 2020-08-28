@@ -33,7 +33,7 @@ GameMasterScreen::GameMasterScreen()
     );
     box_selection_overlay = new GuiOverlay(main_radar, "BOX_SELECTION", sf::Color(255, 255, 255, 32));
     box_selection_overlay->hide();
-    
+
     pause_button = new GuiToggleButton(this, "PAUSE_BUTTON", "Pause", [this](bool value) {
         if (!value)
             gameMasterActions->commandSetGameSpeed(1.0f);
@@ -46,14 +46,14 @@ GameMasterScreen::GameMasterScreen()
         gameMasterActions->commandInterceptAllCommsToGm(value);
     });
     intercept_comms_button->setValue(gameGlobalInfo->intercept_all_comms_to_gm)->setTextSize(20)->setPosition(300, 20, ATopLeft)->setSize(200, 25);
-    
+
     faction_selector = new GuiSelector(this, "FACTION_SELECTOR", [this](int index, string value) {
         gameMasterActions->commandSetFactionId(index, targets.getTargets());
     });
     for(P<FactionInfo> info : factionInfo)
         faction_selector->addEntry(info->getLocaleName(), info->getName());
     faction_selector->setPosition(20, 70, ATopLeft)->setSize(250, 50);
-    
+
     global_message_button = new GuiButton(this, "GLOBAL_MESSAGE_BUTTON", "Global message", [this]() {
         global_message_entry->show();
     });
@@ -143,7 +143,7 @@ GameMasterScreen::GameMasterScreen()
         gameMasterActions->commandCallGmScript(index, getSelection());
     });
     gm_script_options->setPosition(20, 130, ATopLeft)->setSize(250, 500);
-    
+
     order_layout = new GuiAutoLayout(this, "ORDER_LAYOUT", GuiAutoLayout::LayoutVerticalBottomToTop);
     order_layout->setPosition(-20, -90, ABottomRight)->setSize(300, GuiElement::GuiSizeMax);
     
@@ -222,7 +222,7 @@ void GameMasterScreen::update(float delta)
         else
             main_radar->longRange();
     }
-    
+
     bool has_object = false;
     bool has_cpu_ship = false;
     bool has_player_ship = false;
@@ -235,7 +235,7 @@ void GameMasterScreen::update(float delta)
         {
             if (player_ship_selector->indexByValue(string(n)) == -1)
                 player_ship_selector->addEntry(ship->getTypeName() + " " + ship->getCallSign(), string(n));
-            
+
             if (ship->isCommsBeingHailedByGM() || ship->isCommsChatOpenToGM())
             {
                 if (!chat_dialog_per_ship[n]->isVisible())
@@ -294,7 +294,7 @@ void GameMasterScreen::update(float delta)
     {
         selection_info["Position"] = string(targets.getTargets()[0]->getPosition().x, 0) + "," + string(targets.getTargets()[0]->getPosition().y, 0);
     }
- 
+
     unsigned int cnt = 0;
     for(std::unordered_map<string, string>::iterator i = selection_info.begin(); i != selection_info.end(); i++)
     {
@@ -371,9 +371,9 @@ void GameMasterScreen::onMouseDown(sf::Vector2f position)
             gameGlobalInfo->on_gm_click(position);
         }else{
             click_and_drag_state = CD_BoxSelect;
-            
+
             float min_drag_distance = main_radar->getDistance() / 450 * 10;
-            
+
             for(P<SpaceObject> obj : targets.getTargets())
             {
                 if ((obj->getPosition() - position) < std::max(min_drag_distance, obj->getRadius()))
@@ -417,6 +417,7 @@ void GameMasterScreen::onMouseUp(sf::Vector2f position)
         {
             //Right click
             bool shift_down = InputHandler::keyboardIsDown(sf::Keyboard::LShift) || InputHandler::keyboardIsDown(sf::Keyboard::RShift);
+
             gameMasterActions->commandContextualGoTo(position, shift_down, targets.getTargets());
         }
         break;
@@ -502,7 +503,7 @@ string GameMasterScreen::getScriptExport(bool selected_only)
     }else{
         objs = space_object_list;
     }
-    
+
     foreach(SpaceObject, obj, objs)
     {
         string line = obj->getExportLine();

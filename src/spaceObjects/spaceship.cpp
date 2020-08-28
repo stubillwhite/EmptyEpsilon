@@ -39,6 +39,9 @@ REGISTER_SCRIPT_SUBCLASS_NO_CREATE(SpaceShip, ShipTemplateBasedObject)
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setMaxEnergy);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getEnergy);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setEnergy);
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, hasSystem);
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getSystemHackedLevel);
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setSystemHackedLevel);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getSystemHealth);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setSystemHealth);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getSystemHealthMax);
@@ -62,10 +65,10 @@ REGISTER_SCRIPT_SUBCLASS_NO_CREATE(SpaceShip, ShipTemplateBasedObject)
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setJumpDrive);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setJumpDriveRange);
     /// sets the current jump range charged.
-    /// ships will be able to jump when this is equal to their max jump drive range. 
+    /// ships will be able to jump when this is equal to their max jump drive range.
     /// Example ship:setJumpCharge(50000)
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setJumpDriveCharge);
-    /// returns the current amount of jump charged. 
+    /// returns the current amount of jump charged.
     /// Example ship:getJumpCharge()
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getJumpDriveCharge);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, hasWarpDrive);
@@ -127,6 +130,12 @@ REGISTER_SCRIPT_SUBCLASS_NO_CREATE(SpaceShip, ShipTemplateBasedObject)
     /// Example: ship:setWeaponTubeStation(0, 1)
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setWeaponTubeStation);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getWeaponTubeStation);
+    // Returns the time for a tube load
+    // Example: load_time = ship:getTubeLoadTime(0)
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getTubeLoadTime);
+    // Sets the load time for a tube
+    // Example ship:setTubeLoadTime(0, 15)
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setTubeLoadTime);
     /// Set the icon to be used for this ship on the radar.
     /// For example, ship:setRadarTrace("RadarBlip.png") will show a dot instead of an arrow for this ship.
     /// Note: Icon is only shown after scanning, before the ship is scanned it is always shown as an arrow.
@@ -943,7 +952,8 @@ bool SpaceShip::canBeDockedBy(P<SpaceObject> obj)
     P<SpaceShip> ship = obj;
     if (!ship || !ship->ship_template)
         return false;
-    return ship_template->can_be_docked_by_class.count(ship->ship_template->getClass()) > 0;
+    return (ship_template->can_be_docked_by_class.count(ship->ship_template->getClass()) +
+	   ship_template->can_be_docked_by_class.count(ship->ship_template->getSubClass())) > 0;
 }
 
 void SpaceShip::collide(Collisionable* other, float force)
@@ -1325,7 +1335,7 @@ bool SpaceShip::hasSystem(ESystem system)
 float SpaceShip::getSystemEffectiveness(ESystem system)
 {
     float power = systems[system].power_level;
-    
+
     // Substract the hacking from the power, making double hacked systems run at 25% efficiency.
     power = std::max(0.0f, power - systems[system].hacked_level * 0.75f);
 
@@ -1439,6 +1449,22 @@ int SpaceShip::getWeaponTubeStation(int index)
     if (index < 0 || index >= max_weapon_tubes)
         return 0;
     return weapon_tube[index].getStation();
+}
+
+float SpaceShip::getTubeLoadTime(int index)
+{
+    if (index < 0 || index >= max_weapon_tubes) {
+        return 0;
+    }
+    return weapon_tube[index].getLoadTimeConfig();
+}
+
+void SpaceShip::setTubeLoadTime(int index, float time)
+{
+    if (index < 0 || index >= max_weapon_tubes) {
+        return;
+    }
+    weapon_tube[index].setLoadTimeConfig(time);
 }
 
 void SpaceShip::addBroadcast(int threshold, string message)
