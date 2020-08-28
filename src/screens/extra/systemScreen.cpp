@@ -187,7 +187,7 @@ void SystemScreen::updateInstability(sf::RenderTarget& window, GuiElement* conta
         a_r[n].position.x = left + width / 2.0f;
         a_r[n].position.y = top + height / 2.0f;
         a_r[n].position += sf::vector2FromAngle(float(n) / float(point_count) * 360.0f ) * (radius * (0.95f - r / 300));
-        a_r[n].color = sf::Color(255, 0, 0, 255*(my_spaceship->systems[selected_system].instability_level+0.1));
+        a_r[n].color = sf::Color(255, 0, 0, 255*(my_spaceship->systems[selected_system].instability_level));
     }
 
     // Set a zero value at the "end" of the data point array.
