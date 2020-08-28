@@ -131,7 +131,6 @@ set(SOURCES
 	src/screens/crew1/singlePilotScreen.cpp
 	src/screens/extra/damcon.cpp
 	src/screens/extra/powerManagement.cpp
-	src/screens/extra/instabilityScreen.cpp
 	src/screens/extra/systemScreen.cpp
 	src/screens/extra/databaseScreen.cpp
 	src/screens/extra/commsScreen.cpp

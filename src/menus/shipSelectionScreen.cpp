@@ -498,7 +498,6 @@ void ShipSelectionScreen::updateCrewTypeOptions()
         crew_position_button[singlePilot]->show();
         crew_position_button[damageControl]->show();
         crew_position_button[powerManagement]->show();
-        crew_position_button[instability]->show();
         crew_position_button[systemControl]->show();
         crew_position_button[databaseView]->show();
         crew_position_button[altRelay]->show();

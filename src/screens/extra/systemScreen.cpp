@@ -94,20 +94,16 @@ SystemScreen::SystemScreen(GuiContainer* owner)
     instability_info->setSize(350, 250);
     instability_info->setPosition(0, 0, ACenter);
     
-    instability_label = new GuiLabel(instability_info, "INSTABILITY_LABEL", "Instability Level : ", 30);
-    
-    instability_x_label = new GuiLabel(instability_info, "INSTABILITY_X_LABEL", "Mixed oxide fuel", 30);
-    instability_x_slider = new GuiSlider(instability_info, "", -1.0, 1.0, 0.0, [this](float value) {
-        if (my_spaceship) my_spaceship->setSystemInstabilityXValue(selected_system, value);
-    });
-    instability_x_slider->setSize(340, 25);
-
-    instability_y_label = new GuiLabel(instability_info, "INSTABILITY_Y_LABEL", "Depleted uranium", 30);
-    instability_y_slider = new GuiSlider(instability_info, "", -1.0, 1.0, 0.0, [this](float value) {
-        if (my_spaceship) my_spaceship->systems[selected_system].instability_y_value = value;
-    });
-    instability_y_slider->setSize(340, 25);
-    
+    instability_sum_label = new GuiLabel(instability_info, "INSTABILITY_SUM_LABEL", "Instability Level : ", 30);
+   
+    for(int n=0; n<4; n++)
+    {
+        instability_label[n] = new GuiLabel(instability_info, "INSTABILITY_LABEL", "", 30);
+        instability_slider[n] = new GuiSlider(instability_info, "", -1.0, 1.0, 0.0, [this, n](float value) {
+            if (my_spaceship) my_spaceship->commandSetSystemInstability(selected_system, n+1, value);
+        });
+        instability_slider[n]->setSize(340, 25);
+    }
     selectSystem(ESystem(0));
 }
 
@@ -120,6 +116,15 @@ void SystemScreen::onDraw(sf::RenderTarget& window)
         if (selected_system != SYS_None)
         {
             ShipSystem& system = my_spaceship->systems[selected_system];
+
+            for(int n=0; n<4; n++)
+            {
+                instability_label[n]->setVisible(n < system.instability_difficulty);
+                instability_label[n]->setText(system.instability_label[n]);
+                
+                instability_slider[n]->setVisible(n < system.instability_difficulty);
+                instability_slider[n]->setValue(my_spaceship->getSystemInstabilityValue(selected_system,n+1));
+            }
 
             float health = system.health;
             if (health < 0.0)
@@ -144,12 +149,8 @@ void SystemScreen::onDraw(sf::RenderTarget& window)
             effectiveness_bar->setValue(effectiveness)->setColor(sf::Color(64, 128 * health, 64 * health, 192));
             effectiveness_label->setText(string(int(effectiveness * 100)) + "%");
             
-            instability_x_slider->setValue(system.instability_x_value);
-            instability_y_slider->setValue(system.instability_y_value);
-            
-            instability_label->setText("Instability Level : "+ string(int(system.instability_level * 100)) + "%");
-            
             updateInstability(window, instability_container);
+            instability_sum_label->setText("Instability Level : "+ string(int(system.instability_level * 100)) + "%");
         }
     }
 }
@@ -223,10 +224,10 @@ void SystemScreen::selectSystem(ESystem system)
     if (!my_spaceship)
         return;
     
-    if (my_spaceship->systems[selected_system].instability_x_label != "")
-        instability_x_label->setText(my_spaceship->systems[selected_system].instability_x_label);
-    if (my_spaceship->systems[selected_system].instability_y_label != "")
-        instability_y_label->setText(my_spaceship->systems[selected_system].instability_y_label);
+    //if (my_spaceship->systems[selected_system].instability_x_label != "")
+    //    instability_x_label->setText(my_spaceship->systems[selected_system].instability_x_label);
+    //if (my_spaceship->systems[selected_system].instability_y_label != "")
+    //    instability_y_label->setText(my_spaceship->systems[selected_system].instability_y_label);
     system_title->setText(getLocaleSystemName(system));
 }
 

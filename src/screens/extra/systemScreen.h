@@ -42,12 +42,9 @@ private:
     GuiLabel* coolant_label;
     GuiLabel* effectiveness_title;
     GuiLabel* effectiveness_label;
-    GuiLabel* instability_label;
-    GuiLabel* instability_x_label;
-    GuiLabel* instability_y_label;
-    
-    GuiSlider* instability_x_slider;
-    GuiSlider* instability_y_slider;
+    GuiLabel* instability_sum_label;
+    GuiLabel* instability_label[4];
+    GuiSlider* instability_slider[4];
     
     GuiImage* damage_icon;
     GuiImage* heat_icon;

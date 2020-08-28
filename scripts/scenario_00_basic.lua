@@ -75,7 +75,10 @@ end
 function init()
     -- Spawn a player Atlantis.
     player = PlayerSpaceship():setFaction("Human Navy"):setTemplate("Atlantis")
-    player:setSystemInstabilityFactor("reactor",0.01)
+    player:setSystemInstabilityFactor("reactor",0.10):setSystemInstabilityDifficulty("reactor",3)
+    player:setSystemInstabilityLabel("reactor",1,"Test 1")
+    player:setSystemInstabilityLabel("reactor",2,"Test 2")
+    player:setSystemInstabilityLabel("reactor",3,"Test 3")
 
     enemyList = {}
     friendlyList = {}

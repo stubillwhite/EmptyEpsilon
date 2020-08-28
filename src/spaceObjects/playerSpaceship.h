@@ -255,6 +255,7 @@ public:
     void commandScan(P<SpaceObject> object);
     void commandSetSystemPowerRequest(ESystem system, float power_level);
     void commandSetSystemCoolantRequest(ESystem system, float coolant_level);
+    void commandSetSystemInstability(ESystem system, int slider, float instability);
     void commandDock(P<SpaceObject> station);
     void commandUndock();
     void commandAbortDock();
