@@ -15,6 +15,7 @@ class GuiArrow;
 class GuiToggleButton;
 class GuiProgressbar;
 class GuiProgressSlider;
+class GuiSystemEffectsList;
 
 class EngineeringScreen : public GuiOverlay
 {
@@ -27,6 +28,7 @@ private:
     GuiKeyValueDisplay* rear_shield_display;
     GuiKeyValueDisplay* coolant_display;
     GuiSelfDestructButton* self_destruct_button;
+    GuiSystemEffectsList* system_effects_container;
     GuiLabel* power_label;
     GuiSlider* power_slider;
     GuiLabel* coolant_label;
@@ -48,16 +50,13 @@ private:
         GuiProgressSlider* coolant_bar;
     };
     std::vector<SystemRow> system_rows;
-    GuiAutoLayout* system_effects_container;
-    std::vector<GuiKeyValueDisplay*> system_effects;
-    unsigned int system_effects_index;
-    ESystem selected_system;
 
+    ESystem selected_system;
+    
     float previous_energy_measurement;
     float previous_energy_level;
     float average_energy_delta;
     
-    void addSystemEffect(string key, string value);
     void selectSystem(ESystem system);
 public:
     EngineeringScreen(GuiContainer* owner, ECrewPosition crew_position=engineering);

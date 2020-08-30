@@ -187,6 +187,7 @@ set(SOURCES
 	src/screenComponents/miniGame.cpp
 	src/screenComponents/mineSweeper.cpp
 	src/screenComponents/impulseSound.cpp
+	src/screenComponents/systemEffectsList.cpp
 	src/gui/colorConfig.cpp
 	src/gui/hotkeyConfig.cpp
 	src/gui/joystickConfig.cpp
