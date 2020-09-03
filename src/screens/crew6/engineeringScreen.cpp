@@ -7,6 +7,7 @@
 #include "screenComponents/alertOverlay.h"
 #include "screenComponents/customShipFunctions.h"
 #include "screenComponents/systemEffectsList.h"
+#include "screenComponents/powerDamageIndicator.h"
 
 #include "gui/gui2_keyvaluedisplay.h"
 #include "gui/gui2_autolayout.h"
@@ -115,9 +116,13 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
     system_rows[SYS_JumpDrive].button->setIcon("gui/icons/system_jumpdrive");
     system_rows[SYS_FrontShield].button->setIcon("gui/icons/shields-fore");
     system_rows[SYS_RearShield].button->setIcon("gui/icons/shields-aft");
-
-    //system_effects_container = new GuiAutoLayout(system_config_container, "", GuiAutoLayout::LayoutVerticalBottomToTop);
-    system_effects_container = new GuiSystemEffectsList(system_config_container,"");
+    
+    for(int n=0; n<SYS_COUNT; n++)
+    {
+        (new GuiPowerDamageIndicator(system_rows[n].button, n + "_INDICATOR", ESystem(n), ACenterLeft))->setPosition(0, 0, ABottomLeft)->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
+    }
+    
+    system_effects_container = new GuiSystemEffectsList(system_config_container,"",GuiAutoLayout::LayoutVerticalBottomToTop);
     system_effects_container->setPosition(0, -400, ABottomRight)->setSize(270, 400);
 
     GuiPanel* box = new GuiPanel(system_config_container, "POWER_COOLANT_BOX");
@@ -232,8 +237,6 @@ void EngineeringScreen::onDraw(sf::RenderTarget& window)
             coolant_label->setText("Coolant: " + string(int(system.coolant_level / PlayerSpaceship::max_coolant_per_system * 100)) + "%/" + string(int(std::min(system.coolant_request, my_spaceship->max_coolant) / PlayerSpaceship::max_coolant_per_system * 100)) + "%");
             coolant_slider->setEnable(!my_spaceship->auto_coolant_enabled);
             coolant_slider->setValue(std::min(system.coolant_request, my_spaceship->max_coolant));
-
-            /*system effect*/
         }
     }
     GuiOverlay::onDraw(window);
@@ -363,7 +366,7 @@ void EngineeringScreen::selectSystem(ESystem system)
         system_rows[idx].button->setValue(idx == system);
     }
     selected_system = system;
-    system_effects_container->selected_system = system;
+    system_effects_container->selectSystem(system);
     power_slider->enable();
     if (my_spaceship)
     {

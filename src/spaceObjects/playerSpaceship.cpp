@@ -571,7 +571,8 @@ void PlayerSpaceship::update(float delta)
             addHeat(ESystem(n), delta * systems[n].getHeatingDelta() * system_heatup_per_second);
             
             // update Instability subsystems
-            updateInstability(ESystem(n));
+            if (delta > 0.0)
+                updateInstability(ESystem(n));
         }
 
         // If reactor health is worse than -90% and overheating, it explodes,

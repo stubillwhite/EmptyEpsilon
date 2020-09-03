@@ -11,6 +11,7 @@
 #include "gui/gui2_selector.h"
 #include "gui/gui2_slider.h"
 #include "gui/gui2_togglebutton.h"
+#include "gui/gui2_progressbar.h"
 
 GuiObjectTweak::GuiObjectTweak(GuiContainer* owner, ETweakType tweak_type)
 : GuiPanel(owner, "GM_TWEAK_DIALOG")
@@ -513,18 +514,26 @@ void GuiShipTweakBeamweapons::open(P<SpaceObject> target)
 GuiShipTweakSystems::GuiShipTweakSystems(GuiContainer* owner)
 : GuiTweakPage(owner)
 {
+
     GuiAutoLayout* left_col = new GuiAutoLayout(this, "LEFT_LAYOUT", GuiAutoLayout::LayoutVerticalTopToBottom);
-    left_col->setPosition(50, 25, ATopLeft)->setSize(200, GuiElement::GuiSizeMax);
-    GuiAutoLayout* center_col = new GuiAutoLayout(this, "CENTER_LAYOUT", GuiAutoLayout::LayoutVerticalTopToBottom);
-    center_col->setPosition(10, 25, ATopCenter)->setSize(200, GuiElement::GuiSizeMax);
+    left_col->setPosition(50, 25, ATopLeft)->setSize(300, GuiElement::GuiSizeMax);
     GuiAutoLayout* right_col = new GuiAutoLayout(this, "RIGHT_LAYOUT", GuiAutoLayout::LayoutVerticalTopToBottom);
-    right_col->setPosition(-25, 25, ATopRight)->setSize(200, GuiElement::GuiSizeMax);
-    
+    right_col->setPosition(-25, 25, ATopRight)->setSize(300, GuiElement::GuiSizeMax);
+ 
     for(int n=0; n<SYS_COUNT; n++)
     {
         ESystem system = ESystem(n);
-        (new GuiLabel(left_col, "", tr("{system} health").format({{"system", getLocaleSystemName(system)}}), 20))->setSize(GuiElement::GuiSizeMax, 30);
-        system_damage[n] = new GuiSlider(left_col, "", -1.0, 1.0, 0.0, [this, n](float value) {
+        
+        system_selector[n] = new GuiToggleButton(left_col, "", getLocaleSystemName(system), [this, n](bool value) {
+            system_index = n;
+        });
+        system_selector[n]->setSize(GuiElement::GuiSizeMax, 40);
+        
+        system_box[n] = new GuiAutoLayout(right_col, "", GuiAutoLayout::LayoutVerticalTopToBottom);
+        system_box[n]->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
+    
+        (new GuiLabel(system_box[n], "", tr("slider", "Health level"), 20))->setSize(GuiElement::GuiSizeMax, 30);
+        system_damage[n] = new GuiSlider(system_box[n], "", -1.0, 1.0, 0.0, [this, n](float value) {
             target->systems[n].health = std::min(value,target->systems[n].health_max);
         });
         system_damage[n]->setSize(GuiElement::GuiSizeMax, 30);
@@ -532,8 +541,8 @@ GuiShipTweakSystems::GuiShipTweakSystems(GuiContainer* owner)
         system_damage[n]->addSnapValue( 0.0, 0.01);
         system_damage[n]->addSnapValue( 1.0, 0.01);
 
-        (new GuiLabel(center_col, "", tr("{system} health max").format({{"system", getLocaleSystemName(system)}}), 20))->setSize(GuiElement::GuiSizeMax, 30);
-        system_health_max[n] = new GuiSlider(center_col, "", -1.0, 1.0, 1.0, [this, n](float value) {
+        (new GuiLabel(system_box[n], "", tr("slider", "Health max"), 20))->setSize(GuiElement::GuiSizeMax, 30);
+        system_health_max[n] = new GuiSlider(system_box[n], "", -1.0, 1.0, 1.0, [this, n](float value) {
             target->systems[n].health_max = value;
             target->systems[n].health = std::min(value,target->systems[n].health);
         });
@@ -542,13 +551,74 @@ GuiShipTweakSystems::GuiShipTweakSystems(GuiContainer* owner)
         system_health_max[n]->addSnapValue( 0.0, 0.01);
         system_health_max[n]->addSnapValue( 1.0, 0.01);
 
-        (new GuiLabel(right_col, "", tr("{system} heat").format({{"system", getLocaleSystemName(system)}}), 20))->setSize(GuiElement::GuiSizeMax, 30);
-        system_heat[n] = new GuiSlider(right_col, "", 0.0, 1.0, 0.0, [this, n](float value) {
+        (new GuiLabel(system_box[n], "", tr("slider", "Heat level"), 20))->setSize(GuiElement::GuiSizeMax, 30);
+        system_heat[n] = new GuiSlider(system_box[n], "", 0.0, 1.0, 0.0, [this, n](float value) {
             target->systems[n].heat_level = value;
         });
         system_heat[n]->setSize(GuiElement::GuiSizeMax, 30);
         system_heat[n]->addSnapValue( 0.0, 0.01);
         system_heat[n]->addSnapValue( 1.0, 0.01);
+        
+        (new GuiLabel(system_box[n], "", tr("slider", "Coolant request"), 20))->setSize(GuiElement::GuiSizeMax, 30);
+        system_coolant_bar[n] = new GuiProgressbar(system_box[n], "", 0.0, 10.0, 1.0);
+        system_coolant_bar[n]->setDrawBackground(false)->setSize(GuiElement::GuiSizeMax, 30);
+        system_coolant_bar[n]->setColor(sf::Color(0,128,255));
+        system_coolant_slider[n] = new GuiSlider(system_coolant_bar[n], "", 0.0, 10.0, 0.0, [this, n](float value) {
+            target->systems[n].coolant_request = value;
+        });
+        system_coolant_slider[n]->setSize(GuiElement::GuiSizeMax, 30);
+        system_coolant_slider[n]->addSnapValue( 0.0, 0.01);
+        system_coolant_slider[n]->addSnapValue( 1.0, 0.01);
+        system_coolant_slider[n]->addSnapValue( 2.0, 0.01);
+        system_coolant_slider[n]->addSnapValue( 3.0, 0.01);
+        system_coolant_slider[n]->addSnapValue( 4.0, 0.01);
+        system_coolant_slider[n]->addSnapValue( 5.0, 0.01);
+
+        (new GuiLabel(system_box[n], "", tr("slider", "Hack Level"), 20))->setSize(GuiElement::GuiSizeMax, 30);
+        system_hacked[n] = new GuiSlider(system_box[n], "", 0.0, 1.0, 0.0, [this, n](float value) {
+            target->systems[n].hacked_level = value;
+        });
+        system_hacked[n]->setSize(GuiElement::GuiSizeMax, 30);
+        system_hacked[n]->addSnapValue( 0.0, 0.01);
+        system_hacked[n]->addSnapValue( 0.5, 0.01);
+        system_hacked[n]->addSnapValue( 1.0, 0.01);
+
+        (new GuiLabel(system_box[n], "", tr("slider", "Power request"), 20))->setSize(GuiElement::GuiSizeMax, 30);
+        system_power_bar[n] = new GuiProgressbar(system_box[n], "", 0.0, 3.0, 1.0);
+        system_power_bar[n]->setDrawBackground(false)->setSize(GuiElement::GuiSizeMax, 30);
+        system_power_bar[n]->setColor(sf::Color(255, 255, 0));
+        system_power_slider[n] = new GuiSlider(system_power_bar[n], "", 0.0, 3.0, 0.0, [this, n](float value) {
+            target->systems[n].power_request = value;
+        });
+        system_power_slider[n]->setSize(GuiElement::GuiSizeMax, 30);
+        system_power_slider[n]->addSnapValue( 0.0, 0.01);
+        system_power_slider[n]->addSnapValue( 0.5, 0.01);
+        system_power_slider[n]->addSnapValue( 1.0, 0.01);
+        system_power_slider[n]->addSnapValue( 1.5, 0.01);
+        system_power_slider[n]->addSnapValue( 2.0, 0.01);
+        system_power_slider[n]->addSnapValue( 3.0, 0.01);
+
+        (new GuiLabel(system_box[n], "", tr("slider", "Instability factor"), 20))->setSize(GuiElement::GuiSizeMax, 30);
+        system_instability_factor[n] = new GuiSlider(system_box[n], "", 0.0, 0.5, 0.0, [this, n](float value) {
+            target->systems[n].instability_factor = value;
+        });
+        system_instability_factor[n]->setSize(GuiElement::GuiSizeMax, 30);
+        system_instability_factor[n]->addSnapValue( 0.0, 0.01);
+        system_instability_factor[n]->addSnapValue( 0.1, 0.01);
+        system_instability_factor[n]->addSnapValue( 0.2, 0.01);
+        system_instability_factor[n]->addSnapValue( 0.3, 0.01);
+        system_instability_factor[n]->addSnapValue( 0.4, 0.01);
+        system_instability_factor[n]->addSnapValue( 0.5, 0.01);
+
+        (new GuiLabel(system_box[n], "", tr("slider", "Instability difficulty"), 20))->setSize(GuiElement::GuiSizeMax, 30);
+        system_instability_difficulty[n] = new GuiSlider(system_box[n], "", 0, 4, 0, [this, n](int value) {
+            target->systems[n].instability_difficulty = value;
+        });
+        system_instability_difficulty[n]->setSize(GuiElement::GuiSizeMax, 30); 
+
+        (new GuiLabel(system_box[n], "", tr("slider", "Instability level"), 20))->setSize(GuiElement::GuiSizeMax, 30);
+        system_instability_level[n] = new GuiProgressbar(system_box[n], "", 0.0, 1.0, 0.0);
+        system_instability_level[n]->setSize(GuiElement::GuiSizeMax, 30);
     }
 }
 
@@ -556,9 +626,22 @@ void GuiShipTweakSystems::onDraw(sf::RenderTarget& window)
 {
     for(int n=0; n<SYS_COUNT; n++)
     {
+        system_selector[n]->setValue(n == system_index);
+        system_selector[n]->setEnable(target->hasSystem(ESystem(n)));
+        
+        system_box[n]->setVisible(n == system_index);
+        
         system_damage[n]->setValue(target->systems[n].health);
         system_health_max[n]->setValue(target->systems[n].health_max);
         system_heat[n]->setValue(target->systems[n].heat_level);
+        system_coolant_bar[n]->setValue(target->systems[n].coolant_level);
+        system_coolant_slider[n]->setValue(target->systems[n].coolant_request);
+        system_hacked[n]->setValue(target->systems[n].hacked_level);
+        system_power_bar[n]->setValue(target->systems[n].power_level);
+        system_power_slider[n]->setValue(target->systems[n].power_request);
+        system_instability_level[n]->setValue(target->systems[n].instability_level);
+        system_instability_difficulty[n]->setValue(target->systems[n].instability_difficulty);
+        system_instability_factor[n]->setValue(target->systems[n].instability_factor);
     }
 }
 

@@ -20,7 +20,8 @@ enum ECrewPosition
     //extras
     damageControl,
     powerManagement,
-    systemControl,
+    instabilityControl,
+    systemsMonitor,
     databaseView,
     altRelay,
     commsOnly,

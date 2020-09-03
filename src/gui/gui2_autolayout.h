@@ -23,6 +23,7 @@ public:
     GuiAutoLayout(GuiContainer* owner, string id, ELayoutMode mode);
     
     virtual void onDraw(sf::RenderTarget& window);
+    void selectAutoLayout(ELayoutMode layout);
 protected:
     virtual void drawElements(sf::FloatRect parent_rect, sf::RenderTarget& window);
 };

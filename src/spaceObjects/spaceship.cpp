@@ -211,8 +211,9 @@ SpaceShip::SpaceShip(string multiplayerClassName, float multiplayer_significant_
         registerMemberReplication(&systems[n].health, 0.1);
         registerMemberReplication(&systems[n].health_max, 0.1);
         registerMemberReplication(&systems[n].hacked_level, 0.1);
-        registerMemberReplication(&systems[n].instability_level, 0.1);
-        registerMemberReplication(&systems[n].instability_difficulty, 0.1);
+        registerMemberReplication(&systems[n].instability_level);
+        registerMemberReplication(&systems[n].instability_factor);
+        registerMemberReplication(&systems[n].instability_difficulty);
         
         for(int k=0; k<4; k++)
         {
@@ -220,7 +221,7 @@ SpaceShip::SpaceShip(string multiplayerClassName, float multiplayer_significant_
             systems[n].instability_target[k] = 0.0;
             systems[n].instability_label[k] = "";
             
-            registerMemberReplication(&systems[n].instability_value[k], 0.1);
+            registerMemberReplication(&systems[n].instability_value[k]);
             registerMemberReplication(&systems[n].instability_label[k], 0.1);
         }
     }

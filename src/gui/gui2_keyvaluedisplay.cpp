@@ -2,7 +2,7 @@
 #include "gui2_keyvaluedisplay.h"
 
 GuiKeyValueDisplay::GuiKeyValueDisplay(GuiContainer* owner, string id, float div_distance, string key, string value)
-: GuiElement(owner, id), div_distance(div_distance), key(key), value(value), text_size(20), color(sf::Color::White)
+: GuiElement(owner, id), div_distance(div_distance), key(key), value(value), text_size(20), color(sf::Color::White), background(true)
 {
 }
 
@@ -10,7 +10,8 @@ void GuiKeyValueDisplay::onDraw(sf::RenderTarget& window)
 {
     float div_size = 5.0;
     
-    drawStretched(window, rect, "gui/KeyValueBackground", color);
+    if (background)
+        drawStretched(window, rect, "gui/KeyValueBackground", color);
     if (rect.width >= rect.height)
     {
         drawText(window, sf::FloatRect(rect.left, rect.top, rect.width * div_distance - div_size, rect.height), key, ACenterRight, text_size);
@@ -61,3 +62,10 @@ GuiKeyValueDisplay* GuiKeyValueDisplay::setIcon(string icon_texture)
     this->icon_texture = icon_texture;
     return this;
 }
+
+GuiKeyValueDisplay* GuiKeyValueDisplay::isBackground(bool background)
+{
+    this->background = background;
+    return this;
+}
+

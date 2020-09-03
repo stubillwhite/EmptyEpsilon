@@ -115,6 +115,25 @@ HotkeyConfig::HotkeyConfig()
     newKey("SELF_DESTRUCT_CONFIRM", std::make_tuple("Confirm self-destruct", ""));
     newKey("SELF_DESTRUCT_CANCEL", std::make_tuple("Cancel self-destruct", ""));
 
+    newCategory("INSTABILITY", "Instability");
+    newKey("SELECT_REACTOR", std::make_tuple("Select reactor system", "Num1"));
+    newKey("SELECT_BEAM_WEAPONS", std::make_tuple("Select beam weapon system", "Num2"));
+    newKey("SELECT_MISSILE_SYSTEM", std::make_tuple("Select missile weapon system", "Num3"));
+    newKey("SELECT_MANEUVER", std::make_tuple("Select maneuvering system", "Num4"));
+    newKey("SELECT_IMPULSE", std::make_tuple("Select impulse system", "Num5"));
+    newKey("SELECT_WARP", std::make_tuple("Select warp system", "Num6"));
+    newKey("SELECT_JUMP_DRIVE", std::make_tuple("Select jump drive system", "Num7"));
+    newKey("SELECT_FRONT_SHIELDS", std::make_tuple("Select front shields system", "Num8"));
+    newKey("SELECT_REAR_SHIELDS", std::make_tuple("Select rear shields system", "Num9"));
+    newKey("INCREASE_SLIDER_1", std::make_tuple("Increase slider 1", "Z"));
+    newKey("INCREASE_SLIDER_2", std::make_tuple("Increase slider 2", "S"));
+    newKey("INCREASE_SLIDER_3", std::make_tuple("Increase slider 3", "X"));
+    newKey("INCREASE_SLIDER_4", std::make_tuple("Increase slider 4", ""));
+    newKey("DECREASE_SLIDER_1", std::make_tuple("Decrease slider 1", "A"));
+    newKey("DECREASE_SLIDER_2", std::make_tuple("Decrease slider 2", "Q"));
+    newKey("DECREASE_SLIDER_3", std::make_tuple("Decrease slider 3", "W"));
+    newKey("DECREASE_SLIDER_4", std::make_tuple("Decrease slider 4", ""));
+    
 }
 
 static std::vector<std::pair<string, sf::Keyboard::Key> > sfml_key_names = {
