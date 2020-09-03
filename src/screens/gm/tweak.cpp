@@ -1,6 +1,7 @@
 #include <i18n.h>
 #include "tweak.h"
 #include "playerInfo.h"
+#include "gameGlobalInfo.h"
 #include "spaceObjects/spaceship.h"
 
 #include "gui/gui2_listbox.h"
@@ -17,7 +18,7 @@ GuiObjectTweak::GuiObjectTweak(GuiContainer* owner, ETweakType tweak_type)
 : GuiPanel(owner, "GM_TWEAK_DIALOG")
 {
     setPosition(0, -100, ABottomCenter);
-    setSize(1000, 600);
+    setSize(1000, 700);
 
     GuiListbox* list = new GuiListbox(this, "", [this](int index, string value)
     {
@@ -72,7 +73,7 @@ GuiObjectTweak::GuiObjectTweak(GuiContainer* owner, ETweakType tweak_type)
 
     for(GuiTweakPage* page : pages)
     {
-        page->setSize(700, 600)->setPosition(0, 0, ABottomRight)->hide();
+        page->setSize(700, 700)->setPosition(0, 0, ABottomRight)->hide();
     }
 
     pages[0]->show();
@@ -590,7 +591,7 @@ GuiShipTweakSystems::GuiShipTweakSystems(GuiContainer* owner)
         (new GuiLabel(system_box[n], "", tr("slider", "Coolant request"), 20))->setSize(GuiElement::GuiSizeMax, 30);
         system_coolant_bar[n] = new GuiProgressbar(system_box[n], "", 0.0, 10.0, 1.0);
         system_coolant_bar[n]->setDrawBackground(false)->setSize(GuiElement::GuiSizeMax, 30);
-        system_coolant_bar[n]->setColor(sf::Color(0,128,255));
+        system_coolant_bar[n]->setColor(sf::Color(0, 128, 255, 128));
         system_coolant_slider[n] = new GuiSlider(system_coolant_bar[n], "", 0.0, 10.0, 0.0, [this, n](float value) {
             target->systems[n].coolant_request = value;
         });
@@ -614,7 +615,7 @@ GuiShipTweakSystems::GuiShipTweakSystems(GuiContainer* owner)
         (new GuiLabel(system_box[n], "", tr("slider", "Power request"), 20))->setSize(GuiElement::GuiSizeMax, 30);
         system_power_bar[n] = new GuiProgressbar(system_box[n], "", 0.0, 3.0, 1.0);
         system_power_bar[n]->setDrawBackground(false)->setSize(GuiElement::GuiSizeMax, 30);
-        system_power_bar[n]->setColor(sf::Color(255, 255, 0));
+        system_power_bar[n]->setColor(sf::Color(255, 255, 0, 128));
         system_power_slider[n] = new GuiSlider(system_power_bar[n], "", 0.0, 3.0, 0.0, [this, n](float value) {
             target->systems[n].power_request = value;
         });
@@ -625,6 +626,24 @@ GuiShipTweakSystems::GuiShipTweakSystems(GuiContainer* owner)
         system_power_slider[n]->addSnapValue( 1.5, 0.01);
         system_power_slider[n]->addSnapValue( 2.0, 0.01);
         system_power_slider[n]->addSnapValue( 3.0, 0.01);
+        
+        if (gameGlobalInfo->use_nano_repair_crew)
+        {
+            (new GuiLabel(system_box[n], "", tr("slider", "Repair request"), 20))->setSize(GuiElement::GuiSizeMax, 30);
+            system_repair_bar[n] = new GuiProgressbar(system_box[n], "", 0.0, 3.0, 1.0);
+            system_repair_bar[n]->setDrawBackground(false)->setSize(GuiElement::GuiSizeMax, 30);
+            system_repair_bar[n]->setColor(sf::Color(32, 128, 32, 128));
+            system_repair_slider[n] = new GuiSlider(system_repair_bar[n], "", 0.0, 3.0, 0.0, [this, n](float value) {
+                target->systems[n].repair_request = value;
+            });
+            system_repair_slider[n]->setSize(GuiElement::GuiSizeMax, 30);
+            system_repair_slider[n]->addSnapValue( 0.0, 0.01);
+            system_repair_slider[n]->addSnapValue( 1.0, 0.01);
+            system_repair_slider[n]->addSnapValue( 2.0, 0.01);
+            system_repair_slider[n]->addSnapValue( 3.0, 0.01);
+            system_repair_slider[n]->addSnapValue( 4.0, 0.01);
+            system_repair_slider[n]->addSnapValue( 5.0, 0.01);
+        }
 
         (new GuiLabel(system_box[n], "", tr("slider", "Instability factor"), 20))->setSize(GuiElement::GuiSizeMax, 30);
         system_instability_factor[n] = new GuiSlider(system_box[n], "", 0.0, 0.5, 0.0, [this, n](float value) {
@@ -667,6 +686,8 @@ void GuiShipTweakSystems::onDraw(sf::RenderTarget& window)
         system_hacked[n]->setValue(target->systems[n].hacked_level);
         system_power_bar[n]->setValue(target->systems[n].power_level);
         system_power_slider[n]->setValue(target->systems[n].power_request);
+        system_repair_bar[n]->setValue(target->systems[n].repair_level);
+        system_repair_slider[n]->setValue(target->systems[n].repair_request);
         system_instability_level[n]->setValue(target->systems[n].instability_level);
         system_instability_difficulty[n]->setValue(target->systems[n].instability_difficulty);
         system_instability_factor[n]->setValue(target->systems[n].instability_factor);

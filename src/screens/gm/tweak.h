@@ -175,6 +175,8 @@ private:
     GuiSlider* system_hacked[SYS_COUNT];
     GuiProgressbar* system_power_bar[SYS_COUNT];
     GuiSlider* system_power_slider[SYS_COUNT];
+    GuiProgressbar* system_repair_bar[SYS_COUNT];
+    GuiSlider* system_repair_slider[SYS_COUNT];
     GuiSlider* system_instability_factor[SYS_COUNT];
     GuiSlider* system_instability_difficulty[SYS_COUNT];
     GuiProgressbar* system_instability_level[SYS_COUNT];
