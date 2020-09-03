@@ -32,7 +32,7 @@ if(NOT DEFINED CPACK_PACKAGE_VERSION_MAJOR)
 endif(NOT DEFINED CPACK_PACKAGE_VERSION_MAJOR)
 
 set(VERSION_NUMBER ${CPACK_PACKAGE_VERSION_MAJOR}${CPACK_PACKAGE_VERSION_MINOR}${CPACK_PACKAGE_VERSION_PATCH})
-message(STATUS "EmptyEpsilon Verison = ${VERSION_NUMBER}")
+message(STATUS "EmptyEpsilon Version = ${VERSION_NUMBER}")
 
 # Set our optimization flags.
 set(OPTIMIZER_FLAGS)
@@ -272,6 +272,7 @@ set(SOURCES
 	src/hardware/devices/virtualOutputDevice.cpp
 	src/hardware/devices/philipsHueDevice.cpp
 )
+
 if(WIN32)
     list(APPEND SOURCES EmptyEpsilon.rc src/discord.cpp)
 endif()
