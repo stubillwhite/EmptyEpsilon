@@ -48,14 +48,14 @@ variation:setTubeDirection(4, 180):setWeaponTubeExclusiveFor(4, "Mine")
 
 variation:addRoomSystem(1, 0, 2, 1, "Maneuver");
 variation:addRoomSystem(1, 1, 2, 1, "BeamWeapons");
-variation:addRoom(2, 2, 2, 1);
+variation:addRoomSystem(2, 2, 2, 1, "Drones");
 
 variation:addRoomSystem(0, 3, 1, 2, "RearShield");
 variation:addRoomSystem(1, 3, 2, 2, "Reactor");
 variation:addRoomSystem(3, 3, 2, 2, "Warp");
 variation:addRoomSystem(5, 3, 1, 2, "JumpDrive");
 variation:addRoom(6, 3, 2, 1);
-variation:addRoom(6, 4, 2, 1);
+variation:addRoomSystem(6, 4, 2, 1, "Docks");
 variation:addRoomSystem(8, 3, 1, 2, "FrontShield");
 
 variation:addRoom(2, 5, 2, 1);
@@ -220,8 +220,8 @@ template:setRadarTrace("radartrace_smallstation.png")
 template:setHull(150)
 template:setShields(120, 120, 120, 120, 120, 120)
 template:setSpeed(0, 0.5, 0)
-template:setDockClasses("Starfighter", "Frigate")
---               Arc, Dir, Range, CycleTime, Dmg
+template:setDockClasses("Starfighter", "Frigate", "Drone")
+--                  Arc, Dir, Range, CycleTime, Dmg
 template:setBeam(0, 30,   0, 4000.0, 1.5, 20)
 template:setBeam(1, 30,  60, 4000.0, 1.5, 20)
 template:setBeam(2, 30, 120, 4000.0, 1.5, 20)

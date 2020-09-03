@@ -33,7 +33,7 @@ ColorConfig colorConfig;
 void ColorConfig::load()
 {
     std::unordered_map<string, std::vector<sf::Color*>> color_mapping;
-    
+
     DEF_COLOR(background);
     DEF_COLOR(radar_outline);
     DEF_COLOR(log_generic);
@@ -59,6 +59,11 @@ void ColorConfig::load()
 
     DEF_COLOR(ship_waypoint_background);
     DEF_COLOR(ship_waypoint_text);
+
+    DEF_COLOR(beam_arc_energy);
+    DEF_COLOR(beam_arc_kinetic);
+    DEF_COLOR(beam_arc_emp);
+    DEF_COLOR(beam_arc_heat);
 
     P<ResourceStream> stream = getResourceStream("gui/colors.ini");
     if(!stream)

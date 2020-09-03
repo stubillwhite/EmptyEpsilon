@@ -4,6 +4,7 @@
 #include "spaceship.h"
 #include "commsScriptInterface.h"
 #include "playerInfo.h"
+#include "spaceshipParts/dock.h"
 #include <iostream>
 
 enum ECommsState
@@ -36,11 +37,22 @@ public:
     constexpr static float energy_warp_per_second = 1.0f;
     constexpr static float system_heatup_per_second = 0.05f;
     constexpr static float system_power_level_change_per_second = 0.3;
+    constexpr static float energy_transfer_per_second = 5;
+    constexpr static float heat_transfer_per_second = 0.1;
+    constexpr static float cargo_repair_per_second = 0.1;
+
     // Coolant change rate
     constexpr static float system_coolant_level_change_per_second = 1.2;
+    // Repair change rate
+    constexpr static float system_repair_level_change_per_second = 1.2;
+    // Repair effectiveness
+    constexpr static float system_repair_effect_per_second = 0.005;
     // Total coolant
-    constexpr static float max_coolant_per_system = 10.0f;
+    float max_coolant_per_system = 10.0f;
     float max_coolant;
+    // Total repair
+    float max_repair_per_system = 3.0f;
+    float max_repair;
     // Overheat subsystem damage rate
     constexpr static float damage_per_second_on_overheat = 0.08f;
     // Base time it takes to perform an action
@@ -52,7 +64,11 @@ public:
     constexpr static int max_self_destruct_codes = 3;
     // Subsystem effectiveness base rates
     static float system_power_user_factor[];
-    
+    // Waypoints and routes
+    constexpr static int max_routes = 7;
+    constexpr static int max_waypoints_in_route = 20;
+    constexpr static int max_waypoints = 99;
+
     constexpr static int16_t CMD_PLAY_CLIENT_SOUND = 0x0001;
 
     // Content of a line in the ship's log
@@ -69,7 +85,7 @@ public:
 
         bool operator!=(const ShipLogEntry& e) { return prefix != e.prefix || text != e.text || color != e.color; }
     };
-    
+
     class CustomShipFunction
     {
     public:
@@ -84,7 +100,7 @@ public:
         string caption;
         ECrewPosition crew_position;
         ScriptSimpleCallback callback;
-        
+
         bool operator!=(const CustomShipFunction& csf) { return type != csf.type || name != csf.name || caption != csf.caption || crew_position != csf.crew_position; }
     };
 
@@ -102,6 +118,7 @@ public:
     string control_code;
 
 private:
+    bool on_new_player_ship_called=false;
     // Comms variables
     ECommsState comms_state;
     float comms_open_delay;
@@ -114,12 +131,13 @@ private:
     // Ship's log container
     std::vector<ShipLogEntry> ships_log;
 
-    float long_range_radar_range = 50000.0f;
+    float far_range_radar_range = 50000.0f;
+    float long_range_radar_range = 30000.0f;
     float short_range_radar_range = 5000.0f;
 public:
     std::vector<CustomShipFunction> custom_functions;
 
-    std::vector<sf::Vector2f> waypoints;
+    sf::Vector2f waypoints[max_routes][max_waypoints_in_route];
 
     // Ship functionality
     // Capable of scanning a target
@@ -163,10 +181,22 @@ public:
     EMainScreenSetting main_screen_setting;
     // Content overlaid on the main screen, such as comms
     EMainScreenOverlay main_screen_overlay;
+    
+    string texture_front;
+    string texture_back;
+    string texture_left;
+    string texture_right;
+    string texture_top;
+    string texture_bottom;
+    float texture_r;
+    float texture_g;
+    float texture_b;
+    float texture_a;
 
     EAlertLevel alert_level;
 
-    int32_t linked_science_probe_id;
+    //int32_t linked_science_probe_id;
+    int32_t linked_science_probe_id = -1;
 
     PlayerSpaceship();
     virtual ~PlayerSpaceship();
@@ -243,11 +273,11 @@ public:
     void commandImpulse(float target);
     void commandWarp(int8_t target);
     void commandJump(float distance);
-    void commandSetTarget(P<SpaceObject> target);
+    void commandSetTarget(P<SpaceObject> target, int8_t station = 0);
     void commandSetScienceLink(int32_t id);
     void commandLoadTube(int8_t tubeNumber, EMissileWeapons missileType);
     void commandUnloadTube(int8_t tubeNumber);
-    void commandFireTube(int8_t tubeNumber, float missile_target_angle);    
+    void commandFireTube(int8_t tubeNumber, float missile_target_angle);
     void commandFireTubeAtTarget(int8_t tubeNumber, P<SpaceObject> target);
     void commandSetShields(bool enabled);
     void commandMainScreenSetting(EMainScreenSetting mainScreen);
@@ -256,6 +286,7 @@ public:
     void commandSetSystemPowerRequest(ESystem system, float power_level);
     void commandSetSystemCoolantRequest(ESystem system, float coolant_level);
     void commandSetSystemInstability(ESystem system, int slider, float instability);
+    void commandSetSystemRepairRequest(ESystem system, float repair_level);
     void commandDock(P<SpaceObject> station);
     void commandUndock();
     void commandAbortDock();
@@ -268,21 +299,45 @@ public:
     void commandSetBeamFrequency(int32_t frequency);
     void commandSetBeamSystemTarget(ESystem system);
     void commandSetShieldFrequency(int32_t frequency);
-    void commandAddWaypoint(sf::Vector2f position);
-    void commandRemoveWaypoint(int32_t index);
-    void commandMoveWaypoint(int32_t index, sf::Vector2f position);
+    void commandAddWaypoint(sf::Vector2f position, int route = 0);
+    void commandRemoveWaypoint(int index, int route = 0);
+    void commandMoveWaypoint(int index, sf::Vector2f position, int route = 0);
     void commandActivateSelfDestruct();
     void commandCancelSelfDestruct();
     void commandConfirmDestructCode(int8_t index, uint32_t code);
     void commandCombatManeuverBoost(float amount);
     void commandCombatManeuverStrafe(float strafe);
     void commandLaunchProbe(sf::Vector2f target_position);
+    void commandLaunchCargo(int index);
+    void commandMoveCargo(int index);
+    void commandCancelMoveCargo(int index);
+    void commandSetDockMoveTarget(int srcIdx, int destIdx);
+    void commandSetDockEnergyRequest(int index, float value);
     void commandScanDone();
     void commandScanCancel();
     void commandSetAlertLevel(EAlertLevel level);
     void commandHackingFinished(P<SpaceObject> target, string target_system);
     void commandCustomFunction(string name);
-
+    void commandSetTractorBeamDirection(float direction);
+    void commandSetTractorBeamArc(float arc);
+    void commandSetTractorBeamRange(float range);
+    void commandSetTractorBeamMode(ETractorBeamMode range);
+    
+    void setTexture(string t_front, string t_back, string t_left, string t_right, string t_top, string t_bottom){
+        texture_front = t_front;
+        texture_back = t_back;
+        texture_left = t_left;
+        texture_right = t_right;
+        texture_top = t_top;
+        texture_bottom = t_bottom;
+    };
+    void setTextureColor(float r, float g, float b, float a){
+        texture_r = r;
+        texture_g = g;
+        texture_b = b;
+        texture_a = a;
+    };
+    
     virtual void onReceiveServerCommand(sf::Packet& packet) override;
 
     // Template function
@@ -295,6 +350,14 @@ public:
     void setMaxCoolant(float coolant);
     float getMaxCoolant() { return max_coolant; }
     void setAutoCoolant(bool active) { auto_coolant_enabled = active; }
+    void setMaxCoolantPerSystem(float coolant){ max_coolant_per_system = coolant; }
+    float getMaxCoolantPerSystem() { return max_coolant_per_system; }
+    void setSystemRepairRequest(ESystem system, float request);
+    void setMaxRepair(float repair);
+    float getMaxRepair() { return max_repair; }
+    void setMaxRepairPerSystem(int amount){ max_repair_per_system = (float) amount; }
+    float getMaxRepairPerSystem() { return max_repair_per_system; }
+    void setAutoRepair(bool active) { auto_repair_enabled = active; }
     int getRepairCrewCount();
     void setRepairCrewCount(int amount);
     EAlertLevel getAlertLevel() { return alert_level; }
@@ -304,7 +367,7 @@ public:
     virtual bool useEnergy(float amount) override;
     virtual void addHeat(ESystem system, float amount) override;
     virtual void updateInstability(ESystem system);
-    
+
     // Call on the server to play a sound on the main screen.
     void playSoundOnMainScreen(string sound_name);
 
@@ -325,18 +388,20 @@ public:
     void setShieldsActive(bool active) { shields_active = active; }
 
     // Waypoint functions
-    int getWaypointCount() { return waypoints.size(); }
-    sf::Vector2f getWaypoint(int index) { if (index > 0 && index <= int(waypoints.size())) return waypoints[index - 1]; return sf::Vector2f(0, 0); }
+    int getWaypointCount(int route = 0);
+    sf::Vector2f getWaypoint(int index, int route = 0) { if (route > 0 && route <= max_routes && index > 0 && index <= max_waypoints_in_route) return waypoints[route][index - 1]; return sf::Vector2f(0, 0); }
 
     // Ship control code/password setter
-    void setControlCode(string code) { control_code = code; }
+    void setControlCode(string code) { control_code = code.upper(); }
 
     // Radar function
     virtual void drawOnGMRadar(sf::RenderTarget& window, sf::Vector2f position, float scale, float rotation, bool long_range) override;
 
     // Radar range
+    float getFarRangeRadarRange();
     float getLongRangeRadarRange();
     float getShortRangeRadarRange();
+    void setFarRangeRadarRange(float range);
     void setLongRangeRadarRange(float range);
     void setShortRangeRadarRange(float range);
 
@@ -353,6 +418,12 @@ static inline sf::Packet& operator >> (sf::Packet& packet, PlayerSpaceship::Cust
 
 string alertLevelToString(EAlertLevel level);
 string alertLevelToLocaleString(EAlertLevel level);
+
+static const sf::Vector2f empty_waypoint = sf::Vector2f(FLT_MAX, FLT_MAX);
+static const sf::Color routeColors[PlayerSpaceship::max_routes] = {
+    sf::Color::Blue, sf::Color::White, sf::Color::Green, 
+    sf::Color::Red, sf::Color::Yellow, sf::Color::Magenta, 
+    sf::Color::Cyan};
 
 #ifdef _MSC_VER
 #include "playerSpaceship.hpp"

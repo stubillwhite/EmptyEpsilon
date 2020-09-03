@@ -5,6 +5,8 @@
 #include "spaceObject.h"
 #include "shipTemplate.h"
 
+class SpaceShip;
+
 /**
     An object which is based on a ship template. Contains generic behaviour for:
     * Hull damage
@@ -27,7 +29,7 @@ public:
     float hull_strength, hull_max;
     float shield_hit_effect[max_shield_count];
     bool can_be_destroyed;
-
+    
     bool shares_energy_with_docked;       //[config]
     bool repair_docked;                   //[config]
     bool restocks_scan_probes;
@@ -51,12 +53,13 @@ public:
     virtual string getCallSign() override { return callsign; }
     virtual void takeDamage(float damage_amount, DamageInfo info) override;
     virtual void takeHullDamage(float damage_amount, DamageInfo& info);
+    virtual void takeHeatDamage(float damage_amount, DamageInfo& info);
     virtual void destroyedByDamage(DamageInfo& info) = 0;
     virtual float getShieldDamageFactor(DamageInfo& info, int shield_index);
-    
+
     void setCanBeDestroyed(bool enabled) { can_be_destroyed = enabled; }
     bool getCanBeDestroyed(){ return can_be_destroyed; }
-    
+
     virtual void applyTemplateValues() = 0;
     virtual float getShieldRechargeRate(int shield_index);
 
@@ -105,7 +108,6 @@ public:
 
     void onTakingDamage(ScriptSimpleCallback callback);
     void onDestruction(ScriptSimpleCallback callback);
-
     string getShieldDataString();
 };
 

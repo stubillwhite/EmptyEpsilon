@@ -260,11 +260,13 @@ int main(int argc, char** argv)
     if (PreferencesManager::get("disable_shaders").toInt())
         PostProcessor::setEnable(false);
 
-    P<ResourceStream> main_font_stream = getResourceStream("gui/fonts/BebasNeue Regular.otf");
+    string main_font_file = "gui/fonts/" + PreferencesManager::get("font_main", "BebasNeue Regular.otf");
+    P<ResourceStream> main_font_stream = getResourceStream(main_font_file);
     main_font = new sf::Font();
     main_font->loadFromStream(**main_font_stream);
 
-    P<ResourceStream> bold_font_stream = getResourceStream("gui/fonts/BebasNeue Bold.otf");
+    string bold_font_file = "gui/fonts/" + PreferencesManager::get("font_bold", "BebasNeue Bold.otf");
+    P<ResourceStream> bold_font_stream = getResourceStream(bold_font_file);
     bold_font = new sf::Font();
     bold_font->loadFromStream(**bold_font_stream);
 
@@ -333,13 +335,19 @@ int main(int argc, char** argv)
     if (PreferencesManager::get("engine_enabled").empty())
         PreferencesManager::set("engine_enabled", "2");
 
+     //Set the default for autoconnect option
+    if (PreferencesManager::get("automainscreen").empty())
+        PreferencesManager::set("automainscreen", "");
+    if (PreferencesManager::get("autostationslist").empty())
+        PreferencesManager::set("autostationslist", "");
+
     // Set shaders to default.
     PreferencesManager::set("disable_shaders", PostProcessor::isEnabled() ? 0 : 1);
 
     if (PreferencesManager::get("headless") == "")
     {
 #ifndef _MSC_VER
-		// MFC TODO: Fix me -- save prefs to user prefs dir on Windows.
+        // MFC TODO: Fix me -- save prefs to user prefs dir on Windows.
         if (getenv("HOME"))
         {
 #ifdef __WIN32__
@@ -350,7 +358,7 @@ int main(int argc, char** argv)
             PreferencesManager::save(string(getenv("HOME")) + "/.emptyepsilon/options.ini");
         }else
 #endif
-		{
+        {
             PreferencesManager::save("options.ini");
         }
     }
@@ -379,7 +387,7 @@ void returnToMainMenu()
         int crew_position = PreferencesManager::get("autoconnect").toInt() - 1;
         if (crew_position < 0) crew_position = 0;
         if (crew_position > max_crew_positions) crew_position = max_crew_positions;
-        new AutoConnectScreen(ECrewPosition(crew_position), PreferencesManager::get("autocontrolmainscreen").toInt(), PreferencesManager::get("autoconnectship", "solo"));
+        new AutoConnectScreen(ECrewPosition(crew_position), PreferencesManager::get("automainscreen").toInt(), PreferencesManager::get("autocontrolmainscreen").toInt(), PreferencesManager::get("autoconnectship", "solo"));
     }
     else if (PreferencesManager::get("touchcalib").toInt())
     {

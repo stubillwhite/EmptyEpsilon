@@ -39,7 +39,12 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
     rear_shield_display->setIcon("gui/icons/shields-aft")->setTextSize(20)->setPosition(20, 220, ATopLeft)->setSize(240, 40);
     coolant_display = new GuiKeyValueDisplay(this, "COOLANT_DISPLAY", 0.45, tr("total","Coolant"), "");
     coolant_display->setIcon("gui/icons/coolant")->setTextSize(20)->setPosition(20, 260, ATopLeft)->setSize(240, 40);
-
+    if (gameGlobalInfo->use_nano_repair_crew and gameGlobalInfo->use_system_damage)
+    {
+        repair_display = new GuiKeyValueDisplay(this, "COOLANT_DISPLAY", 0.45, tr("total","Repair"), "");
+        repair_display->setIcon("gui/icons/system_health")->setTextSize(20)->setPosition(20, 300, ATopLeft)->setSize(240, 40);
+    }
+    
     self_destruct_button = new GuiSelfDestructButton(this, "SELF_DESTRUCT");
     self_destruct_button->setPosition(20, 20, ATopLeft)->setSize(240, 100)->setVisible(my_spaceship && my_spaceship->getCanSelfDestruct());
 
@@ -61,7 +66,7 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
         info.button->setSize(300, GuiElement::GuiSizeMax);
         info.damage_bar = new GuiProgressbar(info.layout, id + "_DAMAGE", 0.0, 1.0, 0.0);
         info.damage_bar->setSize(150, GuiElement::GuiSizeMax);
-        info.damage_icon = new GuiImage(info.damage_bar, "", "gui/icons/system_health");
+        info.damage_icon = new GuiImage(info.damage_bar, "", "gui/icons/hull");
         info.damage_icon->setColor(colorConfig.overlay_damaged)->setPosition(0, 0, ACenterRight)->setSize(GuiElement::GuiSizeMatchHeight, GuiElement::GuiSizeMax);
         info.damage_label = new GuiLabel(info.damage_bar, id + "_DAMAGE_LABEL", "...", 20);
         info.damage_label->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
@@ -70,23 +75,45 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
         info.heat_arrow = new GuiArrow(info.heat_bar, id + "_HEAT_ARROW", 0);
         info.heat_arrow->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
         info.heat_icon = new GuiImage(info.heat_bar, "", "gui/icons/status_overheat");
-        info.heat_icon->setColor(colorConfig.overlay_overheating)->setPosition(0, 0, ACenter)->setSize(GuiElement::GuiSizeMatchHeight, GuiElement::GuiSizeMax);        
+        info.heat_icon->setColor(colorConfig.overlay_overheating)->setPosition(0, 0, ACenter)->setSize(GuiElement::GuiSizeMatchHeight, GuiElement::GuiSizeMax);
+        info.heat_label = new GuiLabel(info.heat_bar, id + "_HEAT_LABEL", "...", 20);
+        info.heat_label->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
         info.power_bar = new GuiProgressSlider(info.layout, id + "_POWER", 0.0, 3.0, 0.0, [this,n](float value){
             if (my_spaceship)
                 my_spaceship->commandSetSystemPowerRequest(ESystem(n), value);
         });
         info.power_bar->setColor(sf::Color(192, 192, 32, 128))->setSize(100, GuiElement::GuiSizeMax);
+        info.power_label = new GuiLabel(info.power_bar, id + "_POWER_LABEL", "...", 20);
+        info.power_label->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
         info.coolant_bar = new GuiProgressSlider(info.layout, id + "_COOLANT", 0.0, 10.0, 0.0, [this,n](float value){
             if (my_spaceship)
                 my_spaceship->commandSetSystemCoolantRequest(ESystem(n), value);
         });
         info.coolant_bar->setColor(sf::Color(32, 128, 128, 128))->setSize(100, GuiElement::GuiSizeMax);
+        info.coolant_label = new GuiLabel(info.coolant_bar, id + "_COOLANT_LABEL", "...", 20);
+        info.coolant_label->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
         if (!gameGlobalInfo->use_system_damage){
             info.damage_bar->hide();
-            info.health_max_bar->hide();
             info.heat_bar->setSize(150, GuiElement::GuiSizeMax);
             info.power_bar->setSize(150, GuiElement::GuiSizeMax);
             info.coolant_bar->setSize(150, GuiElement::GuiSizeMax);
+        }
+        if (gameGlobalInfo->use_nano_repair_crew)
+        {
+            info.damage_bar->setSize(150, GuiElement::GuiSizeMax);
+            info.heat_bar->setSize(150, GuiElement::GuiSizeMax);
+            info.power_bar->setSize(150, GuiElement::GuiSizeMax);
+            info.coolant_bar->setSize(150, GuiElement::GuiSizeMax);
+            if (gameGlobalInfo->use_system_damage)
+            {
+                info.repair_bar = new GuiProgressSlider(info.layout, id + "_REPAIR", 0.0, 10.0, 0.0, [this,n](float value){
+                    if (my_spaceship)
+                        my_spaceship->commandSetSystemRepairRequest(ESystem(n), value);
+                });
+                info.repair_bar->setColor(sf::Color(32, 128, 32, 128))->setSize(150, GuiElement::GuiSizeMax);
+                info.repair_label = new GuiLabel(info.repair_bar, id + "_REPAIR_LABEL", "...", 20);
+                info.repair_label->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
+            }
         }
 
         info.layout->moveToBack();
@@ -97,10 +124,19 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
     icon_layout->setSize(GuiElement::GuiSizeMax, 48);
     (new GuiElement(icon_layout, "FILLER"))->setSize(300, GuiElement::GuiSizeMax);
     if (gameGlobalInfo->use_system_damage){
-        (new GuiImage(icon_layout, "SYSTEM_HEALTH_ICON", "gui/icons/system_health"))->setSize(150, GuiElement::GuiSizeMax);
-        (new GuiImage(icon_layout, "HEAT_ICON", "gui/icons/status_overheat"))->setSize(100, GuiElement::GuiSizeMax);
-        (new GuiImage(icon_layout, "POWER_ICON", "gui/icons/energy"))->setSize(100, GuiElement::GuiSizeMax);
-        (new GuiImage(icon_layout, "COOLANT_ICON", "gui/icons/coolant"))->setSize(100, GuiElement::GuiSizeMax);
+        if (gameGlobalInfo->use_nano_repair_crew)
+        {
+            (new GuiKeyValueDisplay(icon_layout, "SYSTEM_HEALTH", 0.9, tr("health"), ""))->setIcon("gui/icons/hull")->setTextSize(30)->setSize(150, GuiElement::GuiSizeMax);
+            (new GuiKeyValueDisplay(icon_layout, "SYSTEM_HEAT", 0.9, tr("heat"), ""))->setIcon("gui/icons/status_overheat")->setTextSize(30)->setSize(150, GuiElement::GuiSizeMax);
+            (new GuiKeyValueDisplay(icon_layout, "SYSTEM_POWER", 0.9, tr("power"), ""))->setIcon("gui/icons/energy")->setTextSize(30)->setSize(150, GuiElement::GuiSizeMax);
+            (new GuiKeyValueDisplay(icon_layout, "SYSTEM_COOLANT", 0.9, tr("coolant"), ""))->setIcon("gui/icons/coolant")->setTextSize(30)->setSize(150, GuiElement::GuiSizeMax);
+            (new GuiKeyValueDisplay(icon_layout, "SYSTEM_REPAIR", 0.9, tr("repair"), ""))->setIcon("gui/icons/system_health")->setTextSize(30)->setSize(150, GuiElement::GuiSizeMax);
+        } else {
+            (new GuiImage(icon_layout, "SYSTEM_HEALTH_ICON", "gui/icons/hull"))->setSize(150, GuiElement::GuiSizeMax);
+            (new GuiImage(icon_layout, "HEAT_ICON", "gui/icons/status_overheat"))->setSize(100, GuiElement::GuiSizeMax);
+            (new GuiImage(icon_layout, "POWER_ICON", "gui/icons/energy"))->setSize(100, GuiElement::GuiSizeMax);
+            (new GuiImage(icon_layout, "COOLANT_ICON", "gui/icons/coolant"))->setSize(100, GuiElement::GuiSizeMax);
+        }
     } else {
         (new GuiImage(icon_layout, "HEAT_ICON", "gui/icons/status_overheat"))->setSize(150, GuiElement::GuiSizeMax);
         (new GuiImage(icon_layout, "POWER_ICON", "gui/icons/energy"))->setSize(150, GuiElement::GuiSizeMax);
@@ -116,14 +152,22 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
     system_rows[SYS_JumpDrive].button->setIcon("gui/icons/system_jumpdrive");
     system_rows[SYS_FrontShield].button->setIcon("gui/icons/shields-fore");
     system_rows[SYS_RearShield].button->setIcon("gui/icons/shields-aft");
-    
+    system_rows[SYS_Docks].button->setIcon("gui/icons/docking");
+    system_rows[SYS_Drones].button->setIcon("gui/icons/heading");
+
     for(int n=0; n<SYS_COUNT; n++)
     {
         (new GuiPowerDamageIndicator(system_rows[n].button, n + "_INDICATOR", ESystem(n), ACenterLeft))->setPosition(0, 0, ABottomLeft)->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
     }
-    
-    system_effects_container = new GuiSystemEffectsList(system_config_container,"",GuiAutoLayout::LayoutVerticalBottomToTop);
-    system_effects_container->setPosition(0, -400, ABottomRight)->setSize(270, 400);
+
+    if (gameGlobalInfo->use_nano_repair_crew)
+    {
+        system_effects_container = new GuiSystemEffectsList(this,"",GuiAutoLayout::LayoutVerticalBottomToTop);
+        system_effects_container->setPosition(-20, -20, ATopRight)->setSize(270, 340);
+    } else {
+        system_effects_container = new GuiSystemEffectsList(system_config_container,"",GuiAutoLayout::LayoutVerticalBottomToTop);
+        system_effects_container->setPosition(0, -400, ABottomRight)->setSize(270, 400);
+    }
 
     GuiPanel* box = new GuiPanel(system_config_container, "POWER_COOLANT_BOX");
     box->setPosition(0, 0, ABottomRight)->setSize(270, 400);
@@ -145,13 +189,33 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
             my_spaceship->commandSetSystemCoolantRequest(selected_system, value);
     });
     coolant_slider->setPosition(140, 20, ATopLeft)->setSize(60, 360);
-    for(float snap_point = 0.0; snap_point <= 10.0; snap_point += 2.5)
-        coolant_slider->addSnapValue(snap_point, 0.1);
     coolant_slider->disable();
 
-    (new GuiShipInternalView(system_row_layouts, "SHIP_INTERNAL_VIEW", 48.0f))->setShip(my_spaceship)->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
+    if (!gameGlobalInfo->use_nano_repair_crew)
+        (new GuiShipInternalView(system_row_layouts, "SHIP_INTERNAL_VIEW", 48.0f))->setShip(my_spaceship)->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
+        
+    if (gameGlobalInfo->use_nano_repair_crew)
+    {
+        box->setPosition(0, 20, ATopCenter)->setSize(450, 340);
+        power_label->setHorizontal()->setPosition(20, 20, ATopLeft)->setSize(400, 30);
+        power_slider->setRange(0.0, 3.0)->setPosition(20, 60, ATopLeft)->setSize(400, 50);
+        coolant_label->setHorizontal()->setPosition(20, 120, ATopLeft)->setSize(400, 30);
+        coolant_slider->setRange(0.0, 10.0)->setPosition(20, 160, ATopLeft)->setSize(400, 50);
+        
+        if (gameGlobalInfo->use_system_damage)
+        {
+            repair_label = new GuiLabel(box, "COOLANT_LABEL", tr("slider", "Repair"), 30);
+            repair_label->setAlignment(ACenterLeft)->setPosition(20, 220, ATopLeft)->setSize(400, 30);
+            repair_slider = new GuiSlider(box, "COOLANT_SLIDER", 0.0, 10.0, 0.0, [this](float value) {
+            if (my_spaceship && selected_system != SYS_None)
+                my_spaceship->commandSetSystemRepairRequest(selected_system, value);
+            });
+            repair_slider->setPosition(20, 260, ATopLeft)->setSize(400, 50);
+            repair_slider->disable();
+        }
+    }
 
-    (new GuiCustomShipFunctions(this, crew_position, ""))->setPosition(-20, 120, ATopRight)->setSize(250, GuiElement::GuiSizeMax);
+    (new GuiCustomShipFunctions(this, crew_position, "", my_spaceship))->setPosition(-20, 120, ATopRight)->setSize(250, GuiElement::GuiSizeMax);
 
     previous_energy_level = 0.0;
     average_energy_delta = 0.0;
@@ -193,7 +257,13 @@ void EngineeringScreen::onDraw(sf::RenderTarget& window)
         front_shield_display->setValue(string(my_spaceship->getShieldPercentage(0)) + "%");
         rear_shield_display->setValue(string(my_spaceship->getShieldPercentage(1)) + "%");
         coolant_display->setValue(string(int(my_spaceship->max_coolant * 10)) + "%");
-
+        if (gameGlobalInfo->use_nano_repair_crew)
+        {
+            coolant_display->setValue(string(int(my_spaceship->max_coolant)));
+            if (gameGlobalInfo->use_system_damage)
+                repair_display->setValue(string(int(my_spaceship->max_repair)));
+        }
+        
         for(int n=0; n<SYS_COUNT; n++)
         {
             SystemRow info = system_rows[n];
@@ -205,6 +275,16 @@ void EngineeringScreen::onDraw(sf::RenderTarget& window)
             else
                 info.damage_bar->setValue(health)->setColor(sf::Color(64, 128 * health, 64 * health, 192));
             info.damage_label->setText(string(int(health * 100)) + "%");
+            info.heat_label->setText(string(int(my_spaceship->systems[n].heat_level * 100)) + "%");
+            info.heat_label->setVisible(my_spaceship->systems[n].heat_level > 0.0);
+            info.power_label->setText(string(int(my_spaceship->systems[n].power_level * 100)) + "%");
+            info.coolant_label->setText(string(my_spaceship->systems[n].coolant_level, 1));
+            info.coolant_label->setVisible(my_spaceship->systems[n].coolant_level > 0.0);
+            if (gameGlobalInfo->use_nano_repair_crew and gameGlobalInfo->use_system_damage)
+            {
+                info.repair_label->setText(string(my_spaceship->systems[n].repair_level, 1));
+                info.repair_label->setVisible(my_spaceship->systems[n].repair_level > 0.0);
+            }
             float health_max = my_spaceship->systems[n].health_max;
             if (health_max < 1.0)
                 info.damage_icon->show();
@@ -227,6 +307,12 @@ void EngineeringScreen::onDraw(sf::RenderTarget& window)
 
             info.power_bar->setValue(my_spaceship->systems[n].power_level);
             info.coolant_bar->setValue(my_spaceship->systems[n].coolant_level);
+            info.coolant_bar->setRange(0.0, my_spaceship->max_coolant_per_system);
+            if (gameGlobalInfo->use_nano_repair_crew and gameGlobalInfo->use_system_damage)
+            {
+                info.repair_bar->setRange(0.0, my_spaceship->max_repair_per_system);
+                info.repair_bar->setValue(my_spaceship->systems[n].repair_level);
+            }
         }
 
         if (selected_system != SYS_None)
@@ -234,9 +320,23 @@ void EngineeringScreen::onDraw(sf::RenderTarget& window)
             ShipSystem& system = my_spaceship->systems[selected_system];
             power_label->setText("Power: " + string(int(system.power_level * 100)) + "%/" + string(int(system.power_request * 100)) + "%");
             power_slider->setValue(system.power_request);
-            coolant_label->setText("Coolant: " + string(int(system.coolant_level / PlayerSpaceship::max_coolant_per_system * 100)) + "%/" + string(int(std::min(system.coolant_request, my_spaceship->max_coolant) / PlayerSpaceship::max_coolant_per_system * 100)) + "%");
+            coolant_label->setText("Coolant: " + string(int(system.coolant_level / my_spaceship->max_coolant_per_system * 100)) + "%/" + string(int(std::min(system.coolant_request, my_spaceship->max_coolant) / my_spaceship->max_coolant_per_system * 100)) + "%");
             coolant_slider->setEnable(!my_spaceship->auto_coolant_enabled);
+            coolant_slider->setRange(0.0, my_spaceship->max_coolant_per_system);
             coolant_slider->setValue(std::min(system.coolant_request, my_spaceship->max_coolant));
+
+            if (gameGlobalInfo->use_nano_repair_crew)
+            {
+                coolant_label->setText("Coolant: " + string(system.coolant_level, 1) + " / " + string(my_spaceship->max_coolant_per_system, 1) + "\t\t (Target: " + string(system.coolant_request, 1)+")");
+                power_label->setText("Power: " + string(int(system.power_level * 100)) + "% \t\t (Target: " + string(int(system.power_request * 100)) + "%)");
+                if (gameGlobalInfo->use_system_damage)
+                {
+                    repair_label->setText("Repair: " + string(system.repair_level, 1) + " / " + string(my_spaceship->max_repair_per_system, 1) + "\t\t (Target: " + string(system.repair_request, 1)+")");
+                    repair_slider->setEnable(!my_spaceship->auto_repair_enabled);
+                    repair_slider->setRange(0.0, my_spaceship->max_repair_per_system);
+                    repair_slider->setValue(std::min(system.repair_request, my_spaceship->max_repair));
+                }
+            }
         }
     }
     GuiOverlay::onDraw(window);
@@ -250,12 +350,12 @@ bool EngineeringScreen::onJoystickAxis(const AxisAction& axisAction){
                     power_slider->setValue((axisAction.value + 1) * 3.0 / 2.0);
                     my_spaceship->commandSetSystemPowerRequest(selected_system, power_slider->getValue());
                     return true;
-                } 
+                }
                 if (axisAction.action == "COOLANT" || axisAction.action == std::string("COOLANT_") + getSystemName(selected_system)){
                     coolant_slider->setValue((axisAction.value + 1) * 10.0 / 2.0);
                     my_spaceship->commandSetSystemCoolantRequest(selected_system, coolant_slider->getValue());
                     return true;
-                } 
+                }
             } else {
                 for(int n=0; n<SYS_COUNT; n++)
                 {
@@ -263,7 +363,7 @@ bool EngineeringScreen::onJoystickAxis(const AxisAction& axisAction){
                     if (axisAction.action == std::string("POWER_") + getSystemName(system)){
                         my_spaceship->commandSetSystemPowerRequest(system, (axisAction.value + 1) * 3.0 / 2.0);
                         return true;
-                    } 
+                    }
                     if (axisAction.action == std::string("COOLANT_") + getSystemName(system)){
                         my_spaceship->commandSetSystemCoolantRequest(system, (axisAction.value + 1) * 10.0 / 2.0);
                         return true;
@@ -288,7 +388,74 @@ void EngineeringScreen::onHotkey(const HotkeyResult& key)
         if (key.hotkey == "SELECT_JUMP_DRIVE") selectSystem(SYS_JumpDrive);
         if (key.hotkey == "SELECT_FRONT_SHIELDS") selectSystem(SYS_FrontShield);
         if (key.hotkey == "SELECT_REAR_SHIELDS") selectSystem(SYS_RearShield);
-        
+        if (key.hotkey == "SELECT_DOCKS") selectSystem(SYS_Docks);
+        if (key.hotkey == "SELECT_DRONES") selectSystem(SYS_Drones);
+
+        if (key.hotkey == "SELECT_NEXT_SYSTEM")
+        {
+            if (selected_system == SYS_None)
+                selectSystem(SYS_Reactor);
+            else
+            {
+                int n = ESystem(int(selected_system) + 1);
+
+                while (n<SYS_COUNT)                
+                {
+                    if (my_spaceship->hasSystem(ESystem(n)))
+                    {
+                        selectSystem(ESystem(n));
+                        break;
+                    }
+                    n++;
+                }
+                if (n == SYS_COUNT)
+                    selectSystem(SYS_Reactor);
+            }
+        }
+        if (key.hotkey == "SELECT_PREVIOUS_SYSTEM")
+        {
+            if (selected_system == SYS_None)
+                selectSystem(ESystem(SYS_COUNT-1));
+            else
+            {
+                int n = ESystem(int(selected_system) - 1);
+
+                while (n>=0)                
+                {
+                    if (my_spaceship->hasSystem(ESystem(n)))
+                    {
+                        selectSystem(ESystem(n));
+                        break;
+                    }
+                    n--;
+                }
+                if (n < 0)
+                    selectSystem(ESystem(SYS_COUNT-1));
+            }
+        }
+
+        if (key.hotkey == "RESET_SYSTEMS")
+        {
+            int n_systems = 0;
+            for(int n=0; n<SYS_COUNT; n++)
+                if (my_spaceship->hasSystem(ESystem(n)))
+                    n_systems ++;
+                    
+            for(int n=0; n<SYS_COUNT; n++)
+            {
+                ESystem system = ESystem(n);
+                power_slider->setValue(1.0f);
+                coolant_slider->setValue(0.0f);
+                my_spaceship->commandSetSystemPowerRequest(system, 1.0f);
+                my_spaceship->commandSetSystemCoolantRequest(system, my_spaceship->max_coolant / n_systems);
+                if (gameGlobalInfo->use_nano_repair_crew)
+                {
+                    repair_slider->setValue(0.0f);
+                    my_spaceship->commandSetSystemRepairRequest(system, my_spaceship->max_repair / n_systems);
+                }
+            }
+        }
+
         if (selected_system != SYS_None)
         {
             // Note the code duplication with extra/powerManagement
@@ -352,6 +519,36 @@ void EngineeringScreen::onHotkey(const HotkeyResult& key)
                 coolant_slider->setValue(my_spaceship->systems[selected_system].coolant_request - 0.5f);
                 my_spaceship->commandSetSystemCoolantRequest(selected_system, coolant_slider->getValue());
             }
+            if (key.hotkey == "COOLANT_MAX")
+            {
+                coolant_slider->setValue(my_spaceship->max_coolant_per_system);
+                my_spaceship->commandSetSystemCoolantRequest(selected_system, coolant_slider->getValue());
+            }
+            if (key.hotkey == "COOLANT_MIN")
+            {
+                coolant_slider->setValue(0.0f);
+                my_spaceship->commandSetSystemCoolantRequest(selected_system, coolant_slider->getValue());
+            }
+            if (gameGlobalInfo->use_nano_repair_crew && key.hotkey == "INCREASE_REPAIR")
+            {
+                repair_slider->setValue(my_spaceship->systems[selected_system].repair_request + 0.5f);
+                my_spaceship->commandSetSystemRepairRequest(selected_system, repair_slider->getValue());
+            }
+            if (gameGlobalInfo->use_nano_repair_crew && key.hotkey == "DECREASE_REPAIR")
+            {
+                repair_slider->setValue(my_spaceship->systems[selected_system].repair_request - 0.5f);
+                my_spaceship->commandSetSystemRepairRequest(selected_system, repair_slider->getValue());
+            }
+            if (gameGlobalInfo->use_nano_repair_crew && key.hotkey == "REPAIR_MAX")
+            {
+                repair_slider->setValue(my_spaceship->max_repair_per_system);
+                my_spaceship->commandSetSystemRepairRequest(selected_system, repair_slider->getValue());
+            }
+            if (gameGlobalInfo->use_nano_repair_crew && key.hotkey == "REPAIR_MIN")
+            {
+                repair_slider->setValue(0.0f);
+                my_spaceship->commandSetSystemRepairRequest(selected_system, repair_slider->getValue());
+            }
         }
     }
 }
@@ -360,7 +557,7 @@ void EngineeringScreen::selectSystem(ESystem system)
 {
     if (my_spaceship && !my_spaceship->hasSystem(system))
         return;
-    
+
     for(int idx=0; idx<SYS_COUNT; idx++)
     {
         system_rows[idx].button->setValue(idx == system);
@@ -372,5 +569,7 @@ void EngineeringScreen::selectSystem(ESystem system)
     {
         power_slider->setValue(my_spaceship->systems[system].power_request);
         coolant_slider->setValue(my_spaceship->systems[system].coolant_request);
+        if (gameGlobalInfo->use_nano_repair_crew and gameGlobalInfo->use_system_damage)
+            repair_slider->setValue(my_spaceship->systems[system].repair_request);
     }
 }

@@ -10,7 +10,7 @@ ShipLogScreen::ShipLogScreen(GuiContainer* owner)
 {
     GuiAutoLayout* shiplog_layout = new GuiAutoLayout(this, "SHIPLOG_LAYOUT", GuiAutoLayout::LayoutHorizontalRightToLeft);
     shiplog_layout->setPosition(50, 120)->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
-    custom_function_sidebar= new GuiCustomShipFunctions(shiplog_layout, shipLog, "");
+    custom_function_sidebar= new GuiCustomShipFunctions(shiplog_layout, shipLog, "", my_spaceship);
     custom_function_sidebar->setSize(270, GuiElement::GuiSizeMax);
     (new GuiOverlay(this, "", sf::Color::White))->setTextureTiled("gui/BackgroundCrosses");
     log_text = new GuiAdvancedScrollText(shiplog_layout, "SHIP_LOG");
@@ -21,7 +21,7 @@ ShipLogScreen::ShipLogScreen(GuiContainer* owner)
 void ShipLogScreen::onDraw(sf::RenderTarget& window)
 {
     GuiOverlay::onDraw(window);
-    
+
     if (my_spaceship)
     {
         if (custom_function_sidebar->hasEntries())
@@ -37,7 +37,7 @@ void ShipLogScreen::onDraw(sf::RenderTarget& window)
         {
             log_text->removeEntry(0);
         }
-        
+
         if (log_text->getEntryCount() > 0 && logs.size() > 0 && log_text->getEntryText(0) != logs[0].text)
         {
             bool updated = false;
@@ -54,7 +54,7 @@ void ShipLogScreen::onDraw(sf::RenderTarget& window)
             if (!updated)
                 log_text->clearEntries();
         }
-        
+
         while(log_text->getEntryCount() < logs.size())
         {
             int n = log_text->getEntryCount();

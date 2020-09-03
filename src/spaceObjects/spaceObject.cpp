@@ -16,6 +16,16 @@ REGISTER_SCRIPT_CLASS_NO_CREATE(SpaceObject)
     /// Returns x, y as meters from the origin.
     /// Example: local x, y = obj:getPosition()
     REGISTER_SCRIPT_CLASS_FUNCTION(Collisionable, getPosition);
+    /// Sets this object's position on the map on the Z axis, in meters from the origin.
+    /// Requires one numeric value
+    /// Allow a better 3D visualisation of space, without changing the game
+    /// Advice : Don't use value higher than +100 or -100 to keep game realistic
+    /// Example: obj:setPositionZ(z)
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceObject, setPositionZ);
+    /// Gets this object's position on the map on the Z axis.
+    /// Returns z as meters from the origin.
+    /// Example: local z = obj:getPositionZ()
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceObject, getPositionZ);
     /// Sets this object's absolute rotation, in degrees.
     /// Unlike setHeading, a value of 0 points to the right of the map.
     /// The value can also be unbounded; it can be negative, or greater than
@@ -215,6 +225,7 @@ REGISTER_SCRIPT_CLASS_NO_CREATE(SpaceObject)
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceObject, getRadarSignatureBiological);
     /// Sets this object's scanning complexity (number of bars in the scanning
     /// minigame) and depth (number of scanning minigames to complete).
+    /// Also clears the scanned state.
     /// Requires two integer values.
     /// Example: obj:setScanningParameters(2, 3)
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceObject, setScanningParameters);
@@ -264,12 +275,15 @@ SpaceObject::SpaceObject(float collision_range, string multiplayer_name, float m
     object_radius = collision_range;
     space_object_list.push_back(this);
     faction_id = 0;
+    position_z = 0;
+    hull = 0;
 
     scanning_complexity_value = 0;
     scanning_depth_value = 0;
 
     registerMemberReplication(&callsign);
     registerMemberReplication(&faction_id);
+    registerMemberReplication(&hull);
     registerMemberReplication(&scanned_by_faction);
     registerMemberReplication(&object_description.not_scanned);
     registerMemberReplication(&object_description.friend_of_foe_identified);
@@ -280,6 +294,7 @@ SpaceObject::SpaceObject(float collision_range, string multiplayer_name, float m
     registerMemberReplication(&radar_signature.biological);
     registerMemberReplication(&scanning_complexity_value);
     registerMemberReplication(&scanning_depth_value);
+    registerMemberReplication(&position_z);
     registerCollisionableReplication(multiplayer_significant_range);
 }
 
@@ -291,7 +306,7 @@ SpaceObject::~SpaceObject()
 void SpaceObject::draw3D()
 {
 #if FEATURE_3D_RENDERING
-    model_info.render(getPosition(), getRotation());
+    model_info.render(getPosition(), getRotation(), getPositionZ());
 #endif//FEATURE_3D_RENDERING
 }
 
@@ -311,7 +326,7 @@ void SpaceObject::destroy()
 
 bool SpaceObject::canBeTargetedBy(P<SpaceObject> other)
 {
-    return false;
+    return gameGlobalInfo->all_can_be_targeted;
 }
 
 bool SpaceObject::canBeSelectedBy(P<SpaceObject> other)
@@ -578,6 +593,8 @@ template<> void convert<DamageInfo>::param(lua_State* L, int& idx, DamageInfo& d
         di.type = DT_Kinetic;
     else if (str == "emp")
         di.type = DT_EMP;
+    else if (str == "heat")
+        di.type = DT_Heat;
 
     if (!lua_isnumber(L, idx))
         return;
@@ -596,6 +613,22 @@ template<> void convert<DamageInfo>::param(lua_State* L, int& idx, DamageInfo& d
         return;
 
     convert<ESystem>::param(L, idx, di.system_target);
+}
+
+template<> void convert<EDamageType>::param(lua_State* L, int& idx, EDamageType& dt)
+{
+    dt = DT_Energy;
+    if (!lua_isstring(L, idx))
+        return;
+    string str = string(luaL_checkstring(L, idx++)).lower();
+    if (str == "energy")
+        dt = DT_Energy;
+    else if (str == "kinetic")
+        dt = DT_Kinetic;
+    else if (str == "emp")
+        dt = DT_EMP;
+    else if (str == "heat")
+        dt = DT_Heat;
 }
 
 template<> void convert<EScannedState>::param(lua_State* L, int& idx, EScannedState& ss)

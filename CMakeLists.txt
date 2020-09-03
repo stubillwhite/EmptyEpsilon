@@ -1,6 +1,7 @@
 project(EmptyEpsilon)
 cmake_minimum_required(VERSION 2.8.12)
 
+
 option(ENABLE_CRASH_LOGGER "Enable the drmingw crash logging facilities" OFF)
 message(STATUS "ENABLE_CRASH_LOGGER is " ${ENABLE_CRASH_LOGGER})
 
@@ -78,6 +79,8 @@ endif()
 set(EXECUTABLE_NAME "EmptyEpsilon")
 set(SOURCES
 	src/main.cpp
+	src/cargo.cpp
+	src/shipCargo.cpp
 	src/threatLevelEstimate.cpp
 	src/preferenceManager.cpp
 	src/pathPlanner.cpp
@@ -97,15 +100,15 @@ set(SOURCES
 	src/gameStateLogger.cpp
 	src/shipTemplate.cpp
 	src/beamTemplate.cpp
+	src/tractorBeamTemplate.cpp
 	src/missileWeaponData.cpp
 	src/factionInfo.cpp
 	src/mesh.cpp
 	src/scenarioInfo.cpp
 	src/repairCrew.cpp
-	src/GMScriptCallback.cpp
 	src/GMMessage.cpp
 	src/tutorialGame.cpp
-    src/scriptDataStorage.cpp
+	src/scriptDataStorage.cpp
 	src/menus/joinServerMenu.cpp
 	src/menus/serverBrowseMenu.cpp
 	src/menus/mainMenus.cpp
@@ -129,6 +132,7 @@ set(SOURCES
 	src/screens/crew6/weaponsScreen.cpp
 	src/screens/crew6/helmsScreen.cpp
 	src/screens/crew1/singlePilotScreen.cpp
+	src/screens/crew1/singlePilotView.cpp
 	src/screens/extra/damcon.cpp
 	src/screens/extra/powerManagement.cpp
 	src/screens/extra/instabilityScreen.cpp
@@ -141,7 +145,11 @@ set(SOURCES
 	src/screens/gm/globalMessageEntryView.cpp
 	src/screens/gm/chatDialog.cpp
 	src/screens/gm/tweak.cpp
+	src/screens/extra/droneOperatorScreen.cpp
+	src/screens/extra/dockMasterScreen.cpp
+	src/screens/extra/tractorBeamScreen.cpp
 	src/screenComponents/aimLock.cpp
+	src/screenComponents/fireLock.cpp
 	src/screenComponents/alertOverlay.cpp
 	src/screenComponents/helpOverlay.cpp
 	src/screenComponents/missileTubeControls.cpp
@@ -189,6 +197,7 @@ set(SOURCES
 	src/screenComponents/mineSweeper.cpp
 	src/screenComponents/impulseSound.cpp
 	src/screenComponents/systemEffectsList.cpp
+	src/screenComponents/tractorBeamControl.cpp
 	src/gui/colorConfig.cpp
 	src/gui/hotkeyConfig.cpp
 	src/gui/joystickConfig.cpp
@@ -246,7 +255,9 @@ set(SOURCES
 	src/spaceObjects/planet.cpp
 	src/spaceObjects/zone.cpp
 	src/spaceObjects/spaceshipParts/beamWeapon.cpp
+	src/spaceObjects/spaceshipParts/tractorBeam.cpp
 	src/spaceObjects/spaceshipParts/weaponTube.cpp
+	src/spaceObjects/spaceshipParts/dock.cpp
 	src/ai/fighterAI.cpp
 	src/ai/ai.cpp
 	src/ai/aiFactory.cpp

@@ -5,7 +5,9 @@
 #include "shipTemplateBasedObject.h"
 #include "spaceStation.h"
 #include "spaceshipParts/beamWeapon.h"
+#include "spaceshipParts/tractorBeam.h"
 #include "spaceshipParts/weaponTube.h"
+#include "spaceshipParts/dock.h"
 
 enum EMainScreenSetting
 {
@@ -43,6 +45,8 @@ public:
     float heat_level; //0.0-1.0, system will damage at 1.0
     float coolant_level; //0.0-10.0
     float coolant_request;
+    float repair_level; //0.0-10.0
+    float repair_request;
     float hacked_level; //0.0-1.0
     
     float getHeatingDelta()
@@ -82,21 +86,26 @@ public:
     constexpr static float warp_charge_time = 4.0f;
     constexpr static float warp_decharge_time = 2.0f;
     constexpr static float jump_drive_charge_time = 90.0;   /*<Total charge time for the jump drive after a max range jump */
+    constexpr static float dock_move_time = 15.0f; // It takes this amount of time to move cargo between two docks
     constexpr static float jump_drive_energy_per_km_charge = 4.0f;
     constexpr static float jump_drive_heat_per_jump = 0.35;
     constexpr static float heat_per_combat_maneuver_boost = 0.2;
     constexpr static float heat_per_combat_maneuver_strafe = 0.2;
     constexpr static float heat_per_warp = 0.02;
     constexpr static float unhack_time = 180.0f; //It takes this amount of time to go from 100% hacked to 0% hacked for systems.
+    constexpr static int max_target_id = 10; // Number of maximal specific weapons stations
+
 
     float energy_level;
     float max_energy_level;
+    Dock docks[max_docks_count];
+
     ShipSystem systems[SYS_COUNT];
     /*!
      *[input] Ship will try to aim to this rotation. (degrees)
      */
     float target_rotation;
-    
+
     /*!
      *[input] Ship will rotate in this velocity. ([-1,1], overrides target_rotation)
      */
@@ -128,6 +137,11 @@ public:
     float impulse_acceleration;
 
     /*!
+     * [config] True if we have a reactor (for energy).
+     */
+    bool has_reactor;
+
+    /*!
      * [config] True if we have a warpdrive.
      */
     bool has_warp_drive;
@@ -146,6 +160,11 @@ public:
      * [config] Amount of speed per warp level, in m/s
      */
     float warp_speed_per_warp_level;
+
+    /*!
+     * [config] Enabled Fire
+     */
+    bool lock_fire;
 
     /*!
      * [output] How much charge there is in the combat maneuvering system (0.0-1.0)
@@ -182,14 +201,15 @@ public:
     int beam_frequency;
     ESystem beam_system_target;
     BeamWeapon beam_weapons[max_beam_weapons];
-
+    TractorBeam tractor_beam;
     /**
      * Frequency setting of the shields.
      */
     int shield_frequency;
 
     /// MultiplayerObjectID of the targeted object, or -1 when no target is selected.
-    int32_t target_id;
+    /// Multi target for specific weapons stations
+    int32_t target_id[max_target_id];
 
     EDockingState docking_state;
     P<SpaceObject> docking_target; //Server only
@@ -215,6 +235,7 @@ public:
      */
     virtual void drawOnRadar(sf::RenderTarget& window, sf::Vector2f position, float scale, float rotation, bool long_range) override;
     virtual void drawOnGMRadar(sf::RenderTarget& window, sf::Vector2f position, float scale, float rotation, bool long_range) override;
+    void drawBeamOnRadar(sf::RenderTarget& window, sf::Vector2f position, float scale, float rotation, sf::Color color, sf::Vector2f beam_position, float beam_direction, float beam_arc, float beam_range);
 
     virtual void update(float delta) override;
     virtual float getShieldRechargeRate(int shield_index) override;
@@ -239,6 +260,14 @@ public:
      * \param info Information about damage type (usefull for damage reduction, etc)
      */
     virtual void takeHullDamage(float damage_amount, DamageInfo& info) override;
+
+    /*!
+     * Spaceship takes heat directly on hull.
+     * This is used when shields are down or by weapons that ignore shields.
+     * \param damage_amount Damage to be delt.
+     * \param info Information about damage type (usefull for damage reduction, etc)
+     */
+    virtual void takeHeatDamage(float damage_amount, DamageInfo& info) override;
 
     /*!
      * Spaceship is destroyed by damage.
@@ -318,7 +347,7 @@ public:
 
     virtual void applyTemplateValues() override;
 
-    P<SpaceObject> getTarget();
+    P<SpaceObject> getTarget(int station = 0);
 
     virtual std::unordered_map<string, string> getGMInfo() override;
 
@@ -333,6 +362,8 @@ public:
     void setMaxEnergy(float amount) { if (amount > 0.0) { max_energy_level = amount;} }
     float getEnergy() { return energy_level; }
     void setEnergy(float amount) { if ( (amount > 0.0) && (amount <= max_energy_level)) { energy_level = amount; } }
+    float getSystemHackedLevel(ESystem system) { if (system >= SYS_COUNT) return 0.0; if (system <= SYS_None) return 0.0; return systems[system].hacked_level; }
+    void setSystemHackedLevel(ESystem system, float hacked_level) { if (system >= SYS_COUNT) return; if (system <= SYS_None) return; systems[system].hacked_level = std::min(1.0f, std::max(0.0f, hacked_level)); }
     float getSystemHealth(ESystem system) { if (system >= SYS_COUNT) return 0.0; if (system <= SYS_None) return 0.0; return systems[system].health; }
     void setSystemHealth(ESystem system, float health) { if (system >= SYS_COUNT) return; if (system <= SYS_None) return; systems[system].health = std::min(1.0f, std::max(-1.0f, health)); }
     float getSystemHealthMax(ESystem system) { if (system >= SYS_COUNT) return 0.0; if (system <= SYS_None) return 0.0; return systems[system].health_max; }
@@ -343,6 +374,8 @@ public:
     void setSystemPower(ESystem system, float power) { if (system >= SYS_COUNT) return; if (system <= SYS_None) return; systems[system].power_level = std::min(3.0f, std::max(0.0f, power)); }
     float getSystemCoolant(ESystem system) { if (system >= SYS_COUNT) return 0.0; if (system <= SYS_None) return 0.0; return systems[system].coolant_level; }
     void setSystemCoolant(ESystem system, float coolant) { if (system >= SYS_COUNT) return; if (system <= SYS_None) return; systems[system].coolant_level = std::min(1.0f, std::max(0.0f, coolant)); }
+    float getSystemRepair(ESystem system) { if (system >= SYS_COUNT) return 0.0; if (system <= SYS_None) return 0.0; return systems[system].repair_level; }
+    void setSystemRepair(ESystem system, float repair) { if (system >= SYS_COUNT) return; if (system <= SYS_None) return; systems[system].repair_level = std::min(1.0f, std::max(0.0f, repair)); }
     float getSystemInstabilityLevel(ESystem system) { if (system >= SYS_COUNT) return 0.0; if (system <= SYS_None) return 0.0; return systems[system].instability_level; }
     void setSystemInstabilityLevel(ESystem system, float instability) { if (system >= SYS_COUNT) return; if (system <= SYS_None) return; systems[system].instability_level = std::min(1.0f, std::max(0.0f, instability)); }
     float getSystemInstabilityFactor(ESystem system) { if (system >= SYS_COUNT) return 0; if (system <= SYS_None) return 0; return systems[system].instability_factor; }
@@ -361,6 +394,8 @@ public:
     void setAcceleration(float acceleration) { impulse_acceleration = acceleration; }
     void setCombatManeuver(float boost, float strafe) { combat_maneuver_boost_speed = boost; combat_maneuver_strafe_speed = strafe; }
 
+    void setReactor(bool has_reactor_drive){ has_reactor = has_reactor_drive;}
+    bool hasReactor() { return has_reactor; }
     bool hasJumpDrive() { return has_jump_drive; }
     void setJumpDrive(bool has_jump) { has_jump_drive = has_jump; }
     void setJumpDriveRange(float min, float max) { jump_drive_min_distance = min; jump_drive_max_distance = max; }
@@ -392,7 +427,7 @@ public:
     float getBeamWeaponDirection(int index) { if (index < 0 || index >= max_beam_weapons) return 0.0; return beam_weapons[index].getDirection(); }
     float getBeamWeaponRange(int index) { if (index < 0 || index >= max_beam_weapons) return 0.0; return beam_weapons[index].getRange(); }
 
-    float getBeamWeaponTurretArc(int index) 
+    float getBeamWeaponTurretArc(int index)
     {
         if (index < 0 || index >= max_beam_weapons)
             return 0.0;
@@ -415,8 +450,10 @@ public:
 
     float getBeamWeaponCycleTime(int index) { if (index < 0 || index >= max_beam_weapons) return 0.0; return beam_weapons[index].getCycleTime(); }
     float getBeamWeaponDamage(int index) { if (index < 0 || index >= max_beam_weapons) return 0.0; return beam_weapons[index].getDamage(); }
+    EDamageType getBeamWeaponDamageType(int index) { if (index < 0 || index >= max_beam_weapons) return DT_Energy; return beam_weapons[index].getDamageType(); }
     float getBeamWeaponEnergyPerFire(int index) { if (index < 0 || index >= max_beam_weapons) return 0.0; return beam_weapons[index].getEnergyPerFire(); }
     float getBeamWeaponHeatPerFire(int index) { if (index < 0 || index >= max_beam_weapons) return 0.0; return beam_weapons[index].getHeatPerFire(); }
+    int getBeamWeaponStation(int index) { if (index < 0 || index >= max_beam_weapons) return 0; return beam_weapons[index].getStation(); }
 
     int getShieldsFrequency(void){ return shield_frequency; }
     void setShieldsFrequency(float freq) { if ((freq > SpaceShip::max_frequency) || (freq < 0)) return; shield_frequency = freq;}
@@ -432,6 +469,13 @@ public:
         beam_weapons[index].setRange(range);
         beam_weapons[index].setCycleTime(cycle_time);
         beam_weapons[index].setDamage(damage);
+    }
+
+    void setBeamWeaponDamageType(int index, int damage_type)
+    {
+        if (index < 0 || index >= max_beam_weapons)
+            return;
+        beam_weapons[index].setDamageType(static_cast<EDamageType>(damage_type));
     }
 
     void setBeamWeaponTurret(int index, float arc, float direction, float rotation_rate)
@@ -452,12 +496,30 @@ public:
 
     void setBeamWeaponEnergyPerFire(int index, float energy) { if (index < 0 || index >= max_beam_weapons) return; return beam_weapons[index].setEnergyPerFire(energy); }
     void setBeamWeaponHeatPerFire(int index, float heat) { if (index < 0 || index >= max_beam_weapons) return; return beam_weapons[index].setHeatPerFire(heat); }
+    void setBeamWeaponStation(int index, int station) { if (index < 0 || index >= max_beam_weapons) return; return beam_weapons[index].setStation(station); }
 
+    void setTractorBeam(ETractorBeamMode mode, float arc, float direction, float range, float max_area, float drag_per_second)
+    {
+        tractor_beam.setMode(mode);
+        tractor_beam.setArc(arc);
+        tractor_beam.setDirection(direction);
+        tractor_beam.setRange(range);
+        tractor_beam.setMaxArea(max_area);
+        tractor_beam.setDragPerSecond(drag_per_second);
+    }
+    
+    void setTractorBeamMax(float max_range, float drag_per_second)
+    {
+        tractor_beam.setMaxRange(max_range);
+        tractor_beam.setDragPerSecond(drag_per_second);
+    }
+    
     void setWeaponTubeCount(int amount);
     int getWeaponTubeCount();
     EMissileWeapons getWeaponTubeLoadType(int index);
     EMissileSizes getWeaponTubeSize(int index);
-    
+    int getWeaponTubeStation(int index);
+
     void weaponTubeAllowMissle(int index, EMissileWeapons type);
     void weaponTubeDisallowMissle(int index, EMissileWeapons type);
     void setWeaponTubeExclusiveFor(int index, EMissileWeapons type);
@@ -465,6 +527,9 @@ public:
     void setWeaponTubeSize(int index, EMissileSizes size);
     void setTubeSize(int index, EMissileSizes size);
     EMissileSizes getTubeSize(int index);
+    void setWeaponTubeStation(int index, int station);
+    void setTubeLoadTime(int index, float time);
+    float getTubeLoadTime(int index);
 
     void setRadarTrace(string trace) { radar_trace = trace; }
 
@@ -473,6 +538,9 @@ public:
     // Return a string that can be appended to an object create function in the lua scripting.
     // This function is used in getScriptExport calls to adjust for tweaks done in the GM screen.
     string getScriptExportModificationsOnTemplate();
+    void addDrone(string drone);
+    bool tryDockDrone(SpaceShip* other);
+    float getDronesControlRange();
 };
 
 float frequencyVsFrequencyDamageFactor(int beam_frequency, int shield_frequency);
@@ -485,6 +553,11 @@ REGISTER_MULTIPLAYER_ENUM(EMainScreenSetting);
 REGISTER_MULTIPLAYER_ENUM(EMainScreenOverlay);
 REGISTER_MULTIPLAYER_ENUM(EDockingState);
 REGISTER_MULTIPLAYER_ENUM(EScannedState);
+REGISTER_MULTIPLAYER_ENUM(EDockType);
+REGISTER_MULTIPLAYER_ENUM(EDockState);
+REGISTER_MULTIPLAYER_ENUM(ETractorBeamMode);
+REGISTER_MULTIPLAYER_ENUM(EDamageType);
+
 
 string frequencyToString(int frequency);
 

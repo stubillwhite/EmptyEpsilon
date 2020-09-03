@@ -9,9 +9,10 @@ GuiKeyValueDisplay::GuiKeyValueDisplay(GuiContainer* owner, string id, float div
 void GuiKeyValueDisplay::onDraw(sf::RenderTarget& window)
 {
     float div_size = 5.0;
-    
+
     if (background)
         drawStretched(window, rect, "gui/KeyValueBackground", color);
+
     if (rect.width >= rect.height)
     {
         drawText(window, sf::FloatRect(rect.left, rect.top, rect.width * div_distance - div_size, rect.height), key, ACenterRight, text_size);

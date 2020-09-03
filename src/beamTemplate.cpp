@@ -1,4 +1,5 @@
 #include "beamTemplate.h"
+#include "spaceObjects/spaceObject.h"
 
 BeamTemplate::BeamTemplate()
 {
@@ -10,7 +11,15 @@ BeamTemplate::BeamTemplate()
     turret_rotation_rate = 0;
     cycle_time = 0;
     damage = 0;
+    /*
+    damage_type = 0; # DT_Energy,
+    damage_type = 1; # DT_Kinetic,
+    damage_type = 2; # DT_EMP,
+    damage_type = 3; # DT_Heat
+    */
+    damage_type = 0;
     beam_texture = "beam_orange.png";
+    station = 0;
 
     energy_per_beam_fire = 3.0;
     heat_per_beam_fire = 0.02;
@@ -105,7 +114,7 @@ float BeamTemplate::getTurretRotationRate()
 
 void BeamTemplate::setTurretRotationRate(float rotation_rate)
 {
-    if (rotation_rate < 0)
+    if (rotation_rate < 0.0)
         this->turret_rotation_rate = 0.0;
     // 25 is an arbitrary limit. Values greater than 25.0 are nearly
     // instantaneous.
@@ -122,10 +131,23 @@ float BeamTemplate::getCycleTime()
 
 void BeamTemplate::setCycleTime(float cycle_time)
 {
-    if(cycle_time <= 0)
+    if (cycle_time <= 0.0)
         this->cycle_time = 0.1;
     else
         this->cycle_time = cycle_time;
+}
+
+int BeamTemplate::getDamageType()
+{
+    return damage_type;
+}
+
+void BeamTemplate::setDamageType(int damage_type)
+{
+    if (damage_type < 0 || damage_type > DT_Count)
+        this->damage_type = 0;
+    else
+        this->damage_type = damage_type;
 }
 
 float BeamTemplate::getDamage()
@@ -161,6 +183,19 @@ void BeamTemplate::setHeatPerFire(float heat)
     heat_per_beam_fire = heat;
 }
 
+int BeamTemplate::getStation()
+{
+    return station;
+}
+
+void BeamTemplate::setStation(int station)
+{
+    if(station < 0)
+        this->station = 0;
+    else
+        this->station = station;
+}
+
 BeamTemplate& BeamTemplate::operator=(const BeamTemplate& other)
 {
     beam_texture = other.beam_texture;
@@ -172,7 +207,9 @@ BeamTemplate& BeamTemplate::operator=(const BeamTemplate& other)
     turret_arc = other.turret_rotation_rate;
     cycle_time = other.cycle_time;
     damage = other.damage;
+    damage_type = other.damage_type;
     energy_per_beam_fire = other.energy_per_beam_fire;
     heat_per_beam_fire = other.heat_per_beam_fire;
+    station = other.station;
     return *this;
 }

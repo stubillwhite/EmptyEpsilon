@@ -27,12 +27,15 @@ private:
     GuiKeyValueDisplay* front_shield_display;
     GuiKeyValueDisplay* rear_shield_display;
     GuiKeyValueDisplay* coolant_display;
+    GuiKeyValueDisplay* repair_display;
     GuiSelfDestructButton* self_destruct_button;
     GuiSystemEffectsList* system_effects_container;
     GuiLabel* power_label;
     GuiSlider* power_slider;
     GuiLabel* coolant_label;
     GuiSlider* coolant_slider;
+    GuiLabel* repair_label;
+    GuiSlider* repair_slider;
 
     class SystemRow
     {
@@ -41,13 +44,17 @@ private:
         GuiToggleButton* button;
         GuiProgressbar* damage_bar;
         GuiImage* damage_icon;
-        GuiProgressbar* health_max_bar;
         GuiLabel* damage_label;
         GuiProgressbar* heat_bar;
         GuiArrow* heat_arrow;
         GuiImage* heat_icon;
+        GuiLabel* heat_label;
         GuiProgressSlider* power_bar;
+        GuiLabel* power_label;
         GuiProgressSlider* coolant_bar;
+        GuiLabel* coolant_label;
+        GuiProgressSlider* repair_bar;
+        GuiLabel* repair_label;
     };
     std::vector<SystemRow> system_rows;
 
@@ -56,11 +63,10 @@ private:
     float previous_energy_measurement;
     float previous_energy_level;
     float average_energy_delta;
-    
     void selectSystem(ESystem system);
 public:
     EngineeringScreen(GuiContainer* owner, ECrewPosition crew_position=engineering);
-    
+
     virtual void onDraw(sf::RenderTarget& window) override;
     virtual void onHotkey(const HotkeyResult& key) override;
     virtual bool onJoystickAxis(const AxisAction& axisAction) override;

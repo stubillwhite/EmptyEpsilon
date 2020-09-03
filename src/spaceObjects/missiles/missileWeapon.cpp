@@ -9,7 +9,8 @@ MissileWeapon::MissileWeapon(string multiplayer_name, const MissileWeaponData& d
     target_angle = 0;
     category_modifier = 1;
     lifetime = data.lifetime;
-    
+    hull = 5;
+
     registerMemberReplication(&target_id);
     registerMemberReplication(&target_angle);
     registerMemberReplication(&category_modifier);
@@ -33,7 +34,7 @@ void MissileWeapon::drawOnRadar(sf::RenderTarget& window, sf::Vector2f position,
 void MissileWeapon::update(float delta)
 {
     updateMovement();
-    
+
     // Small missiles have a larger speed & rotational speed, large ones are slower and turn less fast
     float size_speed_modifier = 1 / category_modifier;
 
@@ -42,7 +43,7 @@ void MissileWeapon::update(float delta)
         soundManager->playSound(data.fire_sound, getPosition(), 200.0, 1.0, 1.0f + random(-0.2f, 0.2f));
         launch_sound_played = true;
     }
-    
+
     // Since we do want the range to remain the same, ensure that slow missiles don't die down as fast.
     lifetime -= delta * size_speed_modifier;
     if (lifetime < 0)
@@ -54,7 +55,7 @@ void MissileWeapon::update(float delta)
 
     if (delta > 0)
     {
-        ParticleEngine::spawn(sf::Vector3f(getPosition().x, getPosition().y, 0), sf::Vector3f(getPosition().x, getPosition().y, 0), sf::Vector3f(1, 0.8, 0.8), sf::Vector3f(0, 0, 0), 5, 20, 5.0);
+        ParticleEngine::spawn(sf::Vector3f(getPosition().x, getPosition().y, getPositionZ()), sf::Vector3f(getPosition().x, getPosition().y, getPositionZ()), sf::Vector3f(1, 0.8, 0.8), sf::Vector3f(0, 0, 0), 5, 20, 5.0);
     }
 }
 
@@ -69,8 +70,30 @@ void MissileWeapon::collide(Collisionable* target, float force)
     {
         return;
     }
+    if (P<MissileWeapon>(object))
+    {
+        return;
+    }
+    P<SpaceShip> ship = object;
+    if (ship && owner == ship->getDockedWith())
+    {
+        return;
+    }
 
     hitObject(object);
+    destroy();
+}
+
+void MissileWeapon::takeDamage(float damage_amount, DamageInfo info)
+{
+    // If no hull, then it could no be destroyed
+    if (hull <= 0)
+        return;
+    if (info.type == DT_Heat)
+        return;
+    if (random(1,100)<50)
+        return;
+
     destroy();
 }
 
@@ -89,7 +112,22 @@ void MissileWeapon::updateMovement()
             {
                 target = game_client->getObjectById(target_id);
             }
-
+            
+            if (target)
+            {
+                if (position_z < target->position_z)
+                    setPositionZ(getPositionZ() + 0.5);
+                if (position_z > target->position_z)
+                    setPositionZ(getPositionZ() - 0.5);
+            }
+            else
+            {
+                if (position_z < 0)
+                    setPositionZ(getPositionZ() + 0.5);
+                if (position_z > 0)
+                    setPositionZ(getPositionZ() - 0.5);
+            }
+            
             if (target && (target->getPosition() - getPosition()) < data.homing_range + target->getRadius())
             {
                 target_angle = sf::vector2ToAngle(target->getPosition() - getPosition());

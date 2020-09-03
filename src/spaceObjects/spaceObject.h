@@ -9,9 +9,11 @@
 
 enum EDamageType
 {
-    DT_Energy,
+    DT_Energy = 0,
     DT_Kinetic,
-    DT_EMP
+    DT_EMP,
+    DT_Heat,
+    DT_Count
 };
 
 class DamageInfo
@@ -105,12 +107,17 @@ public:
     int scanning_complexity_value;
     int scanning_depth_value;
     string callsign;
+    float position_z;
+    float hull;
 
     SpaceObject(float collisionRange, string multiplayerName, float multiplayer_significant_range=-1);
     virtual ~SpaceObject();
 
     float getRadius() { return object_radius; }
     void setRadius(float radius) { object_radius = radius; setCollisionRadius(radius); }
+    
+    float getPositionZ() { return position_z; }
+    void setPositionZ(float z) { position_z = z; }
 
     // Return the object's raw radar signature. The default signature is 0,0,0.
     virtual RawRadarSignatureInfo getRadarSignatureInfo() { return radar_signature; }
@@ -232,6 +239,8 @@ protected:
 
 // Define a script conversion function for the DamageInfo structure.
 template<> void convert<DamageInfo>::param(lua_State* L, int& idx, DamageInfo& di);
+// Define a script conversion function for the structure
+template<> void convert<EDamageType>::param(lua_State* L, int& idx, EDamageType& dt);
 // Function to convert a lua parameter to a scan state.
 template<> void convert<EScannedState>::param(lua_State* L, int& idx, EScannedState& ss);
 

@@ -2,6 +2,8 @@
 #include "spaceObjects/spaceship.h"
 #include "spaceObjects/beamEffect.h"
 #include "spaceObjects/spaceObject.h"
+#include "preferenceManager.h"
+#include "gameGlobalInfo.h"
 
 BeamWeapon::BeamWeapon()
 {
@@ -14,8 +16,10 @@ BeamWeapon::BeamWeapon()
     cycle_time = 6.0;
     cooldown = 0.0;
     damage = 1.0;
+    damage_type = DT_Energy;
     energy_per_beam_fire = 3.0;
     heat_per_beam_fire = 0.02;
+    station = 0;
     parent = nullptr;
 }
 
@@ -31,7 +35,9 @@ void BeamWeapon::setParent(SpaceShip* parent)
     parent->registerMemberReplication(&turret_direction);
     parent->registerMemberReplication(&turret_rotation_rate);
     parent->registerMemberReplication(&cycle_time);
+    parent->registerMemberReplication(&damage_type);
     parent->registerMemberReplication(&cooldown, 0.5);
+    parent->registerMemberReplication(&station, 1.0);
 }
 
 void BeamWeapon::setArc(float arc)
@@ -109,14 +115,24 @@ void BeamWeapon::setDamage(float damage)
     this->damage = damage;
 }
 
+void BeamWeapon::setStation(int station)
+{
+    this->station = station;
+}
+
 float BeamWeapon::getDamage()
 {
     return damage;
 }
 
-float BeamWeapon::getEnergyPerFire()
+void BeamWeapon::setDamageType(EDamageType damage_type)
 {
-    return energy_per_beam_fire;
+    this->damage_type = damage_type;
+}
+
+EDamageType BeamWeapon::getDamageType()
+{
+    return damage_type;
 }
 
 void BeamWeapon::setEnergyPerFire(float energy)
@@ -124,14 +140,19 @@ void BeamWeapon::setEnergyPerFire(float energy)
     energy_per_beam_fire = energy;
 }
 
-float BeamWeapon::getHeatPerFire()
+float BeamWeapon::getEnergyPerFire()
 {
-    return heat_per_beam_fire;
+    return energy_per_beam_fire;
 }
 
 void BeamWeapon::setHeatPerFire(float heat)
 {
     heat_per_beam_fire = heat;
+}
+
+float BeamWeapon::getHeatPerFire()
+{
+    return heat_per_beam_fire;
 }
 
 void BeamWeapon::setPosition(sf::Vector3f position)
@@ -159,16 +180,24 @@ float BeamWeapon::getCooldown()
     return cooldown;
 }
 
+int BeamWeapon::getStation()
+{
+    return station;
+}
+
 void BeamWeapon::update(float delta)
 {
     if (cooldown > 0.0)
         cooldown -= delta * parent->getSystemEffectiveness(SYS_BeamWeapons);
 
-    P<SpaceObject> target = parent->getTarget();
+    P<SpaceObject> target = parent->getTarget(station);
+    if (!target)
+        target = parent->getTarget(0);
 
     // Check on beam weapons only if we are on the server, have a target, and
-    // not paused, and if the beams are cooled down or have a turret arc.
-    if (game_server && range > 0.0 && target && parent->isEnemy(target) && delta > 0 && parent->current_warp == 0.0 && parent->docking_state == DS_NotDocking)
+    // not paused, and if the beams are cooled down or have a turret arc, and 
+    // if the specific weapons station is ok.
+    if (game_server && range > 0.0 && target && (parent->isEnemy(target) || gameGlobalInfo->all_can_be_targeted) && delta > 0 && parent->current_warp == 0.0 && parent->docking_state == DS_NotDocking)
     {
         // Get the angle to the target.
         sf::Vector2f diff = target->getPosition() - (parent->getPosition() + sf::rotateVector(sf::Vector2f(position.x, position.y), parent->getRotation()));
@@ -195,9 +224,7 @@ void BeamWeapon::update(float delta)
                     {
                         // ... rotate the turret's beam toward the target.
                         if (fabsf(angle_diff) > 0)
-                        {
                             direction += (angle_diff / fabsf(angle_diff)) * std::min(turret_rotation_rate * parent->getSystemEffectiveness(SYS_BeamWeapons), fabsf(angle_diff));
-                        }
                     // If the target is outside of the turret's arc ...
                     } else {
                         // ... rotate the turret's beam toward the turret's
@@ -205,31 +232,35 @@ void BeamWeapon::update(float delta)
                         float reset_angle_diff = sf::angleDifference(direction, turret_direction);
 
                         if (fabsf(reset_angle_diff) > 0)
-                        {
                             direction += (reset_angle_diff / fabsf(reset_angle_diff)) * std::min(turret_rotation_rate * parent->getSystemEffectiveness(SYS_BeamWeapons), fabsf(reset_angle_diff));
-                        }
                     }
                 }
             }
+            
+            // Fire if Fire Lock is enabled
+            if (!parent->lock_fire)
+                return;
 
-            // If the target is in the beam's arc and range, the beam has cooled
-            // down, and the beam can consume enough energy to fire ...
-            if (distance < range && cooldown <= 0.0 && fabsf(angle_diff) < arc / 2.0 && parent->useEnergy(energy_per_beam_fire))
+            // Fire only if the target is in the beam's arc and range, the beam
+            // has cooled down, and the beam can consume enough energy to fire.
+            if (distance < range && cooldown <= 0.0 && fabsf(angle_diff) < arc / 2.0)
             {
-                // ... add heat to the beam and zap the target.
-                parent->addHeat(SYS_BeamWeapons, heat_per_beam_fire);
-                fire(target, parent->beam_system_target);
+                if (parent->useEnergy(energy_per_beam_fire)) {
+                    parent->addHeat(SYS_BeamWeapons, heat_per_beam_fire);
+                    fire(target, parent->beam_system_target);
+                }
             }
         }
-    // If the beam is turreted and can move, but doesn't have a target, reset it
-    // if necessary.
-    } else if (game_server && range > 0.0 && delta > 0 && turret_arc > 0.0 && direction != turret_direction && turret_rotation_rate > 0) {
+    }
+    else if (game_server && range > 0.0 && delta > 0 && turret_arc > 0.0 &&
+             direction != turret_direction && turret_rotation_rate > 0)
+    {
+        // If the beam is turreted and can move, but doesn't have a target, reset it
+        // if necessary.
         float reset_angle_diff = sf::angleDifference(direction, turret_direction);
 
         if (fabsf(reset_angle_diff) > 0)
-        {
             direction += (reset_angle_diff / fabsf(reset_angle_diff)) * std::min(turret_rotation_rate * parent->getSystemEffectiveness(SYS_BeamWeapons), fabsf(reset_angle_diff));
-        }
     }
 }
 
@@ -249,8 +280,9 @@ void BeamWeapon::fire(P<SpaceObject> target, ESystem system_target)
     effect->beam_fire_sound = "sfx/laser_fire.wav";
     effect->beam_fire_sound_power = damage / 6.0f;
 
-    DamageInfo info(parent, DT_Energy, hit_location);
+    DamageInfo info(parent, damage_type, hit_location);
     info.frequency = parent->beam_frequency; // Beam weapons now always use frequency of the ship.
     info.system_target = system_target;
+
     target->takeDamage(damage, info);
 }

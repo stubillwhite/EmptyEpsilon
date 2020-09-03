@@ -35,6 +35,10 @@ REGISTER_SCRIPT_SUBCLASS(PlayerSpaceship, SpaceShip)
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, transferPlayersAtPositionToShip);
     /// Returns true if a station is occupied by a player, and false if not.
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, hasPlayerAtPosition);
+    /// Set background textures files for the player
+    REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, setTexture);
+    /// Set background textures color for the player
+    REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, setTextureColor);
 
     // Comms functions return Boolean values if true.
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, isCommsInactive);
@@ -57,6 +61,9 @@ REGISTER_SCRIPT_SUBCLASS(PlayerSpaceship, SpaceShip)
     /// Set the maximum coolant available to engineering. Default is 10.
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, setMaxCoolant);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, getMaxCoolant);
+    /// Set the maximum coolant availbale for each system. Default is 10
+    REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, setMaxCoolantPerSystem);
+    REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, getMaxCoolantPerSystem);
 
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, setScanProbeCount);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, getScanProbeCount);
@@ -68,7 +75,7 @@ REGISTER_SCRIPT_SUBCLASS(PlayerSpaceship, SpaceShip)
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, addCustomMessage);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, addCustomMessageWithCallback);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, removeCustom);
-    
+
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, getBeamSystemTarget);
     /// Gets the name of the target system, instead of the ID
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, getBeamSystemTargetName);
@@ -91,6 +98,7 @@ REGISTER_SCRIPT_SUBCLASS(PlayerSpaceship, SpaceShip)
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandSetSystemPowerRequest);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandSetSystemCoolantRequest);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandSetSystemInstability);
+    REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandSetSystemRepairRequest);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandDock);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandUndock);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandAbortDock);
@@ -115,6 +123,9 @@ REGISTER_SCRIPT_SUBCLASS(PlayerSpaceship, SpaceShip)
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandCombatManeuverBoost);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandSetScienceLink);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandSetAlertLevel);
+    REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandSetTractorBeamDirection);
+    REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandSetTractorBeamArc);
+    REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandSetTractorBeamRange);
 
     /// Return the number of Engineering repair crews on the ship.
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, getRepairCrewCount);
@@ -122,6 +133,9 @@ REGISTER_SCRIPT_SUBCLASS(PlayerSpaceship, SpaceShip)
     /// than the number of repair crews, this function removes repair crews.
     /// If the value is greater, it adds new repair crews at random locations.
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, setRepairCrewCount);
+    /// Set the maximum nano repair crew available to engineering. Default is 3.
+    REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, setMaxRepairPerSystem);
+    REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, getMaxRepairPerSystem);
     /// Sets whether automatic coolant distribution is enabled. This sets the
     /// amount of coolant proportionally to the amount of heat in that system.
     /// Use this command on ships to require less player interaction, especially
@@ -133,8 +147,10 @@ REGISTER_SCRIPT_SUBCLASS(PlayerSpaceship, SpaceShip)
     /// Returns the launching PlayerSpaceship and launched ScanProbe.
     /// Example: player:onProbeLaunch(trackProbe)
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, onProbeLaunch);
+    REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, getFarRangeRadarRange);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, getLongRangeRadarRange);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, getShortRangeRadarRange);
+    REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, setFarRangeRadarRange);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, setLongRangeRadarRange);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, setShortRangeRadarRange);
     /// Set whether the object can scan other objects.
@@ -215,6 +231,8 @@ float PlayerSpaceship::system_power_user_factor[] = {
     /*SYS_JumpDrive*/     5.0 * 0.08,
     /*SYS_FrontShield*/   5.0 * 0.08,
     /*SYS_RearShield*/    5.0 * 0.08,
+    /*SYS_Docks*/         1.0 * 0.08,
+    /*SYS_Drones*/        3.0 * 0.08,
 };
 
 static const int16_t CMD_TARGET_ROTATION = 0x0001;
@@ -260,6 +278,16 @@ static const int16_t CMD_HACKING_FINISHED = 0x0028;
 static const int16_t CMD_CUSTOM_FUNCTION = 0x0029;
 static const int16_t CMD_TURN_SPEED = 0x002A;
 static const int16_t CMD_SET_SYSTEM_INSTABILITY = 0x002B;
+static const int16_t CMD_SET_SYSTEM_REPAIR_REQUEST = 0x002C;
+static const int16_t CMD_LAUNCH_CARGO = 0x0030;
+static const int16_t CMD_MOVE_CARGO = 0x0031;
+static const int16_t CMD_CANCEL_MOVE_CARGO = 0x0032;
+static const int16_t CMD_SET_DOCK_MOVE_TARGET = 0x0033;
+static const int16_t CMD_SET_DOCK_ENERGY_REQUEST = 0x0034;
+static const int16_t CMD_SET_TRACTOR_BEAM_DIRECTION = 0x0035;
+static const int16_t CMD_SET_TRACTOR_BEAM_ARC = 0x0036;
+static const int16_t CMD_SET_TRACTOR_BEAM_RANGE = 0x0037;
+static const int16_t CMD_SET_TRACTOR_BEAM_MODE = 0x0038;
 
 string alertLevelToString(EAlertLevel level)
 {
@@ -298,6 +326,16 @@ PlayerSpaceship::PlayerSpaceship()
     // Initialize ship settings
     main_screen_setting = MSS_Front;
     main_screen_overlay = MSO_HideComms;
+    texture_front = "StarsFront";
+    texture_back = "StarsBack";
+    texture_left = "StarsLeft";
+    texture_right = "StarsRight";
+    texture_top = "StarsTop";
+    texture_bottom = "StarsBottom";
+    texture_r = 1.0;
+    texture_g = 1.0;
+    texture_b = 1.0;
+    texture_a = 1.0;
     hull_damage_indicator = 0.0;
     jump_indicator = 0.0;
     comms_state = CS_Inactive;
@@ -306,11 +344,11 @@ PlayerSpaceship::PlayerSpaceship()
     auto_repair_enabled = false;
     auto_coolant_enabled = false;
     max_coolant = max_coolant_per_system;
+    max_repair = max_repair_per_system;
     scan_probe_stock = max_scan_probes;
     alert_level = AL_Normal;
     shields_active = false;
     control_code = "";
-
     setFactionId(1);
 
     // For now, set player ships to always be fully scanned to all other ships
@@ -337,6 +375,9 @@ PlayerSpaceship::PlayerSpaceship()
     registerMemberReplication(&shield_calibration_delay, 0.5);
     registerMemberReplication(&auto_repair_enabled);
     registerMemberReplication(&max_coolant);
+    registerMemberReplication(&max_coolant_per_system);
+    registerMemberReplication(&max_repair);
+    registerMemberReplication(&max_repair_per_system);
     registerMemberReplication(&auto_coolant_enabled);
     registerMemberReplication(&beam_system_target);
     registerMemberReplication(&comms_state);
@@ -345,16 +386,34 @@ PlayerSpaceship::PlayerSpaceship()
     registerMemberReplication(&comms_target_name);
     registerMemberReplication(&comms_incomming_message);
     registerMemberReplication(&ships_log);
-    registerMemberReplication(&waypoints);
+    //registerMemberReplication(&waypoints);
+    for(int r = 0; r < max_routes; r++) {
+        for(int wp = 0; wp < max_waypoints_in_route; wp++) {
+            waypoints[r][wp] = empty_waypoint;
+            registerMemberReplication(&waypoints[r][wp]);
+        }
+    }
     registerMemberReplication(&scan_probe_stock);
     registerMemberReplication(&activate_self_destruct);
     registerMemberReplication(&self_destruct_countdown, 0.2);
     registerMemberReplication(&alert_level);
     registerMemberReplication(&linked_science_probe_id);
     registerMemberReplication(&control_code);
+    registerMemberReplication(&far_range_radar_range);
     registerMemberReplication(&long_range_radar_range);
     registerMemberReplication(&short_range_radar_range);
     registerMemberReplication(&custom_functions);
+    
+    registerMemberReplication(&texture_front);
+    registerMemberReplication(&texture_back);
+    registerMemberReplication(&texture_left);
+    registerMemberReplication(&texture_right);
+    registerMemberReplication(&texture_top);
+    registerMemberReplication(&texture_bottom);
+    registerMemberReplication(&texture_r);
+    registerMemberReplication(&texture_g);
+    registerMemberReplication(&texture_b);
+    registerMemberReplication(&texture_a);
 
     // Determine which stations must provide self-destruct confirmation codes.
     for(int n = 0; n < max_self_destruct_codes; n++)
@@ -376,13 +435,17 @@ PlayerSpaceship::PlayerSpaceship()
         systems[n].power_level = 1.0;
         systems[n].power_request = 1.0;
         systems[n].coolant_level = 0.0;
-        systems[n].coolant_level = 0.0;
+        systems[n].coolant_request = 0.0;
+        systems[n].repair_level = 0.0;
+        systems[n].repair_request = 0.0;
         systems[n].heat_level = 0.0;
 
         registerMemberReplication(&systems[n].power_level);
         registerMemberReplication(&systems[n].power_request);
         registerMemberReplication(&systems[n].coolant_level);
         registerMemberReplication(&systems[n].coolant_request);
+        registerMemberReplication(&systems[n].repair_level);
+        registerMemberReplication(&systems[n].repair_request);
         registerMemberReplication(&systems[n].heat_level, 1.0);
     }
 
@@ -428,33 +491,40 @@ void PlayerSpaceship::update(float delta)
     {
         P<ShipTemplateBasedObject> docked_with_template_based = docking_target;
         P<SpaceShip> docked_with_ship = docking_target;
-
-        // Derive a base energy request rate from the player ship's maximum
-        // energy capacity.
-        float energy_request = std::min(delta * 10.0f, max_energy_level - energy_level);
-
-        // If we're docked with a shipTemplateBasedObject, and that object is
-        // set to share its energy with docked ships, transfer energy from the
-        // mothership to docked ships until the mothership runs out of energy
-        // or the docked ship doesn't require any.
-        if (docked_with_template_based && docked_with_template_based->shares_energy_with_docked)
+        
+        if (docked_with_ship && docked_with_ship->tryDockDrone(this))
         {
-            if (!docked_with_ship || docked_with_ship->useEnergy(energy_request))
-                energy_level += energy_request;
-        }
+            // this drone has docked with a carrier
+            destroy();
+        }else{
 
-        // If a shipTemplateBasedObject and is allowed to restock
-        // scan probes with docked ships.
-        if (docked_with_template_based && docked_with_template_based->restocks_scan_probes)
-        {
-            if (scan_probe_stock < max_scan_probes)
+            // Derive a base energy request rate from the player ship's maximum
+            // energy capacity.
+            float energy_request = std::min(delta * 10.0f, max_energy_level - energy_level);
+
+            // If we're docked with a shipTemplateBasedObject, and that object is
+            // set to share its energy with docked ships, transfer energy from the
+            // mothership to docked ships until the mothership runs out of energy
+            // or the docked ship doesn't require any.
+            if (docked_with_template_based && docked_with_template_based->shares_energy_with_docked)
             {
-                scan_probe_recharge += delta;
+                if (!docked_with_ship || docked_with_ship->useEnergy(energy_request))
+                    energy_level += energy_request;
+            }
 
-                if (scan_probe_recharge > scan_probe_charge_time)
+            // If a shipTemplateBasedObject and is allowed to restock
+            // scan probes with docked ships.
+            if (docked_with_template_based && docked_with_template_based->restocks_scan_probes)
+            {
+                if (scan_probe_stock < max_scan_probes)
                 {
-                    scan_probe_stock += 1;
-                    scan_probe_recharge = 0.0;
+                    scan_probe_recharge += delta;
+
+                    if (scan_probe_recharge > scan_probe_charge_time)
+                    {
+                        scan_probe_stock += 1;
+                        scan_probe_recharge = 0.0;
+                    }
                 }
             }
         }
@@ -479,6 +549,27 @@ void PlayerSpaceship::update(float delta)
             {
                 if (!hasSystem(ESystem(n))) continue;
                 systems[n].coolant_request = max_coolant * systems[n].heat_level / total_heat;
+            }
+        }
+    }
+    
+    // Automate repair if auto_repair_enabled is true. Distributes repair to
+    // subsystems proportionally to their share of the total generated health.
+    if (auto_repair_enabled)
+    {
+        float total_damage = 0.0;
+
+        for(int n = 0; n < SYS_COUNT; n++)
+        {
+            if (!hasSystem(ESystem(n))) continue;
+            total_damage += (1.0 - systems[n].health);
+        }
+        if (total_damage > 0.0)
+        {
+            for(int n = 0; n < SYS_COUNT; n++)
+            {
+                if (!hasSystem(ESystem(n))) continue;
+                systems[n].repair_request = max_repair * (1.0 - systems[n].health) / total_damage;
             }
         }
     }
@@ -566,13 +657,37 @@ void PlayerSpaceship::update(float delta)
                 if (systems[n].coolant_level < systems[n].coolant_request)
                     systems[n].coolant_level = systems[n].coolant_request;
             }
+            
+            if (systems[n].repair_request > systems[n].repair_level)
+            {
+                systems[n].repair_level += delta * system_repair_level_change_per_second;
+                if (systems[n].repair_level > systems[n].repair_request)
+                    systems[n].repair_level = systems[n].repair_request;
+            }
+            else if (systems[n].repair_request < systems[n].repair_level)
+            {
+                systems[n].repair_level -= delta * system_repair_level_change_per_second;
+                if (systems[n].repair_level < systems[n].repair_request)
+                    systems[n].repair_level = systems[n].repair_request;
+            }
 
             // Add heat to overpowered subsystems.
             addHeat(ESystem(n), delta * systems[n].getHeatingDelta() * system_heatup_per_second);
-            
+
             // update Instability subsystems
             if (delta > 0.0)
                 updateInstability(ESystem(n));
+
+            // Repair if nano repair crew
+            if (gameGlobalInfo->use_nano_repair_crew)
+            {
+                systems[n].health += system_repair_effect_per_second * systems[n].repair_level * delta;
+                if (systems[n].health > 1.0)
+                    systems[n].health = 1.0;
+                systems[n].hacked_level -= system_repair_effect_per_second * systems[n].repair_level * delta;;
+                if (systems[n].hacked_level < 0.0)
+                    systems[n].hacked_level = 0.0;
+            }
         }
 
         // If reactor health is worse than -90% and overheating, it explodes,
@@ -669,6 +784,7 @@ void PlayerSpaceship::update(float delta)
                 }
             }
         }
+        
     }else{
         // Actions performed on the client-side only.
 
@@ -727,6 +843,7 @@ void PlayerSpaceship::applyTemplateValues()
     setRepairCrewCount(ship_template->repair_crew_count);
 
     // Set the ship's radar ranges.
+    far_range_radar_range = ship_template->far_range_radar_range;
     long_range_radar_range = ship_template->long_range_radar_range;
     short_range_radar_range = ship_template->short_range_radar_range;
 
@@ -737,6 +854,11 @@ void PlayerSpaceship::applyTemplateValues()
     can_combat_maneuver = ship_template->can_combat_maneuver;
     can_self_destruct = ship_template->can_self_destruct;
     can_launch_probe = ship_template->can_launch_probe;
+    if (!on_new_player_ship_called)
+    {
+        on_new_player_ship_called=true;
+    gameGlobalInfo->on_new_player_ship.call(P<PlayerSpaceship>(this));
+    }
 }
 
 void PlayerSpaceship::executeJump(float distance)
@@ -827,6 +949,45 @@ void PlayerSpaceship::setSystemCoolantRequest(ESystem system, float request)
     }
 
     systems[system].coolant_request = request;
+}
+
+void PlayerSpaceship::setSystemRepairRequest(ESystem system, float request)
+{
+    request = std::max(0.0f, std::min(request, std::min((float) max_repair_per_system, max_repair)));
+    // Set coolant levels on a system.
+    float total_repair = 0;
+    int cnt = 0;
+    for(int n = 0; n < SYS_COUNT; n++)
+    {
+        if (!hasSystem(ESystem(n))) continue;
+        if (n == system) continue;
+
+        total_repair += systems[n].repair_request;
+        cnt++;
+    }
+    if (total_repair > max_repair - request)
+    {
+        for(int n = 0; n < SYS_COUNT; n++)
+        {
+            if (!hasSystem(ESystem(n))) continue;
+            if (n == system) continue;
+
+            systems[n].repair_request *= (max_repair - request) / total_repair;
+        }
+    }else{
+        for(int n = 0; n < SYS_COUNT; n++)
+        {
+            if (!hasSystem(ESystem(n))) continue;
+            if (n == system) continue;
+
+            if (total_repair > 0)
+                systems[n].repair_request = std::min(systems[n].repair_request * (max_repair - request) / total_repair, (float) max_repair_per_system);
+            else
+                systems[n].repair_request = std::min((max_repair - request) / float(cnt), float(max_repair_per_system));
+        }
+    }
+
+    systems[system].repair_request = request;
 }
 
 bool PlayerSpaceship::useEnergy(float amount)
@@ -964,6 +1125,9 @@ void PlayerSpaceship::setRepairCrewCount(int amount)
         P<RepairCrew> rc = new RepairCrew();
         rc->ship_id = getMultiplayerId();
     }
+    
+    // For nano repair Crew
+    max_repair = (float) amount;
 }
 
 void PlayerSpaceship::addToShipLog(string message, sf::Color color)
@@ -1254,7 +1418,11 @@ void PlayerSpaceship::onReceiveClientCommand(int32_t client_id, sf::Packet& pack
         break;
     case CMD_SET_TARGET:
         {
-            packet >> target_id;
+            int32_t target;
+            int8_t station;
+            packet >> target >> station;
+            if (station >= 0 && station < 10) 
+                target_id[station] = target;
         }
         break;
     case CMD_LOAD_TUBE:
@@ -1368,6 +1536,15 @@ void PlayerSpaceship::onReceiveClientCommand(int32_t client_id, sf::Packet& pack
             packet >> system >> slider >> instability;
             if (system < SYS_COUNT && instability >= -1.0 && instability <= 1.0 && slider > 0 && slider <= 4)
                 systems[system].instability_value[slider-1] = instability;
+        }
+        break;
+    case CMD_SET_SYSTEM_REPAIR_REQUEST:
+        {
+            ESystem system;
+            float request;
+            packet >> system >> request;
+            if (system < SYS_COUNT && request >= 0.0 && request <= 10.0)
+                setSystemRepairRequest(system, request);
         }
         break;
     case CMD_DOCK:
@@ -1552,27 +1729,34 @@ void PlayerSpaceship::onReceiveClientCommand(int32_t client_id, sf::Packet& pack
         break;
     case CMD_ADD_WAYPOINT:
         {
+            int route;
             sf::Vector2f position;
-            packet >> position;
-            if (waypoints.size() < 9)
-                waypoints.push_back(position);
+            packet >> route >> position;
+            for (int i = 0; i < max_waypoints_in_route; i++){
+                if (waypoints[route][i] >= empty_waypoint){
+                    waypoints[route][i] = position;
+                    break;
+                }
+            }
         }
         break;
     case CMD_REMOVE_WAYPOINT:
         {
-            int32_t index;
-            packet >> index;
-            if (index >= 0 && index < int(waypoints.size()))
-                waypoints.erase(waypoints.begin() + index);
+            int route;
+            int index;
+            packet >> route >> index;
+            if (index >= 0 && index < max_waypoints_in_route)
+                waypoints[route][index] = empty_waypoint;
         }
         break;
     case CMD_MOVE_WAYPOINT:
         {
-            int32_t index;
+            int route;
+            int index;
             sf::Vector2f position;
-            packet >> index >> position;
-            if (index >= 0 && index < int(waypoints.size()))
-                waypoints[index] = position;
+            packet >> route >> index >> position;
+            if (index >= 0 && index < max_waypoints_in_route)
+                waypoints[route][index] = position;
         }
         break;
     case CMD_ACTIVATE_SELF_DESTRUCT:
@@ -1648,6 +1832,50 @@ void PlayerSpaceship::onReceiveClientCommand(int32_t client_id, sf::Packet& pack
             scan_probe_stock--;
         }
         break;
+    case CMD_LAUNCH_CARGO:
+        int dockIndex;
+        packet >> dockIndex;
+        if (docks[dockIndex].state == EDockState::Docked 
+            && docks[dockIndex].getCargo()->onLaunch(docks[dockIndex]))
+        {
+            docks[dockIndex].getCargo()->destroy();
+            docks[dockIndex].empty();
+        }
+        break;
+    case CMD_SET_DOCK_MOVE_TARGET:
+        {
+            int srcIdx, destIdx;
+            packet >> srcIdx >> destIdx;
+            Dock& src = docks[srcIdx];
+            src.setMoveTarget(destIdx);
+        }
+        break;
+        break;
+    case CMD_MOVE_CARGO:
+        {
+            int index;
+            packet >> index;
+            Dock& src = docks[index];
+            src.startMoveCargo();
+        }
+        break;
+    case CMD_CANCEL_MOVE_CARGO:
+        {
+            int index;
+            packet >> index;
+            Dock& src = docks[index];
+            src.cancelMoveCargo();
+        }
+        break;
+    case CMD_SET_DOCK_ENERGY_REQUEST:
+        packet >> dockIndex;
+        if (docks[dockIndex].state == EDockState::Docked && docks[dockIndex].dock_type == Dock_Energy)
+        {
+            float value;
+            packet >> value;
+            docks[dockIndex].energy_request = value;
+        }
+        break;
     case CMD_SET_ALERT_LEVEL:
         {
             packet >> alert_level;
@@ -1689,6 +1917,40 @@ void PlayerSpaceship::onReceiveClientCommand(int32_t client_id, sf::Packet& pack
             }
         }
         break;
+    case CMD_SET_TRACTOR_BEAM_DIRECTION:
+    {
+        float direction;
+        packet >> direction;
+        tractor_beam.setDirection(direction);
+    }
+    break;
+    case CMD_SET_TRACTOR_BEAM_ARC:
+    {
+        float arc;
+        packet >> arc;
+        if (tractor_beam.getMaxArea() > 0){
+            tractor_beam.setArc(arc);
+            tractor_beam.setRange(std::min(tractor_beam.getRange(), tractor_beam.getMaxRange(arc)));
+        }
+    }
+    break;
+    case CMD_SET_TRACTOR_BEAM_RANGE:
+    {
+        float range;
+        packet >> range;
+        if (tractor_beam.getMaxArea() > 0){
+            tractor_beam.setRange(range);
+            tractor_beam.setArc(std::min(tractor_beam.getArc(), tractor_beam.getMaxArc(range)));
+        }
+    }
+    break;
+    case CMD_SET_TRACTOR_BEAM_MODE:
+    {
+        int mode;
+        packet >> mode;
+        tractor_beam.setMode(ETractorBeamMode(mode));
+    }
+    break;
     }
 }
 
@@ -1728,13 +1990,13 @@ void PlayerSpaceship::commandJump(float distance)
     sendClientCommand(packet);
 }
 
-void PlayerSpaceship::commandSetTarget(P<SpaceObject> target)
+void PlayerSpaceship::commandSetTarget(P<SpaceObject> target, int8_t station)
 {
     sf::Packet packet;
     if (target)
-        packet << CMD_SET_TARGET << target->getMultiplayerId();
+        packet << CMD_SET_TARGET << target->getMultiplayerId() << station;
     else
-        packet << CMD_SET_TARGET << int32_t(-1);
+        packet << CMD_SET_TARGET << int32_t(-1) << station;
     sendClientCommand(packet);
 }
 
@@ -1762,15 +2024,15 @@ void PlayerSpaceship::commandFireTube(int8_t tubeNumber, float missile_target_an
 void PlayerSpaceship::commandFireTubeAtTarget(int8_t tubeNumber, P<SpaceObject> target)
 {
   float targetAngle = 0.0;
-  
+
   if (!target || tubeNumber < 0 || tubeNumber >= getWeaponTubeCount())
     return;
-  
+
   targetAngle = weapon_tube[tubeNumber].calculateFiringSolution(target);
-  
+
   if (targetAngle == std::numeric_limits<float>::infinity())
       targetAngle = getRotation() + weapon_tube[tubeNumber].getDirection();
-    
+
   commandFireTube(tubeNumber, targetAngle);
 }
 
@@ -1822,6 +2084,14 @@ void PlayerSpaceship::commandSetSystemInstability(ESystem system, int slider, fl
 {
     sf::Packet packet;
     packet << CMD_SET_SYSTEM_INSTABILITY << system << slider << instability;
+    sendClientCommand(packet);
+}
+
+void PlayerSpaceship::commandSetSystemRepairRequest(ESystem system, float repair_request)
+{
+    sf::Packet packet;
+    systems[system].repair_request = repair_request;
+    packet << CMD_SET_SYSTEM_REPAIR_REQUEST << system << repair_request;
     sendClientCommand(packet);
 }
 
@@ -1911,24 +2181,24 @@ void PlayerSpaceship::commandSetShieldFrequency(int32_t frequency)
     sendClientCommand(packet);
 }
 
-void PlayerSpaceship::commandAddWaypoint(sf::Vector2f position)
+void PlayerSpaceship::commandAddWaypoint(sf::Vector2f position, int route)
 {
     sf::Packet packet;
-    packet << CMD_ADD_WAYPOINT << position;
+    packet << CMD_ADD_WAYPOINT << route << position;
     sendClientCommand(packet);
 }
 
-void PlayerSpaceship::commandRemoveWaypoint(int32_t index)
+void PlayerSpaceship::commandRemoveWaypoint(int index, int route)
 {
     sf::Packet packet;
-    packet << CMD_REMOVE_WAYPOINT << index;
+    packet << CMD_REMOVE_WAYPOINT << route << index;
     sendClientCommand(packet);
 }
 
-void PlayerSpaceship::commandMoveWaypoint(int32_t index, sf::Vector2f position)
+void PlayerSpaceship::commandMoveWaypoint(int index, sf::Vector2f position, int route)
 {
     sf::Packet packet;
-    packet << CMD_MOVE_WAYPOINT << index << position;
+    packet << CMD_MOVE_WAYPOINT << route << index << position;
     sendClientCommand(packet);
 }
 
@@ -1973,6 +2243,40 @@ void PlayerSpaceship::commandLaunchProbe(sf::Vector2f target_position)
 {
     sf::Packet packet;
     packet << CMD_LAUNCH_PROBE << target_position;
+    sendClientCommand(packet);
+}
+
+void PlayerSpaceship::commandLaunchCargo(int index)
+{
+    sf::Packet packet;
+    packet << CMD_LAUNCH_CARGO << index;
+    sendClientCommand(packet);
+}
+
+void PlayerSpaceship::commandMoveCargo(int index)
+{
+    sf::Packet packet;
+    packet << CMD_MOVE_CARGO << index;
+    sendClientCommand(packet);
+}
+
+void PlayerSpaceship::commandCancelMoveCargo(int index)
+{
+    sf::Packet packet;
+    packet << CMD_CANCEL_MOVE_CARGO << index;
+    sendClientCommand(packet);
+}
+
+void PlayerSpaceship::commandSetDockMoveTarget(int srcIdx, int destIdx)
+{
+    sf::Packet packet;
+    packet << CMD_SET_DOCK_MOVE_TARGET << srcIdx << destIdx;
+    sendClientCommand(packet);
+}
+void PlayerSpaceship::commandSetDockEnergyRequest(int index, float value)
+{
+    sf::Packet packet;
+    packet << CMD_SET_DOCK_ENERGY_REQUEST << index << value;
     sendClientCommand(packet);
 }
 
@@ -2021,6 +2325,29 @@ void PlayerSpaceship::commandSetScienceLink(int32_t id){
     sendClientCommand(packet);
 }
 
+void PlayerSpaceship::commandSetTractorBeamDirection(float direction){
+    sf::Packet packet;
+    packet << CMD_SET_TRACTOR_BEAM_DIRECTION << direction;
+    sendClientCommand(packet);
+}
+
+void PlayerSpaceship::commandSetTractorBeamArc(float arc){
+    sf::Packet packet;
+    packet << CMD_SET_TRACTOR_BEAM_ARC << arc;
+    sendClientCommand(packet);
+}
+void PlayerSpaceship::commandSetTractorBeamRange(float range){
+    sf::Packet packet;
+    packet << CMD_SET_TRACTOR_BEAM_RANGE << range;
+    sendClientCommand(packet);
+}
+void PlayerSpaceship::commandSetTractorBeamMode(ETractorBeamMode mode){
+    sf::Packet packet;
+    packet << CMD_SET_TRACTOR_BEAM_MODE << int(mode);
+    sendClientCommand(packet);
+}
+
+
 void PlayerSpaceship::onReceiveServerCommand(sf::Packet& packet)
 {
     int16_t command;
@@ -2065,6 +2392,11 @@ void PlayerSpaceship::drawOnGMRadar(sf::RenderTarget& window, sf::Vector2f posit
     }
 }
 
+float PlayerSpaceship::getFarRangeRadarRange()
+{
+    return far_range_radar_range;
+}
+
 float PlayerSpaceship::getLongRangeRadarRange()
 {
     return long_range_radar_range;
@@ -2073,6 +2405,14 @@ float PlayerSpaceship::getLongRangeRadarRange()
 float PlayerSpaceship::getShortRangeRadarRange()
 {
     return short_range_radar_range;
+}
+
+void PlayerSpaceship::setFarRangeRadarRange(float range)
+{
+    range = std::max(range, 100.0f);
+    far_range_radar_range = range;
+    long_range_radar_range = std::min(long_range_radar_range, range);
+    short_range_radar_range = std::min(short_range_radar_range, range);
 }
 
 void PlayerSpaceship::setLongRangeRadarRange(float range)
@@ -2089,6 +2429,16 @@ void PlayerSpaceship::setShortRangeRadarRange(float range)
     long_range_radar_range = std::max(long_range_radar_range, range);
 }
 
+int PlayerSpaceship::getWaypointCount(int route)
+{
+    for (int i = 0; i < max_waypoints_in_route; i++){
+        if (waypoints[route][i] >= empty_waypoint){
+            return i;
+        }
+    }
+    return 0;
+}
+
 string PlayerSpaceship::getExportLine()
 {
     string result = "PlayerSpaceship():setTemplate(\"" + template_name + "\"):setPosition(" + string(getPosition().x, 0) + ", " + string(getPosition().y, 0) + ")" + getScriptExportModificationsOnTemplate();
@@ -2096,6 +2446,8 @@ string PlayerSpaceship::getExportLine()
         result += ":setShortRangeRadarRange(" + string(short_range_radar_range, 0) + ")";
     if (long_range_radar_range != ship_template->long_range_radar_range)
         result += ":setLongRangeRadarRange(" + string(long_range_radar_range, 0) + ")";
+    if (far_range_radar_range != ship_template->far_range_radar_range)
+        result += ":setFarRangeRadarRange(" + string(far_range_radar_range, 0) + ")";
     if (can_scan != ship_template->can_scan)
         result += ":setCanScan(" + string(can_scan, true) + ")";
     if (can_hack != ship_template->can_hack)
