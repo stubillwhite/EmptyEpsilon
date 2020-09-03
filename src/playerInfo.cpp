@@ -17,6 +17,8 @@
 
 #include "screens/extra/damcon.h"
 #include "screens/extra/powerManagement.h"
+#include "screens/extra/instabilityScreen.h"
+#include "screens/extra/systemsMonitor.h"
 #include "screens/extra/databaseScreen.h"
 #include "screens/extra/commsScreen.h"
 #include "screens/extra/droneOperatorScreen.h"
@@ -185,6 +187,10 @@ void PlayerInfo::spawnUI()
             screen->addStationTab(new DamageControlScreen(container), damageControl, getCrewPositionName(damageControl), getCrewPositionIcon(damageControl));
         if (crew_position[powerManagement])
             screen->addStationTab(new PowerManagementScreen(container), powerManagement, getCrewPositionName(powerManagement), getCrewPositionIcon(powerManagement));
+        if (crew_position[instabilityControl])
+            screen->addStationTab(new InstabilityControlScreen(container), instabilityControl, getCrewPositionName(instabilityControl), getCrewPositionIcon(instabilityControl));
+        if (crew_position[systemsMonitor])
+            screen->addStationTab(new SystemsMonitorScreen(container), systemsMonitor, getCrewPositionName(systemsMonitor), getCrewPositionIcon(systemsMonitor));
         if (crew_position[databaseView])
             screen->addStationTab(new DatabaseScreen(container), databaseView, getCrewPositionName(databaseView), getCrewPositionIcon(databaseView));
         if (crew_position[altRelay])
@@ -241,6 +247,8 @@ string getCrewPositionName(ECrewPosition position)
     case singlePilot: return tr("station","Single Pilot");
     case damageControl: return tr("station","Damage Control");
     case powerManagement: return tr("station","Power Management");
+    case instabilityControl: return tr("station","Instability Control");
+    case systemsMonitor: return tr("station","Systems Monitor");
     case databaseView: return tr("station","Database");
     case altRelay: return tr("station","Strategic Map");
     case commsOnly: return tr("station","Comms");
@@ -267,6 +275,8 @@ string getCrewPositionIcon(ECrewPosition position)
     case singlePilot: return "";
     case damageControl: return "";
     case powerManagement: return "";
+    case instabilityControl: return "";
+    case systemsMonitor: return "";
     case databaseView: return "";
     case altRelay: return "";
     case commsOnly: return "";
@@ -312,6 +322,10 @@ template<> void convert<ECrewPosition>::param(lua_State* L, int& idx, ECrewPosit
         cp = damageControl;
     else if (str == "powermanagement")
         cp = powerManagement;
+    else if (str == "instabilitycontrol" || str == "instabilityscreen" || str == "instability")
+        cp = instabilityControl;
+    else if (str == "systemsmonitor" || str == "systemsmonitorscreen")
+        cp = systemsMonitor;
     else if (str == "database" || str == "databaseview")
         cp = databaseView;
     else if (str == "altrelay")

@@ -15,6 +15,7 @@ class GuiTextEntry;
 class GuiSlider;
 class GuiSelector;
 class GuiToggleButton;
+class GuiProgressbar;
 
 enum ETweakType
 {
@@ -163,10 +164,20 @@ class GuiShipTweakSystems : public GuiTweakPage
 private:
     P<SpaceShip> target;
 
+    int system_index;
+    GuiElement* system_box[SYS_COUNT];
+    GuiToggleButton* system_selector[SYS_COUNT];
     GuiSlider* system_damage[SYS_COUNT];
     GuiSlider* system_health_max[SYS_COUNT];
     GuiSlider* system_heat[SYS_COUNT];
-
+    GuiProgressbar* system_coolant_bar[SYS_COUNT];
+    GuiSlider* system_coolant_slider[SYS_COUNT];
+    GuiSlider* system_hacked[SYS_COUNT];
+    GuiProgressbar* system_power_bar[SYS_COUNT];
+    GuiSlider* system_power_slider[SYS_COUNT];
+    GuiSlider* system_instability_factor[SYS_COUNT];
+    GuiSlider* system_instability_difficulty[SYS_COUNT];
+    GuiProgressbar* system_instability_level[SYS_COUNT];
 public:
     GuiShipTweakSystems(GuiContainer* owner);
 

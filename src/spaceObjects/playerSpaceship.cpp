@@ -97,6 +97,7 @@ REGISTER_SCRIPT_SUBCLASS(PlayerSpaceship, SpaceShip)
     /// Set power of the system to e.g. 1.5 ("150 percent")
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandSetSystemPowerRequest);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandSetSystemCoolantRequest);
+    REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandSetSystemInstability);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandSetSystemRepairRequest);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandDock);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandUndock);
@@ -276,7 +277,8 @@ static const int16_t CMD_SET_MAIN_SCREEN_OVERLAY = 0x0027;
 static const int16_t CMD_HACKING_FINISHED = 0x0028;
 static const int16_t CMD_CUSTOM_FUNCTION = 0x0029;
 static const int16_t CMD_TURN_SPEED = 0x002A;
-static const int16_t CMD_SET_SYSTEM_REPAIR_REQUEST = 0x002B;
+static const int16_t CMD_SET_SYSTEM_INSTABILITY = 0x002B;
+static const int16_t CMD_SET_SYSTEM_REPAIR_REQUEST = 0x002C;
 static const int16_t CMD_LAUNCH_CARGO = 0x0030;
 static const int16_t CMD_MOVE_CARGO = 0x0031;
 static const int16_t CMD_CANCEL_MOVE_CARGO = 0x0032;
@@ -671,7 +673,11 @@ void PlayerSpaceship::update(float delta)
 
             // Add heat to overpowered subsystems.
             addHeat(ESystem(n), delta * systems[n].getHeatingDelta() * system_heatup_per_second);
-            
+
+            // update Instability subsystems
+            if (delta > 0.0)
+                updateInstability(ESystem(n));
+
             // Repair if nano repair crew
             if (gameGlobalInfo->use_nano_repair_crew)
             {
@@ -1022,6 +1028,33 @@ void PlayerSpaceship::addHeat(ESystem system, float amount)
 
     if (systems[system].heat_level < 0.0)
         systems[system].heat_level = 0.0;
+}
+
+void PlayerSpaceship::updateInstability(ESystem system)
+{  
+    // Update Instability to a subsystem if it's present.
+    if (!hasSystem(system)) return;
+    
+    // Change of target
+    if (random(0.0, 1.0) < systems[system].instability_factor)
+    {
+        for (int n=0; n<systems[system].instability_difficulty; n++)
+        {
+            // Difference between value and target
+            float diff_system = systems[system].instability_target[n] - systems[system].instability_value[n];
+
+            if (diff_system > 0.1)
+                systems[system].instability_target[n] += random(0.00,0.005);
+            else if (diff_system < -0.1)
+                systems[system].instability_target[n] -= random(0.00,0.005);
+            else
+                systems[system].instability_target[n] += random(-0.005,0.005);
+                
+            systems[system].instability_target[n] = std::min(1.0f, std::max(-1.0f, systems[system].instability_target[n]));
+        }
+    }
+    
+    systems[system].instability_level = systems[system].getInstabilityLevel();
 }
 
 void PlayerSpaceship::playSoundOnMainScreen(string sound_name)
@@ -1492,7 +1525,17 @@ void PlayerSpaceship::onReceiveClientCommand(int32_t client_id, sf::Packet& pack
             float request;
             packet >> system >> request;
             if (system < SYS_COUNT && request >= 0.0 && request <= 10.0)
-                setSystemCoolantRequest(system, request);
+                systems[system].coolant_request = request;
+        }
+        break;
+    case CMD_SET_SYSTEM_INSTABILITY:
+        {
+            ESystem system;
+            int slider;
+            float instability;
+            packet >> system >> slider >> instability;
+            if (system < SYS_COUNT && instability >= -1.0 && instability <= 1.0 && slider > 0 && slider <= 4)
+                systems[system].instability_value[slider-1] = instability;
         }
         break;
     case CMD_SET_SYSTEM_REPAIR_REQUEST:
@@ -2034,6 +2077,13 @@ void PlayerSpaceship::commandSetSystemCoolantRequest(ESystem system, float coola
     sf::Packet packet;
     systems[system].coolant_request = coolant_request;
     packet << CMD_SET_SYSTEM_COOLANT_REQUEST << system << coolant_request;
+    sendClientCommand(packet);
+}
+
+void PlayerSpaceship::commandSetSystemInstability(ESystem system, int slider, float instability)
+{
+    sf::Packet packet;
+    packet << CMD_SET_SYSTEM_INSTABILITY << system << slider << instability;
     sendClientCommand(packet);
 }
 

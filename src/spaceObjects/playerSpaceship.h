@@ -285,6 +285,7 @@ public:
     void commandScan(P<SpaceObject> object);
     void commandSetSystemPowerRequest(ESystem system, float power_level);
     void commandSetSystemCoolantRequest(ESystem system, float coolant_level);
+    void commandSetSystemInstability(ESystem system, int slider, float instability);
     void commandSetSystemRepairRequest(ESystem system, float repair_level);
     void commandDock(P<SpaceObject> station);
     void commandUndock();
@@ -365,6 +366,7 @@ public:
     virtual void update(float delta) override;
     virtual bool useEnergy(float amount) override;
     virtual void addHeat(ESystem system, float amount) override;
+    virtual void updateInstability(ESystem system);
 
     // Call on the server to play a sound on the main screen.
     void playSoundOnMainScreen(string sound_name);

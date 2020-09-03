@@ -135,6 +135,8 @@ set(SOURCES
 	src/screens/crew1/singlePilotView.cpp
 	src/screens/extra/damcon.cpp
 	src/screens/extra/powerManagement.cpp
+	src/screens/extra/instabilityScreen.cpp
+	src/screens/extra/systemsMonitor.cpp
 	src/screens/extra/databaseScreen.cpp
 	src/screens/extra/commsScreen.cpp
 	src/screens/extra/shipLogScreen.cpp
@@ -194,6 +196,7 @@ set(SOURCES
 	src/screenComponents/miniGame.cpp
 	src/screenComponents/mineSweeper.cpp
 	src/screenComponents/impulseSound.cpp
+	src/screenComponents/systemEffectsList.cpp
 	src/screenComponents/tractorBeamControl.cpp
 	src/gui/colorConfig.cpp
 	src/gui/hotkeyConfig.cpp

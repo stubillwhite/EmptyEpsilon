@@ -48,10 +48,31 @@ public:
     float repair_level; //0.0-10.0
     float repair_request;
     float hacked_level; //0.0-1.0
-
+    
     float getHeatingDelta()
     {
         return powf(1.7, power_level - 1.0) - (1.01 + coolant_level * 0.1);
+    }
+    
+    float instability_level; //0.0-1.0
+    float instability_factor; //0.0-1.0
+    int instability_difficulty; //0-4
+    float instability_value[4]; //-1.0-1.0
+    float instability_target[4]; //-1.0-1.0
+    string instability_label[4];
+        
+    float getInstabilityLevel()
+    {
+        float instability = 0.0;
+        for(int n=0; n<instability_difficulty; n++)
+            instability += std::abs(instability_value[n] - instability_target[n]) / 2;
+        instability *= hacked_level + 1.0;
+        instability *= heat_level + 0.8;
+        instability *= power_level;
+        
+        instability = std::min(1.0f, std::max(0.0f, instability));
+        
+        return instability;
     }
 };
 
@@ -355,6 +376,16 @@ public:
     void setSystemCoolant(ESystem system, float coolant) { if (system >= SYS_COUNT) return; if (system <= SYS_None) return; systems[system].coolant_level = std::min(1.0f, std::max(0.0f, coolant)); }
     float getSystemRepair(ESystem system) { if (system >= SYS_COUNT) return 0.0; if (system <= SYS_None) return 0.0; return systems[system].repair_level; }
     void setSystemRepair(ESystem system, float repair) { if (system >= SYS_COUNT) return; if (system <= SYS_None) return; systems[system].repair_level = std::min(1.0f, std::max(0.0f, repair)); }
+    float getSystemInstabilityLevel(ESystem system) { if (system >= SYS_COUNT) return 0.0; if (system <= SYS_None) return 0.0; return systems[system].instability_level; }
+    void setSystemInstabilityLevel(ESystem system, float instability) { if (system >= SYS_COUNT) return; if (system <= SYS_None) return; systems[system].instability_level = std::min(1.0f, std::max(0.0f, instability)); }
+    float getSystemInstabilityFactor(ESystem system) { if (system >= SYS_COUNT) return 0; if (system <= SYS_None) return 0; return systems[system].instability_factor; }
+    void setSystemInstabilityFactor(ESystem system, float factor) { if (system >= SYS_COUNT) return; if (system <= SYS_None) return; systems[system].instability_factor = std::min(1.0f, std::max(0.0f, factor)); }
+    float getSystemInstabilityDifficulty(ESystem system) { if (system >= SYS_COUNT) return 0; if (system <= SYS_None) return 0; return systems[system].instability_difficulty; }
+    void setSystemInstabilityDifficulty(ESystem system, int difficulty) { if (system >= SYS_COUNT) return; if (system <= SYS_None) return; systems[system].instability_difficulty = std::min(4, std::max(0, difficulty)); }
+    float getSystemInstabilityValue(ESystem system, int slider) { if (system >= SYS_COUNT) return 0; if (system <= SYS_None) return 0; if (slider < 1) return 0; if (slider > 4) return 0; return systems[system].instability_value[slider-1]; }
+    void setSystemInstabilityValue(ESystem system, int slider, float value) { if (system >= SYS_COUNT) return; if (system <= SYS_None) return; if (slider < 1) return; if (slider > 4) return; systems[system].instability_value[slider-1] = std::min(1.0f, std::max(-1.0f, value)); }
+    string getSystemInstabilityLabel(ESystem system, int slider) { if (system >= SYS_COUNT) return 0; if (system <= SYS_None) return 0; if (slider < 1) return 0; if (slider > 4) return 0; return systems[system].instability_label[slider-1]; }
+    void setSystemInstabilityLabel(ESystem system, int slider, string label) { if (system >= SYS_COUNT) return; if (system <= SYS_None) return; if (slider < 1) return; if (slider > 4) return; systems[system].instability_label[slider-1] = label; }
     float getImpulseMaxSpeed() { return impulse_max_speed; }
     void setImpulseMaxSpeed(float speed) { impulse_max_speed = speed; }
     float getRotationMaxSpeed() { return turn_speed; }

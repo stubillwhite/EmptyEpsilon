@@ -9,6 +9,11 @@ void GuiAutoLayout::onDraw(sf::RenderTarget& window)
 {
 }
 
+void GuiAutoLayout::selectAutoLayout(ELayoutMode layout)
+{
+    mode = layout;
+}
+
 void GuiAutoLayout::drawElements(sf::FloatRect parent_rect, sf::RenderTarget& window)
 {
     sf::Vector2f offset(0, 0);

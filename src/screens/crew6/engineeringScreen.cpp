@@ -6,6 +6,8 @@
 #include "screenComponents/selfDestructButton.h"
 #include "screenComponents/alertOverlay.h"
 #include "screenComponents/customShipFunctions.h"
+#include "screenComponents/systemEffectsList.h"
+#include "screenComponents/powerDamageIndicator.h"
 
 #include "gui/gui2_keyvaluedisplay.h"
 #include "gui/gui2_autolayout.h"
@@ -153,16 +155,20 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
     system_rows[SYS_Docks].button->setIcon("gui/icons/docking");
     system_rows[SYS_Drones].button->setIcon("gui/icons/heading");
 
+    for(int n=0; n<SYS_COUNT; n++)
+    {
+        (new GuiPowerDamageIndicator(system_rows[n].button, n + "_INDICATOR", ESystem(n), ACenterLeft))->setPosition(0, 0, ABottomLeft)->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
+    }
+
     if (gameGlobalInfo->use_nano_repair_crew)
     {
-//        system_effects_container = new GuiAutoLayout(this, "", GuiAutoLayout::LayoutVerticalTopToBottom);
-        system_effects_container = new GuiAutoLayout(this, "", GuiAutoLayout::LayoutVerticalBottomToTop);
-        system_effects_container->setPosition(-20, 20, ATopRight)->setSize(270, 340);
+        system_effects_container = new GuiSystemEffectsList(this,"",GuiAutoLayout::LayoutVerticalBottomToTop);
+        system_effects_container->setPosition(-20, -20, ATopRight)->setSize(270, 340);
     } else {
-        system_effects_container = new GuiAutoLayout(system_config_container, "", GuiAutoLayout::LayoutVerticalBottomToTop);
+        system_effects_container = new GuiSystemEffectsList(system_config_container,"",GuiAutoLayout::LayoutVerticalBottomToTop);
         system_effects_container->setPosition(0, -400, ABottomRight)->setSize(270, 400);
     }
-    
+
     GuiPanel* box = new GuiPanel(system_config_container, "POWER_COOLANT_BOX");
     box->setPosition(0, 0, ABottomRight)->setSize(270, 400);
     power_label = new GuiLabel(box, "POWER_LABEL", tr("slider", "Power"), 30);
@@ -318,6 +324,7 @@ void EngineeringScreen::onDraw(sf::RenderTarget& window)
             coolant_slider->setEnable(!my_spaceship->auto_coolant_enabled);
             coolant_slider->setRange(0.0, my_spaceship->max_coolant_per_system);
             coolant_slider->setValue(std::min(system.coolant_request, my_spaceship->max_coolant));
+
             if (gameGlobalInfo->use_nano_repair_crew)
             {
                 coolant_label->setText("Coolant: " + string(system.coolant_level, 1) + " / " + string(my_spaceship->max_coolant_per_system, 1) + "\t\t (Target: " + string(system.coolant_request, 1)+")");
@@ -330,94 +337,6 @@ void EngineeringScreen::onDraw(sf::RenderTarget& window)
                     repair_slider->setValue(std::min(system.repair_request, my_spaceship->max_repair));
                 }
             }
-
-            system_effects_index = 0;
-            float effectiveness = my_spaceship->getSystemEffectiveness(selected_system);
-            float health_max = my_spaceship->getSystemHealthMax(selected_system);
-            if (health_max < 1.0)
-                addSystemEffect("Maximal health", string(int(health_max * 100)) + "%");
-            switch(selected_system)
-            {
-            case SYS_Reactor:
-                if (effectiveness > 1.0f)
-                    effectiveness = (1.0f + effectiveness) / 2.0f;
-                addSystemEffect(tr("Energy production"),  tr("{energy}/min").format({{"energy", string(effectiveness * -PlayerSpaceship::system_power_user_factor[SYS_Reactor] * 60.0, 1)}}));
-                break;
-            case SYS_BeamWeapons:
-                addSystemEffect(tr("Firing rate"), string(int(effectiveness * 100)) + "%");
-                // If the ship has a turret, also note that the rotation rate
-                // is affected.
-                for(int n = 0; n < max_beam_weapons; n++)
-                {
-                    if (my_spaceship->beam_weapons[n].getTurretArc() > 0)
-                    {
-                        addSystemEffect("Turret rotation rate", string(int(effectiveness * 100)) + "%");
-                        break;
-                    }
-                }
-                break;
-            case SYS_MissileSystem:
-                addSystemEffect(tr("missile","Reload rate"), string(int(effectiveness * 100)) + "%");
-                break;
-            case SYS_Maneuver:
-                addSystemEffect(tr("Turning speed"), string(int(effectiveness * 100)) + "%");
-                if (my_spaceship->combat_maneuver_boost_speed > 0.0 || my_spaceship->combat_maneuver_strafe_speed)
-                    addSystemEffect(tr("Combat recharge rate"), string(int(((my_spaceship->getSystemEffectiveness(SYS_Maneuver) + my_spaceship->getSystemEffectiveness(SYS_Impulse)) / 2.0) * 100)) + "%");
-                break;
-            case SYS_Impulse:
-                addSystemEffect(tr("Impulse speed"), string(int(effectiveness * 100)) + "%");
-                if (my_spaceship->combat_maneuver_boost_speed > 0.0 || my_spaceship->combat_maneuver_strafe_speed)
-                    addSystemEffect(tr("Combat recharge rate"), string(int(((my_spaceship->getSystemEffectiveness(SYS_Maneuver) + my_spaceship->getSystemEffectiveness(SYS_Impulse)) / 2.0) * 100)) + "%");
-                break;
-            case SYS_Warp:
-                addSystemEffect(tr("Warp drive speed"), string(int(effectiveness * 100)) + "%");
-                break;
-            case SYS_JumpDrive:
-                addSystemEffect(tr("Jump drive recharge rate"), string(int(my_spaceship->getJumpDriveRechargeRate() * 100)) + "%");
-                addSystemEffect(tr("Jump drive jump speed"), string(int(effectiveness * 100)) + "%");
-                break;
-            case SYS_FrontShield:
-                if (gameGlobalInfo->use_beam_shield_frequencies)
-                    addSystemEffect(tr("shields","Calibration speed"), string(int((my_spaceship->getSystemEffectiveness(SYS_FrontShield) + my_spaceship->getSystemEffectiveness(SYS_RearShield)) / 2.0 * 100)) + "%");
-                addSystemEffect(tr("shields","Charge rate"), string(int(effectiveness * 100)) + "%");
-                {
-                    DamageInfo di;
-                    di.type = DT_Kinetic;
-                    float damage_negate = 1.0f - my_spaceship->getShieldDamageFactor(di, 0);
-                    if (damage_negate < 0.0)
-                        addSystemEffect(tr("Extra damage"), string(int(-damage_negate * 100)) + "%");
-                    else
-                        addSystemEffect(tr("Damage negate"), string(int(damage_negate * 100)) + "%");
-                }
-                break;
-            case SYS_RearShield:
-                if (gameGlobalInfo->use_beam_shield_frequencies)
-                    addSystemEffect(tr("shields","Calibration speed"), string(int((my_spaceship->getSystemEffectiveness(SYS_FrontShield) + my_spaceship->getSystemEffectiveness(SYS_RearShield)) / 2.0 * 100)) + "%");
-                addSystemEffect(tr("shields","Charge rate"), string(int(effectiveness * 100)) + "%");
-                {
-                    DamageInfo di;
-                    di.type = DT_Kinetic;
-                    float damage_negate = 1.0f -
-my_spaceship->getShieldDamageFactor(di, my_spaceship->shield_count - 1);
-                    if (damage_negate < 0.0)
-                        addSystemEffect(tr("Extra damage"), string(int(-damage_negate * 100)) + "%");
-                    else
-                        addSystemEffect(tr("Damage negate"), string(int(damage_negate * 100)) + "%");
-                }
-                break;
-            case SYS_Docks:
-                addSystemEffect("Cargo move speed", string(int(effectiveness * 100)) + "%");
-                addSystemEffect("Energy transfer speed", string(effectiveness * PlayerSpaceship::energy_transfer_per_second) + "/s");
-                addSystemEffect("Tractor beam drag speed", string(int(effectiveness * 100)) + "%");
-                break;
-            case SYS_Drones:
-                addSystemEffect("Drones control range", string(my_spaceship->getDronesControlRange(),1) + "U");
-                break;
-            default:
-                break;
-            }
-            for(unsigned int idx=system_effects_index; idx<system_effects.size(); idx++)
-                system_effects[idx]->hide();
         }
     }
     GuiOverlay::onDraw(window);
@@ -469,6 +388,8 @@ void EngineeringScreen::onHotkey(const HotkeyResult& key)
         if (key.hotkey == "SELECT_JUMP_DRIVE") selectSystem(SYS_JumpDrive);
         if (key.hotkey == "SELECT_FRONT_SHIELDS") selectSystem(SYS_FrontShield);
         if (key.hotkey == "SELECT_REAR_SHIELDS") selectSystem(SYS_RearShield);
+        if (key.hotkey == "SELECT_DOCKS") selectSystem(SYS_Docks);
+        if (key.hotkey == "SELECT_DRONES") selectSystem(SYS_Drones);
 
         if (key.hotkey == "SELECT_NEXT_SYSTEM")
         {
@@ -642,6 +563,7 @@ void EngineeringScreen::selectSystem(ESystem system)
         system_rows[idx].button->setValue(idx == system);
     }
     selected_system = system;
+    system_effects_container->selectSystem(system);
     power_slider->enable();
     if (my_spaceship)
     {
@@ -650,19 +572,4 @@ void EngineeringScreen::selectSystem(ESystem system)
         if (gameGlobalInfo->use_nano_repair_crew and gameGlobalInfo->use_system_damage)
             repair_slider->setValue(my_spaceship->systems[system].repair_request);
     }
-}
-
-void EngineeringScreen::addSystemEffect(string key, string value)
-{
-    if (system_effects_index == system_effects.size())
-    {
-        GuiKeyValueDisplay* item = new GuiKeyValueDisplay(system_effects_container, "", 0.7, key, value);
-        item->setTextSize(20)->setSize(GuiElement::GuiSizeMax, 40);
-        system_effects.push_back(item);
-    }else{
-        system_effects[system_effects_index]->setKey(key);
-        system_effects[system_effects_index]->setValue(value);
-        system_effects[system_effects_index]->show();
-    }
-    system_effects_index++;
 }
