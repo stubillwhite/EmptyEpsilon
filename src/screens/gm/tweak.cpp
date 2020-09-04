@@ -382,6 +382,12 @@ GuiShipTweakShields::GuiShipTweakShields(GuiContainer* owner)
     GuiAutoLayout* right_col = new GuiAutoLayout(this, "RIGHT_LAYOUT", GuiAutoLayout::LayoutVerticalTopToBottom);
     right_col->setPosition(-25, 25, ATopRight)->setSize(300, GuiElement::GuiSizeMax);
 
+    (new GuiLabel(left_col, "", "Number of Shields", 20))->setSize(GuiElement::GuiSizeMax, 30);
+    shields_count = new GuiSlider(right_col, "", 0, 8, 0, [this](int value) {
+        target->shield_count = value;
+    });
+    shields_count->addOverlay()->setSize(GuiElement::GuiSizeMax, 40);
+
     for(int n=0; n<max_shield_count; n++)
     {
         (new GuiLabel(left_col, "", "Shield " + string(n + 1) + " max:", 20))->setSize(GuiElement::GuiSizeMax, 30);
@@ -404,6 +410,7 @@ GuiShipTweakShields::GuiShipTweakShields(GuiContainer* owner)
 
 void GuiShipTweakShields::onDraw(sf::RenderTarget& window)
 {
+    shields_count->setValue(target->shield_count);
     for(int n=0; n<max_shield_count; n++)
     {
         shield_slider[n]->setValue(target->shield_level[n]);
