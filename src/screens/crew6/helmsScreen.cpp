@@ -12,6 +12,8 @@
 #include "screenComponents/dockingButton.h"
 #include "screenComponents/alertOverlay.h"
 #include "screenComponents/customShipFunctions.h"
+#include "screenComponents/commsOverlay.h"
+#include "screenComponents/shipsLogControl.h"
 
 #include "gui/gui2_label.h"
 #include "gui/gui2_togglebutton.h"
@@ -82,6 +84,9 @@ HelmsScreen::HelmsScreen(GuiContainer* owner)
 
     docking_button = new GuiDockingButton(this, "DOCKING", my_spaceship);
     docking_button->setPosition(20, -20, ABottomLeft)->setSize(280, 50)->setVisible(my_spaceship && my_spaceship->getCanDock());
+
+    new ShipsLog(this, helmsOfficer);
+    (new GuiCommsOverlay(this))->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
 
     (new GuiCustomShipFunctions(this, helmsOfficer, "", my_spaceship))->setPosition(-20, 120, ATopRight)->setSize(250, GuiElement::GuiSizeMax);
 }

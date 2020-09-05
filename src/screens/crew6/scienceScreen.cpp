@@ -13,6 +13,8 @@
 #include "screenComponents/databaseView.h"
 #include "screenComponents/alertOverlay.h"
 #include "screenComponents/customShipFunctions.h"
+#include "screenComponents/commsOverlay.h"
+#include "screenComponents/shipsLogControl.h"
 
 #include "gui/gui2_autolayout.h"
 #include "gui/gui2_keyvaluedisplay.h"
@@ -216,6 +218,9 @@ ScienceScreen::ScienceScreen(GuiContainer* owner, ECrewPosition crew_position)
 
     // Scanning dialog.
     new GuiScanningDialog(this, "SCANNING_DIALOG");
+
+    new ShipsLog(this, crew_position);
+    (new GuiCommsOverlay(this))->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
 }
 
 void ScienceScreen::onDraw(sf::RenderTarget& window)

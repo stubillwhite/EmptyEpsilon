@@ -7,6 +7,6 @@
 CommsScreen::CommsScreen(GuiContainer* owner)
 : GuiOverlay(owner, "COMMS_SCREEN", colorConfig.background)
 {
-    new ShipsLog(this);
+    new ShipsLog(this, relayOfficer);
     (new GuiCommsOverlay(this))->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
 }

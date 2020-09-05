@@ -205,7 +205,7 @@ RelayScreen::RelayScreen(GuiContainer* owner, bool allow_comms)
 
     if (allow_comms)
     {
-        new ShipsLog(this);
+        new ShipsLog(this, relayOfficer);
         (new GuiCommsOverlay(this))->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
     }
 }

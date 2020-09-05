@@ -8,6 +8,8 @@
 #include "screenComponents/customShipFunctions.h"
 #include "screenComponents/systemEffectsList.h"
 #include "screenComponents/powerDamageIndicator.h"
+#include "screenComponents/commsOverlay.h"
+#include "screenComponents/shipsLogControl.h"
 
 #include "gui/gui2_keyvaluedisplay.h"
 #include "gui/gui2_autolayout.h"
@@ -49,7 +51,7 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
     self_destruct_button->setPosition(20, 20, ATopLeft)->setSize(240, 100)->setVisible(my_spaceship && my_spaceship->getCanSelfDestruct());
 
     GuiElement* system_config_container = new GuiElement(this, "");
-    system_config_container->setPosition(0, -20, ABottomCenter)->setSize(750 + 300, GuiElement::GuiSizeMax);
+    system_config_container->setPosition(0, -60, ABottomCenter)->setSize(750 + 300, GuiElement::GuiSizeMax);
     GuiAutoLayout* system_row_layouts = new GuiAutoLayout(system_config_container, "SYSTEM_ROWS", GuiAutoLayout::LayoutVerticalBottomToTop);
     system_row_layouts->setPosition(0, 0, ABottomLeft);
     system_row_layouts->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
@@ -58,7 +60,7 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
         string id = "SYSTEM_ROW_" + getSystemName(ESystem(n));
         SystemRow info;
         info.layout = new GuiAutoLayout(system_row_layouts, id, GuiAutoLayout::LayoutHorizontalLeftToRight);
-        info.layout->setSize(GuiElement::GuiSizeMax, 50);
+        info.layout->setSize(GuiElement::GuiSizeMax, 40);
 
         info.button = new GuiToggleButton(info.layout, id + "_SELECT", getLocaleSystemName(ESystem(n)), [this, n](bool value){
             selectSystem(ESystem(n));
@@ -198,9 +200,9 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
     {
         box->setPosition(0, 20, ATopCenter)->setSize(450, 340);
         power_label->setHorizontal()->setPosition(20, 20, ATopLeft)->setSize(400, 30);
-        power_slider->setRange(0.0, 3.0)->setPosition(20, 60, ATopLeft)->setSize(400, 50);
+        power_slider->setRange(0.0, 3.0)->setPosition(20, 60, ATopLeft)->setSize(400, 40);
         coolant_label->setHorizontal()->setPosition(20, 120, ATopLeft)->setSize(400, 30);
-        coolant_slider->setRange(0.0, 10.0)->setPosition(20, 160, ATopLeft)->setSize(400, 50);
+        coolant_slider->setRange(0.0, 10.0)->setPosition(20, 160, ATopLeft)->setSize(400, 40);
         
         if (gameGlobalInfo->use_system_damage)
         {
@@ -210,10 +212,13 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
             if (my_spaceship && selected_system != SYS_None)
                 my_spaceship->commandSetSystemRepairRequest(selected_system, value);
             });
-            repair_slider->setPosition(20, 260, ATopLeft)->setSize(400, 50);
+            repair_slider->setPosition(20, 260, ATopLeft)->setSize(400, 40);
             repair_slider->disable();
         }
     }
+
+    new ShipsLog(this, crew_position);
+    (new GuiCommsOverlay(this))->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
 
     (new GuiCustomShipFunctions(this, crew_position, "", my_spaceship))->setPosition(-20, 120, ATopRight)->setSize(250, GuiElement::GuiSizeMax);
 

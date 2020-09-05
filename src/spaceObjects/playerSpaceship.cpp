@@ -316,8 +316,8 @@ string alertLevelToLocaleString(EAlertLevel level)
 }
 
 // Configure ship's log packets.
-static inline sf::Packet& operator << (sf::Packet& packet, const PlayerSpaceship::ShipLogEntry& e) { return packet << e.prefix << e.text << e.color.r << e.color.g << e.color.b << e.color.a; }
-static inline sf::Packet& operator >> (sf::Packet& packet, PlayerSpaceship::ShipLogEntry& e) { packet >> e.prefix >> e.text >> e.color.r >> e.color.g >> e.color.b >> e.color.a; return packet; }
+static inline sf::Packet& operator << (sf::Packet& packet, const PlayerSpaceship::ShipLogEntry& e) { return packet << e.prefix << e.text << e.color.r << e.color.g << e.color.b << e.color.a  << e.position; }
+static inline sf::Packet& operator >> (sf::Packet& packet, PlayerSpaceship::ShipLogEntry& e) { packet >> e.prefix >> e.text >> e.color.r >> e.color.g >> e.color.b >> e.color.a  >> e.position; return packet; }
 
 REGISTER_MULTIPLAYER_CLASS(PlayerSpaceship, "PlayerSpaceship");
 PlayerSpaceship::PlayerSpaceship()
@@ -457,7 +457,7 @@ PlayerSpaceship::PlayerSpaceship()
         }
 
         // Initialize the ship's log.
-        addToShipLog("Start of log", colorConfig.log_generic);
+        addToShipLog("Start of log", colorConfig.log_generic, relayOfficer);
     }
 
     // Initialize player ship callsigns with a "PL" designation.
@@ -875,9 +875,24 @@ void PlayerSpaceship::takeHullDamage(float damage_amount, DamageInfo& info)
     {
         hull_damage_indicator = 1.5;
     }
+    
+    // Take hull damage like any other ship.
+    float systems_diff[SYS_COUNT];
+    for(int n=0; n<SYS_COUNT; n++)
+        systems_diff[n] = systems[n].health;
 
     // Take hull damage like any other ship.
     SpaceShip::takeHullDamage(damage_amount, info);
+    
+    // Infos for engineering log
+    string system_damage = string(abs(damage_amount)) + string(" hull damages. Affected systems : ");
+    for(int n=0; n<SYS_COUNT; n++)
+    {
+        if(systems_diff[n] != systems[n].health)
+            system_damage += string(getSystemName(ESystem(n))) + string(" / ");
+    }
+    system_damage.erase(system_damage.end()-2, system_damage.end());
+    addToShipLog(system_damage,sf::Color::Red, engineering);
 }
 
 void PlayerSpaceship::setMaxCoolant(float coolant)
@@ -1130,15 +1145,15 @@ void PlayerSpaceship::setRepairCrewCount(int amount)
     max_repair = (float) amount;
 }
 
-void PlayerSpaceship::addToShipLog(string message, sf::Color color)
+void PlayerSpaceship::addToShipLog(string message, sf::Color color, ECrewPosition position)
 {
-    // Cap the ship's log size to 100 entries. If it exceeds that limit,
+    // Cap the ship's log size to 1000 entries. If it exceeds that limit,
     // start erasing entries from the beginning.
-    if (ships_log.size() > 100)
+    if (ships_log.size() > 1000)
         ships_log.erase(ships_log.begin());
 
     // Timestamp a log entry, color it, and add it to the end of the log.
-    ships_log.emplace_back(string(gameGlobalInfo->elapsed_time, 1) + string(": "), message, color);
+    ships_log.emplace_back(string(gameGlobalInfo->elapsed_time, 1) + string(": "), message, color, position);
 }
 
 void PlayerSpaceship::addToShipLogBy(string message, P<SpaceObject> target)
@@ -1146,19 +1161,28 @@ void PlayerSpaceship::addToShipLogBy(string message, P<SpaceObject> target)
     // Log messages received from other ships. Friend-or-foe colors are drawn
     // from colorConfig (colors.ini).
     if (!target)
-        addToShipLog(message, colorConfig.log_receive_neutral);
+        addToShipLog(message, colorConfig.log_receive_neutral, relayOfficer);
     else if (isFriendly(target))
-        addToShipLog(message, colorConfig.log_receive_friendly);
+        addToShipLog(message, colorConfig.log_receive_friendly, relayOfficer);
     else if (isEnemy(target))
-        addToShipLog(message, colorConfig.log_receive_enemy);
+        addToShipLog(message, colorConfig.log_receive_enemy, relayOfficer);
     else
-        addToShipLog(message, colorConfig.log_receive_neutral);
+        addToShipLog(message, colorConfig.log_receive_neutral, relayOfficer);
 }
 
-const std::vector<PlayerSpaceship::ShipLogEntry>& PlayerSpaceship::getShipsLog() const
+std::vector<PlayerSpaceship::ShipLogEntry>& PlayerSpaceship::getShipsLog(ECrewPosition position)
 {
+    sub_log.clear();
+    // Initialize log
+    for(unsigned int n=0; n<ships_log.size(); n++)
+    {
+        if (ships_log[n].position == position || position == max_crew_positions || ships_log[n].position == max_crew_positions)
+        {
+            sub_log.emplace_back(ships_log[n].prefix, ships_log[n].text, ships_log[n].color, ships_log[n].position);
+        }
+    }
     // Return the ship's log.
-    return ships_log;
+    return sub_log;
 }
 
 void PlayerSpaceship::transferPlayersToShip(P<PlayerSpaceship> other_ship)
@@ -1271,7 +1295,7 @@ void PlayerSpaceship::setCommsMessage(string message)
 {
     // Record a new comms message to the ship's log.
     for(string line : message.split("\n"))
-        addToShipLog(line, sf::Color(192, 192, 255));
+        addToShipLog(line, sf::Color(192, 192, 255), relayOfficer);
     // Display the message in the messaging window.
     comms_incomming_message = message;
 }
@@ -1280,7 +1304,7 @@ void PlayerSpaceship::addCommsIncommingMessage(string message)
 {
     // Record incoming comms messages to the ship's log.
     for(string line : message.split("\n"))
-        addToShipLog(line, sf::Color(192, 192, 255));
+        addToShipLog(line, sf::Color(192, 192, 255), relayOfficer);
     // Add the message to the messaging window.
     comms_incomming_message = comms_incomming_message + "\n> " + message;
 }
@@ -1289,7 +1313,7 @@ void PlayerSpaceship::addCommsOutgoingMessage(string message)
 {
     // Record outgoing comms messages to the ship's log.
     for(string line : message.split("\n"))
-        addToShipLog(line, colorConfig.log_send);
+        addToShipLog(line, colorConfig.log_send, relayOfficer);
     // Add the message to the messaging window.
     comms_incomming_message = comms_incomming_message + "\n< " + message;
 }
@@ -1310,7 +1334,7 @@ bool PlayerSpaceship::hailCommsByGM(string target_name)
         return false;
 
     // Log the hail.
-    addToShipLog("Hailed by " + target_name, colorConfig.log_generic);
+    addToShipLog("Hailed by " + target_name, colorConfig.log_generic, relayOfficer);
 
     // Set comms to the hail state and notify Relay/comms.
     comms_state = CS_BeingHailedByGM;
@@ -1364,7 +1388,7 @@ void PlayerSpaceship::closeComms()
         {
             P<PlayerSpaceship> player_ship = comms_target;
             player_ship->comms_state = CS_ChannelClosed;
-            player_ship->addToShipLog("Communication channel closed by other side", colorConfig.log_generic);
+            player_ship->addToShipLog("Communication channel closed by other side", colorConfig.log_generic, relayOfficer);
         }
         if (comms_state == CS_OpeningChannel && comms_target)
         {
@@ -1374,11 +1398,11 @@ void PlayerSpaceship::closeComms()
                 if (player_ship->comms_state == CS_BeingHailed && player_ship->comms_target == this)
                 {
                     player_ship->comms_state = CS_Inactive;
-                    player_ship->addToShipLog("Hailing from " + getCallSign() + " stopped", colorConfig.log_generic);
+                    player_ship->addToShipLog("Hailing from " + getCallSign() + " stopped", colorConfig.log_generic, relayOfficer);
                 }
             }
         }
-        addToShipLog("Communication channel closed", colorConfig.log_generic);
+        addToShipLog("Communication channel closed", colorConfig.log_generic, relayOfficer);
         if (comms_state == CS_ChannelOpenGM)
             comms_state = CS_ChannelClosed;
         else
@@ -1414,6 +1438,7 @@ void PlayerSpaceship::onReceiveClientCommand(int32_t client_id, sf::Packet& pack
             float distance;
             packet >> distance;
             initializeJump(distance);
+            addToShipLog("Jump initialization",sf::Color::White,engineering);
         }
         break;
     case CMD_SET_TARGET:
@@ -1453,7 +1478,10 @@ void PlayerSpaceship::onReceiveClientCommand(int32_t client_id, sf::Packet& pack
             packet >> tube_nr >> missile_target_angle;
 
             if (tube_nr >= 0 && tube_nr < max_weapon_tubes)
+            {
                 weapon_tube[tube_nr].fire(missile_target_angle);
+                addToShipLog("Missile fire",sf::Color::Yellow,engineering);
+            }
         }
         break;
     case CMD_SET_SHIELDS:
@@ -1467,10 +1495,12 @@ void PlayerSpaceship::onReceiveClientCommand(int32_t client_id, sf::Packet& pack
                 if (active)
                 {
                     playSoundOnMainScreen("shield_up.wav");
+                    addToShipLog("Shield up",sf::Color::Green,engineering);
                 }
                 else
                 {
                     playSoundOnMainScreen("shield_down.wav");
+                    addToShipLog("Shield down",sf::Color::Green,engineering);
                 }
             }
         }
@@ -1552,13 +1582,20 @@ void PlayerSpaceship::onReceiveClientCommand(int32_t client_id, sf::Packet& pack
             int32_t id;
             packet >> id;
             requestDock(game_server->getObjectById(id));
+            addToShipLog("Docking requested",sf::Color::Cyan,engineering);
         }
         break;
     case CMD_UNDOCK:
-        requestUndock();
+        {
+            requestUndock();
+            addToShipLog("Undocking requested",sf::Color::Cyan,engineering);
+        }
         break;
     case CMD_ABORT_DOCK:
-        abortDock();
+        {
+            abortDock();
+            addToShipLog("Docking aborded",sf::Color::Cyan,engineering);
+        }
         break;
     case CMD_OPEN_TEXT_COMM:
         if (comms_state == CS_Inactive || comms_state == CS_BeingHailed || comms_state == CS_BeingHailedByGM || comms_state == CS_ChannelClosed)
@@ -1573,7 +1610,7 @@ void PlayerSpaceship::onReceiveClientCommand(int32_t client_id, sf::Packet& pack
                 comms_open_delay = comms_channel_open_time;
                 comms_target_name = comms_target->getCallSign();
                 comms_incomming_message = "Opened comms with " + comms_target_name;
-                addToShipLog("Hailing: " + comms_target_name, colorConfig.log_generic);
+                addToShipLog("Hailing: " + comms_target_name, colorConfig.log_generic, relayOfficer);
             }else{
                 comms_state = CS_Inactive;
             }
@@ -1598,11 +1635,11 @@ void PlayerSpaceship::onReceiveClientCommand(int32_t client_id, sf::Packet& pack
 
                     comms_incomming_message = "Opened comms to " + playerShip->getCallSign();
                     playerShip->comms_incomming_message = "Opened comms to " + getCallSign();
-                    addToShipLog("Opened communication channel to " + playerShip->getCallSign(), colorConfig.log_generic);
-                    playerShip->addToShipLog("Opened communication channel to " + getCallSign(), colorConfig.log_generic);
+                    addToShipLog("Opened communication channel to " + playerShip->getCallSign(), colorConfig.log_generic, relayOfficer);
+                    playerShip->addToShipLog("Opened communication channel to " + getCallSign(), colorConfig.log_generic, relayOfficer);
                 }else{
-                    addToShipLog("Refused communications from " + playerShip->getCallSign(), colorConfig.log_generic);
-                    playerShip->addToShipLog("Refused communications to " + getCallSign(), colorConfig.log_generic);
+                    addToShipLog("Refused communications from " + playerShip->getCallSign(), colorConfig.log_generic, relayOfficer);
+                    playerShip->addToShipLog("Refused communications to " + getCallSign(), colorConfig.log_generic, relayOfficer);
                     comms_state = CS_Inactive;
                     playerShip->comms_state = CS_ChannelFailed;
                 }
@@ -1611,10 +1648,10 @@ void PlayerSpaceship::onReceiveClientCommand(int32_t client_id, sf::Packet& pack
                 {
                     if (!comms_target)
                     {
-                        addToShipLog("Hail suddenly went dead.", colorConfig.log_generic);
+                        addToShipLog("Hail suddenly went dead.", colorConfig.log_generic, relayOfficer);
                         comms_state = CS_ChannelBroken;
                     }else{
-                        addToShipLog("Accepted hail from " + comms_target->getCallSign(), colorConfig.log_generic);
+                        addToShipLog("Accepted hail from " + comms_target->getCallSign(), colorConfig.log_generic, relayOfficer);
                         comms_reply_id.clear();
                         comms_reply_message.clear();
                         if (comms_incomming_message == "")
@@ -1634,7 +1671,7 @@ void PlayerSpaceship::onReceiveClientCommand(int32_t client_id, sf::Packet& pack
                     }
                 }else{
                     if (comms_target)
-                        addToShipLog("Refused hail from " + comms_target->getCallSign(), colorConfig.log_generic);
+                        addToShipLog("Refused hail from " + comms_target->getCallSign(), colorConfig.log_generic, relayOfficer);
                     comms_state = CS_Inactive;
                 }
             }
@@ -1648,10 +1685,10 @@ void PlayerSpaceship::onReceiveClientCommand(int32_t client_id, sf::Packet& pack
             {
                 comms_state = CS_ChannelOpenGM;
 
-                addToShipLog("Opened communication channel to " + comms_target_name, colorConfig.log_generic);
+                addToShipLog("Opened communication channel to " + comms_target_name, colorConfig.log_generic, relayOfficer);
                 comms_incomming_message = "Opened comms with " + comms_target_name;
             }else{
-                addToShipLog("Refused hail from " + comms_target_name, colorConfig.log_generic);
+                addToShipLog("Refused hail from " + comms_target_name, colorConfig.log_generic, relayOfficer);
                 comms_state = CS_Inactive;
             }
         }
@@ -1663,7 +1700,7 @@ void PlayerSpaceship::onReceiveClientCommand(int32_t client_id, sf::Packet& pack
             packet >> index;
             if (index < comms_reply_id.size())
             {
-                addToShipLog(comms_reply_message[index], colorConfig.log_send);
+                addToShipLog(comms_reply_message[index], colorConfig.log_send, relayOfficer);
 
                 comms_incomming_message = "?";
                 int id = comms_reply_id[index];
@@ -1687,6 +1724,8 @@ void PlayerSpaceship::onReceiveClientCommand(int32_t client_id, sf::Packet& pack
         break;
     case CMD_SET_AUTO_REPAIR:
         packet >> auto_repair_enabled;
+        if (auto_repair_enabled)
+            addToShipLog("Autorepair enabled",sf::Color::White,engineering);
         break;
     case CMD_SET_BEAM_FREQUENCY:
         {
@@ -1697,6 +1736,7 @@ void PlayerSpaceship::onReceiveClientCommand(int32_t client_id, sf::Packet& pack
                 beam_frequency = 0;
             if (beam_frequency > SpaceShip::max_frequency)
                 beam_frequency = SpaceShip::max_frequency;
+            addToShipLog("New beam frequency: " + frequencyToString(new_frequency),sf::Color::Yellow,weaponsOfficer);
         }
         break;
     case CMD_SET_BEAM_SYSTEM_TARGET:
@@ -1708,6 +1748,7 @@ void PlayerSpaceship::onReceiveClientCommand(int32_t client_id, sf::Packet& pack
                 beam_system_target = SYS_None;
             if (beam_system_target > ESystem(int(SYS_COUNT) - 1))
                 beam_system_target = ESystem(int(SYS_COUNT) - 1);
+            addToShipLog("New targeted system: " + getLocaleSystemName(system),sf::Color::Yellow,weaponsOfficer);
         }
         break;
     case CMD_SET_SHIELD_FREQUENCY:
@@ -1724,6 +1765,7 @@ void PlayerSpaceship::onReceiveClientCommand(int32_t client_id, sf::Packet& pack
                     shield_frequency = 0;
                 if (shield_frequency > SpaceShip::max_frequency)
                     shield_frequency = SpaceShip::max_frequency;
+                addToShipLog("New shield frequency: " + frequencyToString(new_frequency),sf::Color::Green,engineering);
             }
         }
         break;
@@ -1761,6 +1803,7 @@ void PlayerSpaceship::onReceiveClientCommand(int32_t client_id, sf::Packet& pack
         break;
     case CMD_ACTIVATE_SELF_DESTRUCT:
         activate_self_destruct = true;
+        addToShipLog("Self Destruction procedure activate",sf::Color::Red,engineering);
         for(int n=0; n<max_self_destruct_codes; n++)
         {
             self_destruct_code[n] = irandom(0, 99999);
@@ -1789,6 +1832,7 @@ void PlayerSpaceship::onReceiveClientCommand(int32_t client_id, sf::Packet& pack
         if (self_destruct_countdown <= 0.0f)
         {
             activate_self_destruct = false;
+            addToShipLog("Self Destruction procedure canceled",sf::Color::Red,engineering);
         }
         break;
     case CMD_CONFIRM_SELF_DESTRUCT:
@@ -1879,6 +1923,10 @@ void PlayerSpaceship::onReceiveClientCommand(int32_t client_id, sf::Packet& pack
     case CMD_SET_ALERT_LEVEL:
         {
             packet >> alert_level;
+            if(alertLevelToString(alert_level) == "RED ALERT")
+                addToShipLog("Red Alert",sf::Color::Red,max_crew_positions);
+            if(alertLevelToString(alert_level) == "YELLOW ALERT")
+                addToShipLog("Yellow Alert",sf::Color::Yellow,max_crew_positions);
         }
         break;
     case CMD_SET_SCIENCE_LINK:

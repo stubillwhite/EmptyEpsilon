@@ -29,7 +29,7 @@ void ShipLogScreen::onDraw(sf::RenderTarget& window)
         else
             custom_function_sidebar->hide();
 
-        const std::vector<PlayerSpaceship::ShipLogEntry>& logs = my_spaceship->getShipsLog();
+        std::vector<PlayerSpaceship::ShipLogEntry>& logs = my_spaceship->getShipsLog(max_crew_positions);
         if (log_text->getEntryCount() > 0 && logs.size() == 0)
             log_text->clearEntries();
 
@@ -58,6 +58,8 @@ void ShipLogScreen::onDraw(sf::RenderTarget& window)
         while(log_text->getEntryCount() < logs.size())
         {
             int n = log_text->getEntryCount();
+            if (logs[n].position != max_crew_positions)
+                logs[n].prefix = logs[n].prefix + "\t[" + getCrewPositionName(logs[n].position) + "]\t";
             log_text->addEntry(logs[n].prefix, logs[n].text, logs[n].color);
         }
     }

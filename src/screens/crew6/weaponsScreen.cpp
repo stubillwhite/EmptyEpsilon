@@ -15,6 +15,8 @@
 #include "screenComponents/alertOverlay.h"
 #include "screenComponents/customShipFunctions.h"
 #include "screenComponents/tractorBeamControl.h"
+#include "screenComponents/commsOverlay.h"
+#include "screenComponents/shipsLogControl.h"
 
 #include "gui/gui2_rotationdial.h"
 #include "gui/gui2_label.h"
@@ -99,6 +101,9 @@ WeaponsScreen::WeaponsScreen(GuiContainer* owner)
     }
 
     (new GuiCustomShipFunctions(this, weaponsOfficer, "", my_spaceship))->setPosition(-20, 120, ATopRight)->setSize(250, GuiElement::GuiSizeMax);
+
+    new ShipsLog(this, weaponsOfficer);
+    (new GuiCommsOverlay(this))->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
 }
 
 void WeaponsScreen::onDraw(sf::RenderTarget& window)

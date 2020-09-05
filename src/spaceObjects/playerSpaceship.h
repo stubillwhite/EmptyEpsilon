@@ -78,12 +78,13 @@ public:
         string prefix;
         string text;
         sf::Color color;
+        ECrewPosition position;
 
         ShipLogEntry() {}
-        ShipLogEntry(string prefix, string text, sf::Color color)
-        : prefix(prefix), text(text), color(color) {}
+        ShipLogEntry(string prefix, string text, sf::Color color, ECrewPosition position)
+        : prefix(prefix), text(text), color(color), position(position) {}
 
-        bool operator!=(const ShipLogEntry& e) { return prefix != e.prefix || text != e.text || color != e.color; }
+        bool operator!=(const ShipLogEntry& e) { return prefix != e.prefix || text != e.text || color != e.color || position != e.position; }
     };
 
     class CustomShipFunction
@@ -130,6 +131,7 @@ private:
     CommsScriptInterface comms_script_interface; // Server only
     // Ship's log container
     std::vector<ShipLogEntry> ships_log;
+    std::vector<ShipLogEntry> sub_log;
 
     float far_range_radar_range = 50000.0f;
     float long_range_radar_range = 30000.0f;
@@ -374,9 +376,9 @@ public:
     float getNetSystemEnergyUsage();
 
     // Ship's log functions
-    void addToShipLog(string message, sf::Color color);
+    void addToShipLog(string message, sf::Color color, ECrewPosition position = relayOfficer);
     void addToShipLogBy(string message, P<SpaceObject> target);
-    const std::vector<ShipLogEntry>& getShipsLog() const;
+    std::vector<ShipLogEntry>& getShipsLog(ECrewPosition position);
 
     // Ship's crew functions
     void transferPlayersToShip(P<PlayerSpaceship> other_ship);

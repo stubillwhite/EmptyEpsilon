@@ -80,6 +80,6 @@ OperationScreen::OperationScreen(GuiContainer* owner)
 
     mode = TargetSelection;
 
-    new ShipsLog(this);
+    new ShipsLog(this, relayOfficer);
     (new GuiCommsOverlay(this))->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
 }
