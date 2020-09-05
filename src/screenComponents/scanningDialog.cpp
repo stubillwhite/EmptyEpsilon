@@ -94,6 +94,36 @@ bool GuiScanningDialog::onJoystickAxis(const AxisAction& axisAction){
     return false;
 }
 
+void GuiScanningDialog::onHotkey(const HotkeyResult& key)
+{
+    if (key.category == "SCIENCE" && my_spaceship)
+    {
+        if (key.hotkey == "ABORD_SCAN")
+            my_spaceship->commandScanCancel();
+
+        for(int n=0; n<max_sliders; n++)
+        {
+            if (sliders[n]->isVisible())
+            {
+                if (key.hotkey == "SCAN_LEFT_"+string(n+1))
+                {
+                    float new_value = sliders[n]->getValue()-0.05;
+                    if (new_value <= 0.0)
+                        new_value = 0.0;
+                    sliders[n]->setValue(new_value);
+                }
+                if (key.hotkey == "SCAN_RIGHT_"+string(n+1))
+                {
+                    float new_value = sliders[n]->getValue()+0.05;
+                    if (new_value >= 1.0)
+                        new_value = 1.0;
+                    sliders[n]->setValue(new_value);
+                }
+            }
+        }
+    }
+}
+
 void GuiScanningDialog::setupParameters()
 {
     if (!my_spaceship)

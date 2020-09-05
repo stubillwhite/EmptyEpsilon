@@ -326,3 +326,89 @@ void RelayScreen::onDraw(sf::RenderTarget& window)
     else
         delete_waypoint_button->disable();
 }
+
+void RelayScreen::onHotkey(const HotkeyResult& key)
+{
+    if (key.category == "RELAY" && my_spaceship)
+    {
+        if (key.hotkey == "LINK_SCIENCE")
+        {
+            P<ScanProbe> obj = targets.get();
+            if (obj && obj->isFriendly(my_spaceship))
+            {
+                if (!link_to_science_button->getValue())
+                    my_spaceship->commandSetScienceLink(targets.get()->getMultiplayerId());
+                else
+                my_spaceship->commandSetScienceLink(-1);
+            }
+        }
+        if (key.hotkey == "BEGIN_HACK")
+        {
+            P<SpaceObject> target = targets.get();
+            if (my_spaceship && target && target->canBeHackedBy(my_spaceship))
+            {
+                hacking_dialog->open(target);
+            }
+        }
+        if (key.hotkey == "ADD_WAYPOINT")
+        {
+            mode = WaypointPlacement;
+            option_buttons->hide();
+        }
+        if (key.hotkey == "DELETE_WAYPOINT")
+        {
+            if (targets.getWaypointIndex() >= 0)
+                my_spaceship->commandRemoveWaypoint(targets.getWaypointIndex(), targets.getRouteIndex());
+        }
+        if (key.hotkey == "LAUNCH_PROBE")
+        {
+            mode = LaunchProbe;
+            option_buttons->hide();
+        }
+        if (key.hotkey == "INC_ZOOM")
+        {
+            float view_distance = radar->getDistance() * 1.1f;
+            if (view_distance > my_spaceship->getFarRangeRadarRange())
+                view_distance = my_spaceship->getFarRangeRadarRange();
+            if (view_distance < my_spaceship->getShortRangeRadarRange())
+                view_distance = my_spaceship->getShortRangeRadarRange();
+            radar->setDistance(view_distance);
+            // Keep the zoom slider in sync.
+            zoom_slider->setValue(view_distance);
+            zoom_label->setText(tr("Zoom: {zoom}x").format({{"zoom", string(my_spaceship->getFarRangeRadarRange() / view_distance, 1)}}));
+        }
+        if (key.hotkey == "DEC_ZOOM")
+        {
+            float view_distance = radar->getDistance() * 0.9f;
+            if (view_distance > my_spaceship->getFarRangeRadarRange())
+                view_distance = my_spaceship->getFarRangeRadarRange();
+            if (view_distance < my_spaceship->getShortRangeRadarRange())
+                view_distance = my_spaceship->getShortRangeRadarRange();
+            radar->setDistance(view_distance);
+            // Keep the zoom slider in sync.
+            zoom_slider->setValue(view_distance);
+            zoom_label->setText(tr("Zoom: {zoom}x").format({{"zoom", string(my_spaceship->getFarRangeRadarRange() / view_distance, 1)}}));
+        }
+        if (key.hotkey == "ALERT_NORMAL")
+        {
+            my_spaceship->commandSetAlertLevel(AL_Normal);
+            for(GuiButton* button : alert_level_buttons)
+                button->setVisible(false);
+            alert_level_button->setValue(false);
+        }
+        if (key.hotkey == "ALERT_YELLOW")
+        {
+            my_spaceship->commandSetAlertLevel(AL_YellowAlert);
+            for(GuiButton* button : alert_level_buttons)
+                button->setVisible(false);
+            alert_level_button->setValue(false);
+        }
+        if (key.hotkey == "ALERT_RED")
+        {
+            my_spaceship->commandSetAlertLevel(AL_RedAlert);
+            for(GuiButton* button : alert_level_buttons)
+                button->setVisible(false);
+            alert_level_button->setValue(false);
+        }
+    }
+}

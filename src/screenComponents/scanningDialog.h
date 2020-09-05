@@ -32,6 +32,7 @@ public:
 
     virtual void onDraw(sf::RenderTarget& window) override;
     virtual bool onJoystickAxis(const AxisAction& axisAction) override;
+    virtual void onHotkey(const HotkeyResult& key) override;
 
     void setupParameters();
     void updateSignal();

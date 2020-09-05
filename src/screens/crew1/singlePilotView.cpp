@@ -246,28 +246,28 @@ void SinglePilotView::onHotkey(const HotkeyResult& key)
 
 bool SinglePilotView::onJoystickAxis(const AxisAction& axisAction)
 {
-    if(my_spaceship)
+    if(target_spaceship)
     {
         if (axisAction.category == "HELMS")
         {
             if (axisAction.action == "IMPULSE")
             {
-                my_spaceship->commandImpulse(axisAction.value);
+                target_spaceship->commandImpulse(axisAction.value);
                 return true;
             }
             if (axisAction.action == "ROTATE")
             {
-                my_spaceship->commandTurnSpeed(axisAction.value);
+                target_spaceship->commandTurnSpeed(axisAction.value);
                 return true;
             }
             if (axisAction.action == "STRAFE")
             {
-                my_spaceship->commandCombatManeuverStrafe(axisAction.value);
+                target_spaceship->commandCombatManeuverStrafe(axisAction.value);
                 return true;
             }
             if (axisAction.action == "BOOST")
             {
-                my_spaceship->commandCombatManeuverBoost(axisAction.value);
+                target_spaceship->commandCombatManeuverBoost(axisAction.value);
                 return true;
             }
         }

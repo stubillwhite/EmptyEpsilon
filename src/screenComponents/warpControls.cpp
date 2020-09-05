@@ -90,5 +90,15 @@ void GuiWarpControls::onHotkey(const HotkeyResult& key)
             target_spaceship->commandWarp(4);
             slider->setValue(4);
         }
+        else if (key.hotkey == "INC_WARP")
+        {
+            target_spaceship->commandWarp(target_spaceship->warp_request + 1);
+            slider->setValue(target_spaceship->warp_request);
+        }
+        else if (key.hotkey == "DEC_WARP")
+        {
+            target_spaceship->commandWarp(target_spaceship->warp_request - 1);
+            slider->setValue(target_spaceship->warp_request);
+        }
     }
 }
