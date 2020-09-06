@@ -83,6 +83,7 @@ class SpaceObject : public Collisionable, public MultiplayerObject
 {
     float object_radius;
     uint8_t faction_id;
+    uint8_t personality_id;
     struct
     {
         string not_scanned;
@@ -218,6 +219,11 @@ public:
     string getLocaleFaction() { return factionInfo[this->faction_id]->getLocaleName(); }
     void setFactionId(unsigned int faction_id) { this->faction_id = faction_id; }
     unsigned int getFactionId() { return faction_id; }
+    void setPersonalityId(unsigned int personality_id) {
+        this->personality_id = personality_id;
+    }
+    string getPersonality();
+    unsigned int getPersonalityId() { return personality_id; }
     void setReputationPoints(float amount);
     int getReputationPoints();
     bool takeReputationPoints(float amount);

@@ -24,6 +24,7 @@ class GuiTextEntry;
 class GameMasterChatDialog;
 class GuiObjectCreationView;
 class GuiGlobalMessageEntryView;
+class GuiFactions;
 class GameMasterScreen : public GuiCanvas, public Updatable
 {
 private:
@@ -32,6 +33,7 @@ private:
     GuiRadarView* main_radar;
     GuiOverlay* box_selection_overlay;
     GuiSelector* faction_selector;
+    GuiSelector* personality_selector;
 
     GuiElement* chat_layer;
     std::vector<GameMasterChatDialog*> chat_dialog_per_ship;
@@ -42,6 +44,7 @@ private:
     GuiObjectTweak* object_tweak_dialog;
     GuiObjectTweak* station_tweak_dialog;
     GuiObjectTweak* jammer_tweak_dialog;
+    GuiFactions* factions_dialog;
 
     GuiAutoLayout* info_layout;
     std::vector<GuiKeyValueDisplay*> info_items;
@@ -53,6 +56,7 @@ private:
     GuiToggleButton* pause_button;
     GuiToggleButton* intercept_comms_button;
     GuiButton* tweak_button;
+    GuiButton* factions_button;
     GuiButton* copy_scenario_button;
     GuiButton* copy_selected_button;
     GuiSelector* player_ship_selector;

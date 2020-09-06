@@ -82,6 +82,12 @@ REGISTER_SCRIPT_CLASS_NO_CREATE(SpaceObject)
     /// two objects have the same faction.
     /// Example: other:setFactionId(obj:getFactionId())
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceObject, getFactionId);
+    /// Sets the personality of an object. Requires a index in the personality list.
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceObject, setPersonalityId);
+    /// Gets the personality name to which this object belongs.
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceObject, getPersonality);
+    /// Gets the personality ID to which this object belongs.
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceObject, getPersonalityId);
     /// Gets the friend-or-foe status of the parameter's faction relative to
     /// this object's faction.
     /// Requires a SpaceObject.
@@ -275,6 +281,7 @@ SpaceObject::SpaceObject(float collision_range, string multiplayer_name, float m
     object_radius = collision_range;
     space_object_list.push_back(this);
     faction_id = 0;
+    personality_id = 0;
     position_z = 0;
     hull = 0;
 
@@ -283,6 +290,7 @@ SpaceObject::SpaceObject(float collision_range, string multiplayer_name, float m
 
     registerMemberReplication(&callsign);
     registerMemberReplication(&faction_id);
+    registerMemberReplication(&personality_id);
     registerMemberReplication(&hull);
     registerMemberReplication(&scanned_by_faction);
     registerMemberReplication(&object_description.not_scanned);
@@ -452,10 +460,28 @@ void SpaceObject::setScanningParameters(int complexity, int depth)
     scanned_by_faction.clear();
 }
 
+string SpaceObject::getPersonality()
+{
+    if (personality_id == 1)
+        return "Pacifist";
+    if (personality_id == 2)
+        return "Hostile";
+    if (personality_id == 3)
+        return "Solo";
+
+    return "Normal";
+}
+
 bool SpaceObject::isEnemy(P<SpaceObject> obj)
 {
     if (obj)
     {
+        if (personality_id == 1)
+            return false;
+        if (personality_id == 2)
+            return faction_id != obj->faction_id;
+        if (personality_id == 3 && callsign != obj->callsign)
+            return callsign != obj->callsign && obj->personality_id != 3;
         return factionInfo[faction_id]->states[obj->faction_id] == FVF_Enemy;
     } else {
         return false;
@@ -464,6 +490,19 @@ bool SpaceObject::isEnemy(P<SpaceObject> obj)
 
 bool SpaceObject::isFriendly(P<SpaceObject> obj)
 {
+    if (obj)
+    {
+        if (personality_id == 1)
+            return true;
+        if (personality_id == 2)
+            return faction_id == obj->faction_id;
+        if (personality_id == 3 && callsign != obj->callsign)
+            return callsign == obj->callsign || obj->personality_id == 3;
+        return factionInfo[faction_id]->states[obj->faction_id] == FVF_Friendly;
+    } else {
+        return false;
+    }
+    
     if (obj)
     {
         return factionInfo[faction_id]->states[obj->faction_id] == FVF_Friendly;

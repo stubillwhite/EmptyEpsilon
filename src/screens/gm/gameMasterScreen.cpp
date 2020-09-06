@@ -9,6 +9,7 @@
 #include "spaceObjects/cpuShip.h"
 #include "spaceObjects/spaceStation.h"
 #include "spaceObjects/zone.h"
+#include "factions.h"
 
 #include "screenComponents/radarView.h"
 
@@ -54,6 +55,18 @@ GameMasterScreen::GameMasterScreen()
         faction_selector->addEntry(info->getLocaleName(), info->getName());
     faction_selector->setPosition(20, 70, ATopLeft)->setSize(250, 50);
 
+    personality_selector = new GuiSelector(this, "FACTION_SELECTOR", [this](int index, string value) {
+        for(P<SpaceObject> obj : targets.getTargets())
+        {
+            gameMasterActions->commandSetPersonalityId(index, targets.getTargets());
+        }
+    });
+    personality_selector->addEntry("Normal","Normal");
+    personality_selector->addEntry("Pacifist","Pacifist");
+    personality_selector->addEntry("Hostile","Hostile");
+    personality_selector->addEntry("Solo","Solo");
+    personality_selector->setPosition(20, 120, ATopLeft)->setSize(250, 50);
+
     global_message_button = new GuiButton(this, "GLOBAL_MESSAGE_BUTTON", "Global message", [this]() {
         global_message_entry->show();
     });
@@ -88,6 +101,12 @@ GameMasterScreen::GameMasterScreen()
     });
     cancel_action_button->setPosition(20, -70, ABottomLeft)->setSize(250, 50)->hide();
 
+    factions_button = new GuiButton(this, "FACTIONS_BUTTON", "Factions", [this]() {
+        factions_dialog->show();
+    });
+    // tweaks only work on the server
+    factions_button->setPosition(20, -120, ABottomLeft)->setSize(250, 50)->setEnable(bool(game_server));
+
     tweak_button = new GuiButton(this, "TWEAK_OBJECT", "Tweak", [this]() {
         for(P<SpaceObject> obj : targets.getTargets())
         {
@@ -117,7 +136,7 @@ GameMasterScreen::GameMasterScreen()
         }
     });
     // tweaks only work on the server
-    tweak_button->setPosition(20, -120, ABottomLeft)->setSize(250, 50)->setEnable(bool(game_server))->hide();
+    tweak_button->setPosition(20, -170, ABottomLeft)->setSize(250, 50)->setEnable(bool(game_server))->hide();
 
     player_comms_hail = new GuiButton(this, "HAIL_PLAYER", "Hail ship", [this]() {
         for(P<SpaceObject> obj : targets.getTargets())
@@ -129,7 +148,7 @@ GameMasterScreen::GameMasterScreen()
             }
         }
     });
-    player_comms_hail->setPosition(20, -170, ABottomLeft)->setSize(250, 50)->hide();
+    player_comms_hail->setPosition(20, -220, ABottomLeft)->setSize(250, 50)->hide();
 
     info_layout = new GuiAutoLayout(this, "INFO_LAYOUT", GuiAutoLayout::LayoutVerticalTopToBottom);
     info_layout->setPosition(-20, 20, ATopRight)->setSize(300, GuiElement::GuiSizeMax);
@@ -180,6 +199,8 @@ GameMasterScreen::GameMasterScreen()
     station_tweak_dialog->hide();
     jammer_tweak_dialog = new GuiObjectTweak(this, TW_Jammer);
     jammer_tweak_dialog->hide();
+    factions_dialog = new GuiFactions(this);
+    factions_dialog->hide();
 
     global_message_entry = new GuiGlobalMessageEntryView(this);
     global_message_entry->hide();
@@ -451,7 +472,10 @@ void GameMasterScreen::onMouseUp(sf::Vector2f position)
 
 
             if (space_objects.size() > 0)
+            {
                 faction_selector->setSelectionIndex(space_objects[0]->getFactionId());
+                personality_selector->setSelectionIndex(space_objects[0]->getPersonalityId());
+            }
         }
         break;
     default:

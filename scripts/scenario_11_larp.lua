@@ -10,6 +10,15 @@ function init()
     ------------ In Progress ----------
     -----------------------------------
     
+    -- Dynamic Faction and Personality
+    -- setPersonalityId can modify personality of object and behaviour with another object
+    -- 0: Normal (with faction behaviour)
+    -- 1: Pacifist (don't attack anyone)
+    -- 2: Hostile (attack everybody with another faction)
+    -- 3: Solo (attack everybody, except another solo object)
+    CpuShip():setFaction("Kraylor"):setTemplate("Adv. Gunship"):setPosition(-10000, 4000):setPersonalityId(1):orderRoaming()
+    -- Factions behaviour between themselves can be changed by GM during the game 
+    
     -- Logs by station
     -- Logs can now append on several stations. You activate this feature in options.ini with the parameter server_config_logs_by_station. If enabled, logs are only visible in a station if at least one log entry exist for the considered station. Ship logs screen shown all the logs with an indication of the station.
     player:addToShipLog("Start of helm log","white","helms")
@@ -51,10 +60,10 @@ function init()
     
     station_z = SpaceStation():setPosition(5000, 0):setTemplate('Huge Station'):setFaction("Human Navy"):setPositionZ(500)
 
-    --for n=1,20 do
-    --    CpuShip():setFaction("Human Navy"):setTemplate("Adv. Gunship"):setPosition(random(0,10000), random(-10000,10000)):setPositionZ(random(-500,500)):orderRoaming()
-    --    CpuShip():setFaction("Kraylor"):setTemplate("Adv. Gunship"):setPosition(random(0,10000), random(-10000,10000)):setPositionZ(random(-500,500)):orderRoaming()
-    --end
+    for n=1,20 do
+        CpuShip():setFaction("Human Navy"):setTemplate("Adv. Gunship"):setPosition(random(0,10000), random(-10000,10000)):setPositionZ(random(-500,500)):orderRoaming()
+        CpuShip():setFaction("Kraylor"):setTemplate("Adv. Gunship"):setPosition(random(0,10000), random(-10000,10000)):setPositionZ(random(-500,500)):orderRoaming()
+    end
     
     Nebula():setPosition(5000, 5000):setPositionZ(500)
     Nebula():setPosition(5000, -5000):setPositionZ(-500)

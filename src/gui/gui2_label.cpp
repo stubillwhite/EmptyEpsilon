@@ -36,6 +36,12 @@ GuiLabel* GuiLabel::setAlignment(EGuiAlign alignment)
     return this;
 }
 
+GuiLabel* GuiLabel::removeBackground()
+{
+    background = false;
+    return this;
+}
+
 GuiLabel* GuiLabel::addBackground()
 {
     background = true;
