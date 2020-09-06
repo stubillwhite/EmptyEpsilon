@@ -10,7 +10,7 @@ ShipsLog::ShipsLog(GuiContainer* owner, ECrewPosition position)
 {
     setPosition(0, 0, ABottomCenter);
     setSize(GuiElement::GuiSizeMax, 50);
-    setMargins(400, 0);
+    setMargins(350, 0);
 
     open = false;
 
@@ -87,7 +87,7 @@ bool ShipsLog::onMouseDown(sf::Vector2f position)
     else
     {
         setSize(getSize().x, 50);
-        setMargins(400, 0);
+        setMargins(350, 0);
     }
     return true;
 }
@@ -107,7 +107,7 @@ void ShipsLog::onHotkey(const HotkeyResult& key)
             else
             {
                 setSize(getSize().x, 50);
-                setMargins(400, 0);
+                setMargins(350, 0);
             }
         }
     }

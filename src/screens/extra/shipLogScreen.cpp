@@ -1,5 +1,6 @@
 #include "shipLogScreen.h"
 #include "playerInfo.h"
+#include "gameGlobalInfo.h"
 #include "spaceObjects/playerSpaceship.h"
 
 #include "gui/gui2_advancedscrolltext.h"
@@ -58,7 +59,7 @@ void ShipLogScreen::onDraw(sf::RenderTarget& window)
         while(log_text->getEntryCount() < logs.size())
         {
             int n = log_text->getEntryCount();
-            if (logs[n].position != max_crew_positions)
+            if (gameGlobalInfo->logs_by_station && logs[n].position != max_crew_positions)
                 logs[n].prefix = logs[n].prefix + "\t[" + getCrewPositionName(logs[n].position) + "]\t";
             log_text->addEntry(logs[n].prefix, logs[n].text, logs[n].color);
         }

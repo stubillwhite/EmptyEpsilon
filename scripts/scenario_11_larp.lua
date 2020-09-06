@@ -5,6 +5,18 @@
 function init()
     
     player = PlayerSpaceship():setFaction("Human Navy"):setTemplate("Battle docker"):setPosition(-10000, 0)
+    
+    -----------------------------------
+    ------------ In Progress ----------
+    -----------------------------------
+    
+    -- Logs by station
+    -- Logs can now append on several stations. You activate this feature in options.ini with the parameter server_config_logs_by_station. If enabled, logs are only visible in a station if at least one log entry exist for the considered station. Ship logs screen shown all the logs with an indication of the station.
+    player:addToShipLog("Start of helm log","white","helms")
+    player:addToShipLog("Start of weapons log","white","weapons")
+    player:addToShipLog("Start of engineering log","white","engineering")
+    player:addToShipLog("Start of science log","white","science")
+    player:addToShipLog("Start of relay log","white","relay")
 
     -----------------------------------
     -- ### EE LARP release 1.3-beta ---

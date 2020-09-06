@@ -37,6 +37,7 @@ ServerCreationScreen::ServerCreationScreen()
     gameGlobalInfo->use_nano_repair_crew = PreferencesManager::get("server_use_nano_repair_crew", "1").toInt();
     gameGlobalInfo->color_by_faction = PreferencesManager::get("server_config_color_by_faction", "1").toInt();
     gameGlobalInfo->all_can_be_targeted = PreferencesManager::get("server_config_all_can_be_targeted", "1").toInt();
+    gameGlobalInfo->logs_by_station = PreferencesManager::get("server_config_logs_by_station", "1").toInt();
 
     // Create a two-column layout.
     GuiElement* container = new GuiAutoLayout(this, "", GuiAutoLayout::ELayoutMode::LayoutVerticalColumns);

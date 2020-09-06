@@ -87,6 +87,7 @@ public:
     string gm_control_code;
     bool color_by_faction;
     bool all_can_be_targeted;
+    bool logs_by_station;
     float elapsed_time;
     string scenario;
     string variation = "None";

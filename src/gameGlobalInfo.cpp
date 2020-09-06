@@ -37,15 +37,16 @@ GameGlobalInfo::GameGlobalInfo()
     hacking_games = HG_All;
     use_beam_shield_frequencies = true;
     use_system_damage = true;
-    use_complex_radar_signatures = true;
+    use_complex_radar_signatures = false;
     allow_main_screen_tactical_radar = true;
     allow_main_screen_long_range_radar = true;
-    use_nano_repair_crew = false;
+    use_nano_repair_crew = true;
     gm_control_code = "";
     elapsed_time = 0.0f;
     intercept_all_comms_to_gm = false;
-    color_by_faction = false;
-    all_can_be_targeted = false;
+    color_by_faction = true;
+    all_can_be_targeted = true;
+    logs_by_station = true;
 
     registerMemberReplication(&scanning_complexity);
     registerMemberReplication(&hacking_difficulty);

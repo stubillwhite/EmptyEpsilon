@@ -457,7 +457,8 @@ PlayerSpaceship::PlayerSpaceship()
         }
 
         // Initialize the ship's log.
-        addToShipLog("Start of log", colorConfig.log_generic, relayOfficer);
+        if (!gameGlobalInfo->logs_by_station)
+            addToShipLog("Start of log", colorConfig.log_generic, relayOfficer);
     }
 
     // Initialize player ship callsigns with a "PL" designation.
@@ -1176,7 +1177,12 @@ std::vector<PlayerSpaceship::ShipLogEntry>& PlayerSpaceship::getShipsLog(ECrewPo
     // Initialize log
     for(unsigned int n=0; n<ships_log.size(); n++)
     {
-        if (ships_log[n].position == position || position == max_crew_positions || ships_log[n].position == max_crew_positions)
+        if (gameGlobalInfo->logs_by_station)
+        {
+            if (ships_log[n].position == position || position == max_crew_positions || ships_log[n].position == max_crew_positions)
+                sub_log.emplace_back(ships_log[n].prefix, ships_log[n].text, ships_log[n].color, ships_log[n].position);
+        } 
+        else if (position == relayOfficer || position == max_crew_positions)
         {
             sub_log.emplace_back(ships_log[n].prefix, ships_log[n].text, ships_log[n].color, ships_log[n].position);
         }
