@@ -9,6 +9,12 @@ function init()
     -----------------------------------
     ------------ In Progress ----------
     -----------------------------------
+
+    -- Template recorded or not in the database
+    -- Into the templates configuration files, you can choose to avoid a template from the database. It allow you to configure multiple ship template from a same base (for example with different texture color). Only the base is recorded and the rest is removed from the database.
+    
+    -- Station and drone recorded in the database
+    -- Nothing to do here, just to inform you that stations and drones template are now recorded in the database. Name of the button has changed (ships -> Templates) to keep consistency. This can be changed by translation.
     
     -- Dynamic Factions and Personality
     -- setPersonalityId can modify personality of object and behaviour with another object

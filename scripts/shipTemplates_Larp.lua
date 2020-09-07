@@ -56,5 +56,8 @@ template:addDoor(6, 3, false);
 template:addDoor(6, 4, false);
 template:addDoor(8, 3, false);
 template:addDoor(8, 4, false);
- 
+
+
+-- To choose recorded ship template or not
+template = ShipTemplate():setName("Not recorded ship"):setClass("Secret", "Secret"):setModel("AtlasHeavyFighterYellow"):setRecorded(false)
 

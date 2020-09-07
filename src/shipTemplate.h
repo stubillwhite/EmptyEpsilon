@@ -85,6 +85,7 @@ private:
     string class_name;
     string sub_class_name;
     TemplateType type;
+    bool recorded;
 public:
     string getName();
     string getLocaleName();
@@ -93,6 +94,9 @@ public:
     string getSubClass();
     void setType(TemplateType type);
     TemplateType getType();
+
+    void setRecorded(bool value) { recorded = value; }
+    bool getRecorded(){ return recorded; }
 
     P<ModelData> model_data;
 

@@ -317,6 +317,10 @@ void fillDefaultDatabaseData()
     for(string& template_name : template_names)
     {
         P<ShipTemplate> ship_template = ShipTemplate::getTemplate(template_name);
+
+        if (!ship_template->getRecorded())
+            continue;
+
         string class_name = ship_template->getClass();
         string subclass_name = ship_template->getSubClass();
         if (class_set.find(class_name) == class_set.end())
@@ -337,6 +341,10 @@ void fillDefaultDatabaseData()
     for(string& template_name : template_names)
     {
         P<ShipTemplate> ship_template = ShipTemplate::getTemplate(template_name);
+
+        if (!ship_template->getRecorded())
+            continue;
+
         P<ScienceDatabase> entry = class_database_entries[ship_template->getClass()]->addEntry(ship_template->getLocaleName());
 
         entry->setModelData(ship_template->model_data);

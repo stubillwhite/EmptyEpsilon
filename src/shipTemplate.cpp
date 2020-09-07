@@ -13,6 +13,10 @@ REGISTER_SCRIPT_CLASS(ShipTemplate)
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setLocaleName);
     /// Set the class name, and subclass name for the ship. Used to divide ships into different classes.
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setClass);
+    /// Set is the ShipTemplate is recorded in the database, true by default
+    REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setRecorded);
+    /// Check if the ShipTemplate is recorded in the database
+    REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, getRecorded);
     /// Set the description shown for this ship in the science database.
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setDescription);
     /// Sets the type of template. Defaults to normal ships, so then it does not need to be set.
@@ -139,6 +143,7 @@ ShipTemplate::ShipTemplate()
     type = Ship;
     class_name = tr("No class");
     sub_class_name = tr("No sub-class");
+    recorded = true;
     shares_energy_with_docked = true;
     repair_docked = false;
     restocks_scan_probes = false;
