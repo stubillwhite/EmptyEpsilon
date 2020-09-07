@@ -10,7 +10,7 @@ function init()
     ------------ In Progress ----------
     -----------------------------------
     
-    -- Dynamic Faction and Personality
+    -- Dynamic Factions and Personality
     -- setPersonalityId can modify personality of object and behaviour with another object
     -- 0: Normal (with faction behaviour)
     -- 1: Pacifist (don't attack anyone)
