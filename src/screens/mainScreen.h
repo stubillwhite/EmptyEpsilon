@@ -22,6 +22,7 @@ private:
     string keyboard_general = "";
     GuiRadarView* tactical_radar;
     GuiRadarView* long_range_radar;
+    GuiRadarView* far_range_radar;
     GuiCommsOverlay* onscreen_comms;
     std::unique_ptr<ImpulseSound> impulse_sound;
 public:

@@ -40,6 +40,7 @@ GameGlobalInfo::GameGlobalInfo()
     use_complex_radar_signatures = false;
     allow_main_screen_tactical_radar = true;
     allow_main_screen_long_range_radar = true;
+    allow_main_screen_far_range_radar = true;
     use_nano_repair_crew = true;
     gm_control_code = "";
     elapsed_time = 0.0f;
@@ -60,6 +61,7 @@ GameGlobalInfo::GameGlobalInfo()
     registerMemberReplication(&use_complex_radar_signatures);
     registerMemberReplication(&allow_main_screen_tactical_radar);
     registerMemberReplication(&allow_main_screen_long_range_radar);
+    registerMemberReplication(&allow_main_screen_far_range_radar);
     registerMemberReplication(&use_nano_repair_crew);
     registerMemberReplication(&gm_control_code);
     registerMemberReplication(&elapsed_time, 0.1);

@@ -9,6 +9,10 @@ function init()
     -----------------------------------
     ------------ In Progress ----------
     -----------------------------------
+    
+    -- New main screen radar
+    -- Add a far range radar (aka relay screen)
+    player:commandMainScreenSetting("farRange")
 
     -- Template recorded or not in the database
     -- Into the templates configuration files, you can choose to avoid a template from the database. It allow you to configure multiple ship template from a same base (for example with different texture color). Only the base is recorded and the rest is removed from the database.

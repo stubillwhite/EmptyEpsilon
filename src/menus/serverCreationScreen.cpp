@@ -34,6 +34,7 @@ ServerCreationScreen::ServerCreationScreen()
     gameGlobalInfo->use_complex_radar_signatures = PreferencesManager::get("server_config_use_complex_radar_signatures", "1").toInt();
     gameGlobalInfo->allow_main_screen_tactical_radar = PreferencesManager::get("server_config_allow_main_screen_tactical_radar", "1").toInt();
     gameGlobalInfo->allow_main_screen_long_range_radar = PreferencesManager::get("server_config_allow_main_screen_long_range_radar", "1").toInt();
+    gameGlobalInfo->allow_main_screen_far_range_radar = PreferencesManager::get("server_config_allow_main_screen_far_range_radar", "1").toInt();
     gameGlobalInfo->use_nano_repair_crew = PreferencesManager::get("server_use_nano_repair_crew", "1").toInt();
     gameGlobalInfo->color_by_faction = PreferencesManager::get("server_config_color_by_faction", "1").toInt();
     gameGlobalInfo->all_can_be_targeted = PreferencesManager::get("server_config_all_can_be_targeted", "1").toInt();
@@ -107,12 +108,15 @@ ServerCreationScreen::ServerCreationScreen()
     // Radar row.
     row = new GuiAutoLayout(left_panel, "", GuiAutoLayout::LayoutHorizontalLeftToRight);
     row->setSize(GuiElement::GuiSizeMax, 50);
-    (new GuiToggleButton(row, "MAIN_TACTICAL_TOGGLE", tr("Tactical radar"), [](bool value) {
+    (new GuiToggleButton(row, "MAIN_TACTICAL_TOGGLE", tr("Tactical"), [](bool value) {
         gameGlobalInfo->allow_main_screen_tactical_radar = value == 1;
-    }))->setValue(gameGlobalInfo->allow_main_screen_tactical_radar)->setSize(275, GuiElement::GuiSizeMax)->setPosition(0, 0, ACenterLeft);
-    (new GuiToggleButton(row, "MAIN_LONG_RANGE_TOGGLE", tr("Long range radar"), [](bool value) {
+    }))->setValue(gameGlobalInfo->allow_main_screen_tactical_radar)->setSize(180, GuiElement::GuiSizeMax)->setPosition(0, 0, ACenterLeft);
+    (new GuiToggleButton(row, "MAIN_LONG_RANGE_TOGGLE", tr("Long range"), [](bool value) {
         gameGlobalInfo->allow_main_screen_long_range_radar = value == 1;
-    }))->setValue(gameGlobalInfo->allow_main_screen_long_range_radar)->setSize(275, GuiElement::GuiSizeMax)->setPosition(0, 0, ACenterRight);
+    }))->setValue(gameGlobalInfo->allow_main_screen_long_range_radar)->setSize(180, GuiElement::GuiSizeMax)->setPosition(0, 0, ACenterRight);
+    (new GuiToggleButton(row, "MAIN_FAR_RANGE_TOGGLE", tr("Far range"), [](bool value) {
+        gameGlobalInfo->allow_main_screen_far_range_radar = value == 1;
+    }))->setValue(gameGlobalInfo->allow_main_screen_far_range_radar)->setSize(180, GuiElement::GuiSizeMax)->setPosition(0, 0, ACenterRight);
 
     // Game rules section.
     (new GuiLabel(left_panel, "GAME_RULES_LABEL", tr("Game rules"), 30))->addBackground()->setSize(GuiElement::GuiSizeMax, 50);

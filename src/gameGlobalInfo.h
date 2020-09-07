@@ -83,6 +83,7 @@ public:
     bool use_complex_radar_signatures;
     bool allow_main_screen_tactical_radar;
     bool allow_main_screen_long_range_radar;
+    bool allow_main_screen_far_range_radar;
     bool use_nano_repair_crew;
     string gm_control_code;
     bool color_by_faction;

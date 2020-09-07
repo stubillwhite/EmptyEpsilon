@@ -34,6 +34,11 @@ ScreenMainScreen::ScreenMainScreen()
     long_range_radar->setPosition(0, 0, ATopLeft)->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
     long_range_radar->setRangeIndicatorStepSize(5000.0f)->longRange()->enableCallsigns()->hide();
     long_range_radar->setFogOfWarStyle(GuiRadarView::NebulaFogOfWar);
+    far_range_radar = new GuiRadarView(this, "GLOBAL", my_spaceship->getLongRangeRadarRange(), nullptr, my_spaceship);
+    far_range_radar->setPosition(0, 0, ATopLeft)->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
+    far_range_radar->setAutoCentering(true);
+    far_range_radar->longRange()->enableWaypoints()->enableCallsigns()->setStyle(GuiRadarView::Rectangular)->setFogOfWarStyle(GuiRadarView::FriendlysShortRangeFogOfWar);
+    far_range_radar->hide();
     onscreen_comms = new GuiCommsOverlay(this);
     onscreen_comms->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax)->setVisible(false);
 
@@ -91,16 +96,25 @@ void ScreenMainScreen::update(float delta)
             viewport->show();
             tactical_radar->hide();
             long_range_radar->hide();
+            far_range_radar->hide();
             break;
         case MSS_Tactical:
             viewport->hide();
             tactical_radar->show();
             long_range_radar->hide();
+            far_range_radar->hide();
             break;
         case MSS_LongRange:
             viewport->hide();
             tactical_radar->hide();
             long_range_radar->show();
+            far_range_radar->hide();
+            break;
+        case MSS_FarRange:
+            viewport->hide();
+            tactical_radar->hide();
+            long_range_radar->hide();
+            far_range_radar->show();
             break;
         }
 
@@ -167,6 +181,10 @@ void ScreenMainScreen::onClick(sf::Vector2f mouse_position)
                 my_spaceship->commandMainScreenSetting(MSS_LongRange);
             break;
         case MSS_LongRange:
+            if (gameGlobalInfo->allow_main_screen_far_range_radar)
+                my_spaceship->commandMainScreenSetting(MSS_FarRange);
+            break;
+        case MSS_FarRange:
             if (gameGlobalInfo->allow_main_screen_tactical_radar)
                 my_spaceship->commandMainScreenSetting(MSS_Tactical);
             break;
@@ -192,6 +210,8 @@ void ScreenMainScreen::onHotkey(const HotkeyResult& key)
             my_spaceship->commandMainScreenSetting(MSS_Tactical);
         else if (key.hotkey == "LONG_RANGE_RADAR")
             my_spaceship->commandMainScreenSetting(MSS_LongRange);
+        else if (key.hotkey == "FAR_RANGE_RADAR")
+            my_spaceship->commandMainScreenSetting(MSS_FarRange);
         else if (key.hotkey == "FIRST_PERSON")
             viewport->first_person = !viewport->first_person;
     }
