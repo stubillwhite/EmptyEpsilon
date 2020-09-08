@@ -81,6 +81,8 @@ MISSILE_TYPES = {
 
 --- `"reactor"`
 SYS_REACTOR = "reactor"
+--- `"reactor"`
+SYS_OXYGEN = "oxygen"
 --- `"beamweapons"`
 SYS_BEAMWEAPONS = "beamweapons"
 --- `"missilesystem"`
@@ -97,6 +99,10 @@ SYS_JUMPDRIVE = "jumpdrive"
 SYS_FRONTSHIELD = "frontshield"
 --- `"rearshield"`
 SYS_REARSHIELD = "rearshield"
+--- `"Drones"`
+SYS_DRONES = "drones"
+--- `"rearshield"`
+SYS_DOCKS = "docks"
 
 --- Array of the system names.
 --

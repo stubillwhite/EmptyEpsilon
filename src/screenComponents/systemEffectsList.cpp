@@ -143,14 +143,14 @@ void GuiSystemEffectsList::addSystemEnergy(ESystem system)
 
     float energy = 0.0;
     float effectiveness = my_spaceship->getSystemEffectiveness(selected_system);
-    energy = effectiveness * PlayerSpaceship::system_power_user_factor[selected_system] * 60.0;
+    energy = effectiveness * my_spaceship->systems[selected_system].power_user_factor * 60.0;
     
     // Specific systems : Reactor
     if (selected_system == SYS_Reactor)
     {
         if (effectiveness > 1.0f)
             effectiveness = (1.0f + effectiveness) / 2.0f;
-        energy = effectiveness * PlayerSpaceship::system_power_user_factor[selected_system] * 60.0;
+        energy = effectiveness * my_spaceship->systems[selected_system].power_user_factor * 60.0;
     }
     
     // Specific systems : Shields

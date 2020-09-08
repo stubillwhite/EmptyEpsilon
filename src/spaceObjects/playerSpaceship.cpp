@@ -440,6 +440,7 @@ PlayerSpaceship::PlayerSpaceship()
         systems[n].repair_level = 0.0;
         systems[n].repair_request = 0.0;
         systems[n].heat_level = 0.0;
+        systems[n].power_user_factor = system_power_user_factor[n];
 
         registerMemberReplication(&systems[n].power_level);
         registerMemberReplication(&systems[n].power_request);
@@ -447,7 +448,8 @@ PlayerSpaceship::PlayerSpaceship()
         registerMemberReplication(&systems[n].coolant_request);
         registerMemberReplication(&systems[n].repair_level);
         registerMemberReplication(&systems[n].repair_request);
-        registerMemberReplication(&systems[n].heat_level, 1.0);
+        registerMemberReplication(&systems[n].heat_level);
+        registerMemberReplication(&systems[n].power_user_factor, 1.0);
     }
 
     if (game_server)
@@ -1093,16 +1095,16 @@ float PlayerSpaceship::getNetSystemEnergyUsage()
     {
         if (!hasSystem(ESystem(n))) continue;
         // Factor the subsystem's health into energy generation.
-        if (system_power_user_factor[n] < 0)
+        if (systems[n].power_user_factor < 0)
         {
             float f = getSystemEffectiveness(ESystem(n));
             if (f > 1.0f)
                 f = (1.0f + f) / 2.0f;
-            net_power -= system_power_user_factor[n] * f;
+            net_power -= systems[n].power_user_factor * f;
         }
         else
         {
-            net_power -= system_power_user_factor[n] * systems[n].power_level;
+            net_power -= systems[n].power_user_factor * systems[n].power_level;
         }
     }
 

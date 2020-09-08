@@ -2,6 +2,8 @@
 -- Description: Empty scenario, no enemies, no friendlies. Just to show larp edition of Empty Epsilon
 -- Type: Basic
 
+require("ee.lua")
+
 function init()
     
     player = PlayerSpaceship():setFaction("Human Navy"):setTemplate("Battle docker"):setPosition(-10000, 0)
@@ -9,6 +11,23 @@ function init()
     -----------------------------------
     ------------ In Progress ----------
     -----------------------------------
+    
+    -- Change Power Use Factor
+    -- Each system use a fixed amount of energy, affected by the power and the efficiency of the system. Here is the default values
+    -- SYS_Reactor     -25.0 * 0.08,   (Negative factor seems Reactor produces energy)
+    -- SYS_Oxygen        3.0 * 0.08,
+    -- SYS_BeamWeapons   3.0 * 0.08,
+    -- SYS_MissileSystem 1.0 * 0.08,
+    -- SYS_Maneuver      2.0 * 0.08,
+    -- SYS_Impulse       4.0 * 0.08,
+    -- SYS_Warp          5.0 * 0.08,
+    -- SYS_JumpDrive     5.0 * 0.08,
+    -- SYS_FrontShield   5.0 * 0.08,
+    -- SYS_RearShield    5.0 * 0.08,
+    -- SYS_Docks         1.0 * 0.08,
+    -- SYS_Drones        3.0 * 0.08,
+    -- Factor can be changed by script (example : oxygen don't use energy)
+    player:setSystemPowerUseFactor(SYS_OXYGEN, 0.0)
 
     -- Oxygen system
     -- Ship can have up to 10 oxygen zones (0 to 9), with a level and a max of oxygen (100 by default). You could also choose the discharge_rate_per_second, aka the number of oxygen decrease by second (0.1 by default) independently of another setting. And the recharge_rate_per_second parameter, aka the number of oxygen increase by second (0.1 by default) affected by the efficiency of oxygen system.
