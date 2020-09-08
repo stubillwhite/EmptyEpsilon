@@ -30,22 +30,27 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
 
     // Render the alert level color overlay.
     (new AlertLevelOverlay(this));
-
+    int i = 100;
     energy_display = new GuiKeyValueDisplay(this, "ENERGY_DISPLAY", 0.45, tr("Energy"), "");
-    energy_display->setIcon("gui/icons/energy")->setTextSize(20)->setPosition(20, 100, ATopLeft)->setSize(240, 40);
+    energy_display->setIcon("gui/icons/energy")->setTextSize(20)->setPosition(20, i, ATopLeft)->setSize(240, 40);
+    i += 40;
     hull_display = new GuiKeyValueDisplay(this, "HULL_DISPLAY", 0.45, tr("health","Hull"), "");
-    hull_display->setIcon("gui/icons/hull")->setTextSize(20)->setPosition(20, 140, ATopLeft)->setSize(240, 40);
-    front_shield_display = new GuiKeyValueDisplay(this, "SHIELDS_DISPLAY", 0.45, tr("shields", "Front"), "");
-    front_shield_display->setIcon("gui/icons/shields-fore")->setTextSize(20)->setPosition(20, 180, ATopLeft)->setSize(240, 40);
-    rear_shield_display = new GuiKeyValueDisplay(this, "SHIELDS_DISPLAY", 0.45, tr("shields", "Rear"), "");
-    rear_shield_display->setIcon("gui/icons/shields-aft")->setTextSize(20)->setPosition(20, 220, ATopLeft)->setSize(240, 40);
+    hull_display->setIcon("gui/icons/hull")->setTextSize(20)->setPosition(20, i, ATopLeft)->setSize(240, 40);
+    i += 40;
+    shield_display = new GuiKeyValueDisplay(this, "SHIELDS_DISPLAY", 0.45, tr("shields", "Front"), "");
+    shield_display->setIcon("gui/icons/shields-fore")->setTextSize(20)->setPosition(20, i, ATopLeft)->setSize(240, 40);
+    i += 40;
     coolant_display = new GuiKeyValueDisplay(this, "COOLANT_DISPLAY", 0.45, tr("total","Coolant"), "");
-    coolant_display->setIcon("gui/icons/coolant")->setTextSize(20)->setPosition(20, 260, ATopLeft)->setSize(240, 40);
+    coolant_display->setIcon("gui/icons/coolant")->setTextSize(20)->setPosition(20, i, ATopLeft)->setSize(240, 40);
     if (gameGlobalInfo->use_nano_repair_crew and gameGlobalInfo->use_system_damage)
     {
-        repair_display = new GuiKeyValueDisplay(this, "COOLANT_DISPLAY", 0.45, tr("total","Repair"), "");
-        repair_display->setIcon("gui/icons/system_health")->setTextSize(20)->setPosition(20, 300, ATopLeft)->setSize(240, 40);
+        i += 40;
+        repair_display = new GuiKeyValueDisplay(this, "REPAIR_DISPLAY", 0.45, tr("total","Repair"), "");
+        repair_display->setIcon("gui/icons/system_health")->setTextSize(20)->setPosition(20, i, ATopLeft)->setSize(240, 40);
     }
+    i += 40;
+    oxygen_display = new GuiKeyValueDisplay(this, "OXYGEN_DISPLAY", 0.45, tr("total","Oxygen"), "");
+    oxygen_display->setIcon("gui/icons/system_oxygen")->setTextSize(20)->setPosition(20, i, ATopLeft)->setSize(240, 40);
     
     self_destruct_button = new GuiSelfDestructButton(this, "SELF_DESTRUCT");
     self_destruct_button->setPosition(20, 20, ATopLeft)->setSize(240, 100)->setVisible(my_spaceship && my_spaceship->getCanSelfDestruct());
@@ -146,6 +151,7 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
     }
 
     system_rows[SYS_Reactor].button->setIcon("gui/icons/system_reactor");
+    system_rows[SYS_Oxygen].button->setIcon("gui/icons/system_oxygen");
     system_rows[SYS_BeamWeapons].button->setIcon("gui/icons/system_beam");
     system_rows[SYS_MissileSystem].button->setIcon("gui/icons/system_missile");
     system_rows[SYS_Maneuver].button->setIcon("gui/icons/system_maneuver");
@@ -198,16 +204,16 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
         
     if (gameGlobalInfo->use_nano_repair_crew)
     {
-        box->setPosition(0, 20, ATopCenter)->setSize(450, 340);
-        power_label->setHorizontal()->setPosition(20, 20, ATopLeft)->setSize(400, 30);
+        box->setPosition(0, 20, ATopCenter)->setSize(450, 320);
+        power_label->setHorizontal()->setPosition(20, 20, ATopLeft)->setSize(400, 20);
         power_slider->setRange(0.0, 3.0)->setPosition(20, 60, ATopLeft)->setSize(400, 40);
-        coolant_label->setHorizontal()->setPosition(20, 120, ATopLeft)->setSize(400, 30);
+        coolant_label->setHorizontal()->setPosition(20, 120, ATopLeft)->setSize(400, 20);
         coolant_slider->setRange(0.0, 10.0)->setPosition(20, 160, ATopLeft)->setSize(400, 40);
         
         if (gameGlobalInfo->use_system_damage)
         {
             repair_label = new GuiLabel(box, "COOLANT_LABEL", tr("slider", "Repair"), 30);
-            repair_label->setAlignment(ACenterLeft)->setPosition(20, 220, ATopLeft)->setSize(400, 30);
+            repair_label->setAlignment(ACenterLeft)->setPosition(20, 220, ATopLeft)->setSize(400, 20);
             repair_slider = new GuiSlider(box, "COOLANT_SLIDER", 0.0, 10.0, 0.0, [this](float value) {
             if (my_spaceship && selected_system != SYS_None)
                 my_spaceship->commandSetSystemRepairRequest(selected_system, value);
@@ -259,8 +265,11 @@ void EngineeringScreen::onDraw(sf::RenderTarget& window)
             hull_display->setColor(sf::Color::Red);
         else
             hull_display->setColor(sf::Color::White);
-        front_shield_display->setValue(string(my_spaceship->getShieldPercentage(0)) + "%");
-        rear_shield_display->setValue(string(my_spaceship->getShieldPercentage(1)) + "%");
+        string shields = "";
+        shields += string(my_spaceship->getShieldPercentage(0)) + "%";
+        if (my_spaceship->getShieldPercentage(1) > 0)
+            shields += "/" + string(my_spaceship->getShieldPercentage(1)) + "%";
+        shield_display->setValue(shields);
         coolant_display->setValue(string(int(my_spaceship->max_coolant * 10)) + "%");
         if (gameGlobalInfo->use_nano_repair_crew)
         {
@@ -268,6 +277,14 @@ void EngineeringScreen::onDraw(sf::RenderTarget& window)
             if (gameGlobalInfo->use_system_damage)
                 repair_display->setValue(string(int(my_spaceship->max_repair)));
         }
+        string oxygen = string(my_spaceship->oxygen_zones[0].oxygen_level / my_spaceship->oxygen_zones[0].oxygen_max * 100,1) + "%";
+        for(int n=1; n<10; n++)
+        {
+            if (my_spaceship->oxygen_zones[n].oxygen_max > 0)
+                oxygen += "/" + string(my_spaceship->oxygen_zones[n].oxygen_level / my_spaceship->oxygen_zones[n].oxygen_max * 100,1) + "%";
+        }
+        oxygen_display->setValue(oxygen);
+        oxygen_display->setVisible(my_spaceship->hasSystem(SYS_Oxygen));
         
         for(int n=0; n<SYS_COUNT; n++)
         {

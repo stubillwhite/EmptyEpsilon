@@ -24,8 +24,8 @@ private:
 
     GuiKeyValueDisplay* energy_display;
     GuiKeyValueDisplay* hull_display;
-    GuiKeyValueDisplay* front_shield_display;
-    GuiKeyValueDisplay* rear_shield_display;
+    GuiKeyValueDisplay* shield_display;
+    GuiKeyValueDisplay* oxygen_display;
     GuiKeyValueDisplay* coolant_display;
     GuiKeyValueDisplay* repair_display;
     GuiSelfDestructButton* self_destruct_button;

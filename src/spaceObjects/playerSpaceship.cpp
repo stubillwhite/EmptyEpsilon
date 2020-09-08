@@ -223,6 +223,7 @@ REGISTER_SCRIPT_SUBCLASS(PlayerSpaceship, SpaceShip)
 
 float PlayerSpaceship::system_power_user_factor[] = {
     /*SYS_Reactor*/     -25.0 * 0.08,
+    /*SYS_Oxygen*/        3.0 * 0.08,
     /*SYS_BeamWeapons*/   3.0 * 0.08,
     /*SYS_MissileSystem*/ 1.0 * 0.08,
     /*SYS_Maneuver*/      2.0 * 0.08,

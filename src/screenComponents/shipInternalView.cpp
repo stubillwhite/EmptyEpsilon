@@ -36,6 +36,7 @@ GuiShipInternalView* GuiShipInternalView::setShip(P<SpaceShip> ship)
         GuiShipRoom* room = new GuiShipRoom(room_container, id + "_ROOM_" + string(n), room_size, rt.size, nullptr);
         room->setPosition(sf::Vector2f(rt.position) * room_size, ATopLeft);
         room->setSystem(ship, rt.system);
+        room->setTitle(ship, rt.title);
     }
 
     for(unsigned int n=0; n<st->doors.size(); n++)
@@ -166,6 +167,8 @@ GuiShipRoom::GuiShipRoom(GuiContainer* owner, string id, float room_size, sf::Ve
 : GuiElement(owner, id), system(SYS_None), room_size(room_size), func(func)
 {
     setSize(sf::Vector2f(dimensions) * room_size);
+    title_label = new GuiLabel(this, "ROOM_TITLE", "", 20);
+    title_label->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
 }
 
 void GuiShipRoom::onDraw(sf::RenderTarget& window)
@@ -174,6 +177,8 @@ void GuiShipRoom::onDraw(sf::RenderTarget& window)
     if (ship && ship->hasSystem(system))
         f = std::max(0.0f, ship->systems[system].health);
     draw9Cut(window, rect, "room_background", sf::Color(255, 255 * f, 255 * f, 255));
+    
+    title_label->setText(title);
 
     if (system != SYS_None && ship && ship->hasSystem(system))
     {

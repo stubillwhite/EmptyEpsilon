@@ -61,6 +61,8 @@ GuiObjectTweak::GuiObjectTweak(GuiContainer* owner, ETweakType tweak_type)
         list->addEntry("Beams", "");
         pages.push_back(new GuiShipTweakSystems(this));
         list->addEntry("Systems", "");
+        pages.push_back(new GuiShipTweakOxygen(this));
+        list->addEntry("Oxygen", "");
     }
 
     if (tweak_type == TW_Player)
@@ -166,6 +168,12 @@ GuiTweakShip::GuiTweakShip(GuiContainer* owner)
         target->setReactor(value);
     });
     reactor_toggle->setSize(GuiElement::GuiSizeMax, 40);
+
+    oxygen_generator_toggle = new GuiToggleButton(right_col, "", "Oxygen Generator", [this](bool value) {
+        target->setOxygenGenerator(value);
+    });
+    oxygen_generator_toggle->setSize(GuiElement::GuiSizeMax, 40);
+
     warp_toggle = new GuiToggleButton(right_col, "", "Warp Drive", [this](bool value) {
         target->setWarpDrive(value);
     });
@@ -183,6 +191,7 @@ void GuiTweakShip::onDraw(sf::RenderTarget& window)
     jump_charge_slider->setValue(target->getJumpDriveCharge());
     type_name->setText(target->getTypeName());
     reactor_toggle->setValue(target->has_reactor);
+    oxygen_generator_toggle->setValue(target->has_oxygen_generator);
     warp_toggle->setValue(target->has_warp_drive);
     jump_toggle->setValue(target->hasJumpDrive());
     impulse_speed_slider->setValue(target->impulse_max_speed);
@@ -702,6 +711,105 @@ void GuiShipTweakSystems::onDraw(sf::RenderTarget& window)
 }
 
 void GuiShipTweakSystems::open(P<SpaceObject> target)
+{
+    P<SpaceShip> ship = target;
+    this->target = ship;
+}
+
+GuiShipTweakOxygen::GuiShipTweakOxygen(GuiContainer* owner)
+: GuiTweakPage(owner)
+{
+
+    GuiAutoLayout* left_col = new GuiAutoLayout(this, "LEFT_LAYOUT", GuiAutoLayout::LayoutVerticalTopToBottom);
+    left_col->setPosition(50, 25, ATopLeft)->setSize(300, GuiElement::GuiSizeMax);
+    GuiAutoLayout* right_col = new GuiAutoLayout(this, "RIGHT_LAYOUT", GuiAutoLayout::LayoutVerticalTopToBottom);
+    right_col->setPosition(-25, 25, ATopRight)->setSize(300, GuiElement::GuiSizeMax);
+
+    for(unsigned int n=0; n<10; n++)
+    {
+        zone_selector[n] = new GuiToggleButton(left_col, "", "Zone " + string(n+1), [this, n](bool value) {
+            zone_index = n;
+        });
+        zone_selector[n]->setSize(GuiElement::GuiSizeMax, 40);
+    }
+    
+    (new GuiLabel(left_col, "", tr("Change zone name:"), 20))->setSize(GuiElement::GuiSizeMax, 30);
+    zone_label = new GuiTextEntry(left_col, "", "");
+    zone_label->setSize(GuiElement::GuiSizeMax, 50);
+    zone_label->callback([this](string text) {
+        target->oxygen_zones[zone_index].label = text.upper();
+    });
+        
+    for(unsigned int n=0; n<10; n++)
+    {
+        zone_box[n] = new GuiAutoLayout(right_col, "", GuiAutoLayout::LayoutVerticalTopToBottom);
+        zone_box[n]->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
+    
+        (new GuiLabel(zone_box[n], "", tr("slider", "Oxygen level"), 20))->setSize(GuiElement::GuiSizeMax, 30);
+        zone_oxygen_level[n] = new GuiSlider(zone_box[n], "", 0.0, 1000.0, 100.0, [this, n](float value) {
+            target->oxygen_zones[n].oxygen_level = std::min(value,target->oxygen_zones[n].oxygen_max);
+        });
+        zone_oxygen_level[n]->setSize(GuiElement::GuiSizeMax, 30);
+        zone_oxygen_level[n]->addSnapValue(0.0, 0.01);
+        zone_oxygen_level[n]->addSnapValue(200.0, 0.01);
+        zone_oxygen_level[n]->addSnapValue(400.0, 0.01);
+        zone_oxygen_level[n]->addSnapValue(600.0, 0.01);
+        zone_oxygen_level[n]->addSnapValue(800.0, 0.01);
+        zone_oxygen_level[n]->addSnapValue(1000.0, 0.01);
+        zone_oxygen_level[n]->addOverlay();
+
+        (new GuiLabel(zone_box[n], "", tr("slider", "Oxygen max"), 20))->setSize(GuiElement::GuiSizeMax, 30);
+        zone_oxygen_max[n] = new GuiSlider(zone_box[n], "", 0.0, 1000.0, 100.0, [this, n](float value) {
+            target->oxygen_zones[n].oxygen_max = value;
+            target->oxygen_zones[n].oxygen_level = std::min(value,target->oxygen_zones[n].oxygen_level);
+        });
+        zone_oxygen_max[n]->setSize(GuiElement::GuiSizeMax, 30);
+        zone_oxygen_max[n]->addSnapValue(0.0, 0.01);
+        zone_oxygen_max[n]->addSnapValue(200.0, 0.01);
+        zone_oxygen_max[n]->addSnapValue(400.0, 0.01);
+        zone_oxygen_max[n]->addSnapValue(600.0, 0.01);
+        zone_oxygen_max[n]->addSnapValue(800.0, 0.01);
+        zone_oxygen_max[n]->addSnapValue(1000.0, 0.01);
+        zone_oxygen_max[n]->addOverlay();
+
+        (new GuiLabel(zone_box[n], "", tr("slider", "Recharge rate per second"), 20))->setSize(GuiElement::GuiSizeMax, 30);
+        zone_recharge_rate[n] = new GuiSlider(zone_box[n], "", 0.0, 10.0, 1.0, [this, n](float value) {
+            target->oxygen_zones[n].recharge_rate_per_second = value / 10.0;
+        });
+        zone_recharge_rate[n]->setSize(GuiElement::GuiSizeMax, 30);
+        // Override overlay label.
+        zone_recharge_rate_label[n] = new GuiLabel(zone_recharge_rate[n], "", "", 30);
+        zone_recharge_rate_label[n]->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
+        
+        (new GuiLabel(zone_box[n], "", tr("slider", "Discharge rate per second"), 20))->setSize(GuiElement::GuiSizeMax, 30);
+        zone_discharge_rate[n] = new GuiSlider(zone_box[n], "", 0.0, 10.0, 1.0, [this, n](float value) {
+            target->oxygen_zones[n].discharge_rate_per_second = value / 10.0;
+        });
+        zone_discharge_rate[n]->setSize(GuiElement::GuiSizeMax, 30);
+        // Override overlay label.
+        zone_discharge_rate_label[n] = new GuiLabel(zone_discharge_rate[n], "", "", 30);
+        zone_discharge_rate_label[n]->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
+    }
+}
+
+void GuiShipTweakOxygen::onDraw(sf::RenderTarget& window)
+{
+    for(unsigned int n=0; n<10; n++)
+    {
+        zone_selector[n]->setValue(n == zone_index);
+        zone_box[n]->setVisible(n == zone_index);
+        zone_selector[n]->setText(target->oxygen_zones[n].label);
+        zone_oxygen_level[n]->setValue(target->oxygen_zones[n].oxygen_level);
+        zone_oxygen_max[n]->setValue(target->oxygen_zones[n].oxygen_max);
+        zone_recharge_rate[n]->setValue(target->oxygen_zones[n].recharge_rate_per_second * 10.0);
+        zone_recharge_rate_label[n]->setText(target->oxygen_zones[n].recharge_rate_per_second);
+        zone_discharge_rate[n]->setValue(target->oxygen_zones[n].discharge_rate_per_second * 10.0);
+        zone_discharge_rate_label[n]->setText(target->oxygen_zones[n].discharge_rate_per_second);
+    }
+    zone_label->setText(target->oxygen_zones[zone_index].label);
+}
+
+void GuiShipTweakOxygen::open(P<SpaceObject> target)
 {
     P<SpaceShip> ship = target;
     this->target = ship;

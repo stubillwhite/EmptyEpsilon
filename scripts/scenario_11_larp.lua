@@ -9,6 +9,13 @@ function init()
     -----------------------------------
     ------------ In Progress ----------
     -----------------------------------
+
+    -- Oxygen system
+    -- Ship can have up to 10 oxygen zones (0 to 9), with a level and a max of oxygen (100 by default). You could also choose the discharge_rate_per_second, aka the number of oxygen decrease by second (0.1 by default) independently of another setting. And the recharge_rate_per_second parameter, aka the number of oxygen increase by second (0.1 by default) affected by the efficiency of oxygen system.
+    -- Each zone must be set in the template file or in the script file, and can after be changed by tweak.
+    player:setOxygenZone(0, "Zone 1", 200.0, 500.0, 0.5, 0.5)
+    -- You also need a oxygen generator to access to the oxygen system (false by default)
+    player:setOxygenGenerator(true)
     
     -- New main screen radar
     -- Add a far range radar (aka relay screen)
@@ -58,7 +65,7 @@ function init()
     -- You can change the maximum amount of repair by system with this function (the same for each system)
     player:setMaxRepairPerSystem(4)
     -- It is also possible to active automatic repair
-    player:commandSetAutoRepair(true):setAutoCoolant(true)
+    -- player:commandSetAutoRepair(true):setAutoCoolant(true)
     
     -----------------------------------
     -- ### EE LARP release 1.2-beta ---

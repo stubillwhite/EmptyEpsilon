@@ -3,6 +3,7 @@
 #define SPACESHIP_H
 
 #include "shipTemplateBasedObject.h"
+#include "shipTemplate.h"
 #include "spaceStation.h"
 #include "spaceshipParts/beamWeapon.h"
 #include "spaceshipParts/tractorBeam.h"
@@ -100,6 +101,8 @@ public:
     float energy_level;
     float max_energy_level;
     Dock docks[max_docks_count];
+    OxygenZone oxygen_zones[10];
+    //std::vector<ShipOxygenZoneTemplate> oxygen_zones;
 
     ShipSystem systems[SYS_COUNT];
     /*!
@@ -141,6 +144,11 @@ public:
      * [config] True if we have a reactor (for energy).
      */
     bool has_reactor;
+
+    /*!
+     * [config] True if we have a oxygen generator.
+     */
+    bool has_oxygen_generator;
 
     /*!
      * [config] True if we have a warpdrive.
@@ -240,6 +248,7 @@ public:
 
     virtual void update(float delta) override;
     virtual float getShieldRechargeRate(int shield_index) override;
+    virtual float getZoneRechargeRate(unsigned int zone_index);
     virtual float getShieldDamageFactor(DamageInfo& info, int shield_index) override;
     float getJumpDriveRechargeRate() { return Tween<float>::linear(getSystemEffectiveness(SYS_JumpDrive), 0.0, 1.0, -0.25, 1.0); }
 
@@ -397,6 +406,14 @@ public:
 
     void setReactor(bool has_reactor_drive){ has_reactor = has_reactor_drive;}
     bool hasReactor() { return has_reactor; }
+    void setOxygenGenerator(bool has_generator){ has_oxygen_generator = has_generator;}
+    bool hasOxygenGenerator() { return has_oxygen_generator; }
+    void setOxygenZone(int index, string label, float oxygen_level, float oxygen_max, float recharge_rate_per_second, float discharge_rate_per_second);
+    string getOxygenZoneLabel(int index) {if (index < 0 || index > 9) return ""; return oxygen_zones[index].label; }
+    float getOxygenZoneLevel(int index) {if (index < 0 || index > 9) return 0.0; return oxygen_zones[index].oxygen_level; }
+    float getOxygenZoneMax(int index) {if (index < 0 || index > 9) return 0.0; return oxygen_zones[index].oxygen_max; }
+    float getOxygenZoneRecharge(int index) {if (index < 0 || index > 9) return 0.0; return oxygen_zones[index].recharge_rate_per_second; }
+    float getOxygenZoneDischarge(int index) {if (index < 0 || index > 9) return 0.0; return oxygen_zones[index].discharge_rate_per_second; } 
     bool hasJumpDrive() { return has_jump_drive; }
     void setJumpDrive(bool has_jump) { has_jump_drive = has_jump; }
     void setJumpDriveRange(float min, float max) { jump_drive_min_distance = min; jump_drive_max_distance = max; }

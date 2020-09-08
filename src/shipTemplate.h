@@ -18,6 +18,7 @@ enum ESystem
 {
     SYS_None = -1,
     SYS_Reactor = 0,
+    SYS_Oxygen,
     SYS_BeamWeapons,
     SYS_MissileSystem,
     SYS_Maneuver,
@@ -29,6 +30,16 @@ enum ESystem
     SYS_Docks,
     SYS_Drones,
     SYS_COUNT
+};
+
+class OxygenZone
+{
+public:
+    string label;
+    float oxygen_level;
+    float oxygen_max;
+    float recharge_rate_per_second;
+    float discharge_rate_per_second;
 };
 
 /* Define script conversion function for the ESystem enum. */
@@ -45,8 +56,9 @@ public:
     sf::Vector2i position;
     sf::Vector2i size;
     ESystem system;
+    string title;
 
-    ShipRoomTemplate(sf::Vector2i position, sf::Vector2i size, ESystem system) : position(position), size(size), system(system) {}
+    ShipRoomTemplate(sf::Vector2i position, sf::Vector2i size, ESystem system, string title) : position(position), size(size), system(system), title(title) {}
 };
 class ShipDoorTemplate
 {
@@ -115,6 +127,8 @@ public:
     bool can_self_destruct = true;
     bool can_launch_probe = true;
     bool has_reactor;
+    bool has_oxygen_generator;
+    OxygenZone oxygen_zones[10];
 
     float energy_storage_amount;
     int repair_crew_count;
@@ -149,6 +163,7 @@ public:
 
     std::vector<ShipRoomTemplate> rooms;
     std::vector<ShipDoorTemplate> doors;
+    //std::vector<ShipOxygenZoneTemplate> oxygen_zones;
     std::vector<DroneTemplate> drones;
 
     ShipTemplate();
@@ -171,6 +186,7 @@ public:
     void setCanSelfDestruct(bool enabled) { can_self_destruct = enabled; }
     void setCanLaunchProbe(bool enabled) { can_launch_probe = enabled; }
     void setHasReactor(bool hasReactor);
+    void setHasOxygenGenerator(bool hasOxygen);
     void setIsShipCargo(bool enabled) { isShipCargo = enabled; }
     void setMesh(string model, string color_texture, string specular_texture, string illumination_texture);
     void setEnergyStorage(float energy_amount);
@@ -208,7 +224,9 @@ public:
     void setWeaponStorage(EMissileWeapons weapon, int amount);
     void addRoom(sf::Vector2i position, sf::Vector2i size);
     void addRoomSystem(sf::Vector2i position, sf::Vector2i size, ESystem system);
+    void addRoomTitle(sf::Vector2i position, sf::Vector2i size, string title);
     void addDoor(sf::Vector2i position, bool horizontal);
+    void setOxygenZone(int index, string label, float oxygen_max, float recharge_rate_per_second, float discharge_rate_per_second);
     void addDrones(string template_name, int count);
     void setDocks(int launchers, int energy, int weapons, int thermic, int repair, int stock);
     void setRadarTrace(string trace);

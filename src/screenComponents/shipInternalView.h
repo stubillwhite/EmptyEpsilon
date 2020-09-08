@@ -2,11 +2,13 @@
 #define SHIP_INTERNAL_VIEW_H
 
 #include "gui/gui2_element.h"
+#include "gui/gui2_label.h"
 #include "spaceObjects/spaceship.h"
 
 class RepairCrew;
 class GuiShipRoomContainer;
 class GuiShipCrew;
+class GuiLabel;
 
 class GuiShipInternalView : public GuiElement
 {
@@ -46,6 +48,8 @@ public:
 private:
     P<SpaceShip> ship;
     ESystem system;
+    string title;
+    GuiLabel* title_label;
     float room_size;
     func_t func;
 public:
@@ -54,6 +58,7 @@ public:
     virtual void onDraw(sf::RenderTarget& window);
 
     GuiShipRoom* setSystem(P<SpaceShip> ship, ESystem system) { this->ship = ship; this->system = system; return this; }
+    GuiShipRoom* setTitle(P<SpaceShip> ship, string title) { this->ship = ship; this->title = title; return this; }
 
     virtual bool onMouseDown(sf::Vector2f position);
     virtual void onMouseUp(sf::Vector2f position);

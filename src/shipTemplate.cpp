@@ -65,6 +65,9 @@ REGISTER_SCRIPT_CLASS(ShipTemplate)
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setTubeStation);
 
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setHasReactor);
+    REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setHasOxygenGenerator);
+    REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setOxygenZone);
+
     /// Set the amount of starting hull
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setHull);
     /// Set the shield levels, amount of parameters defines the amount of shields. (Up to a maximum of 8 shields)
@@ -108,6 +111,14 @@ REGISTER_SCRIPT_CLASS(ShipTemplate)
     /// the ship system as the string equivalent of an ESystem value.
     /// Example: template:addRoomSystem(1, 2, 3, 4, "Reactor")
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, addRoomSystem);
+    /// Add a room containing a title to a ship template.
+    /// Rooms are shown on the engineering and damcon screens.
+    /// If a system doesn't have a room, or repair crews can't reach a system's room, it
+    /// might not be repairable.
+    /// Accepts five parameters: the room's x coordinate, y coordinate, width, height, and
+    /// the ship system as the string equivalent of an ESystem value.
+    /// Example: template:addRoomSystem(1, 2, 3, 4, "Reactor")
+    REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, addRoomTitle);
     /// Add a door between rooms in a ship template.
     /// Rooms are shown on the engineering and damcon screens.
     /// If a system room doesn't have a door connecting it to other rooms, repair crews
@@ -178,6 +189,15 @@ ShipTemplate::ShipTemplate()
     radar_trace = "RadarArrow.png";
     impulse_sound_file = "sfx/engine.wav";
     has_reactor = true;
+    has_oxygen_generator = false;
+    for(int n=0; n<10; n++)
+    {
+        oxygen_zones[n].label = "";
+        oxygen_zones[n].oxygen_level = 0;
+        oxygen_zones[n].oxygen_max = 0;
+        oxygen_zones[n].recharge_rate_per_second = 0.1f;
+        oxygen_zones[n].discharge_rate_per_second = 0.1f;
+    }
     launcher_dock_count = 0;
     energy_dock_count = 0;
     weapons_dock_count = 0;
@@ -420,6 +440,7 @@ string getSystemName(ESystem system)
     switch(system)
     {
     case SYS_Reactor: return "Reactor";
+    case SYS_Oxygen: return "Oxygen";
     case SYS_BeamWeapons: return "Beam Weapons";
     case SYS_MissileSystem: return "Missile System";
     case SYS_Maneuver: return "Maneuvering";
@@ -440,6 +461,7 @@ string getLocaleSystemName(ESystem system)
     switch(system)
     {
     case SYS_Reactor: return tr("system", "Reactor");
+    case SYS_Oxygen: return tr("system", "Oxygen");
     case SYS_BeamWeapons: return tr("system", "Beam Weapons");
     case SYS_MissileSystem: return tr("system", "Missile System");
     case SYS_Maneuver: return tr("system", "Maneuvering");
@@ -513,6 +535,22 @@ void ShipTemplate::setHasReactor(bool hasReactor)
     has_reactor = hasReactor;
 }
 
+void ShipTemplate::setHasOxygenGenerator(bool hasOxygen)
+{
+    has_oxygen_generator = hasOxygen;
+}
+
+void ShipTemplate::setOxygenZone(int index, string label, float oxygen_max, float recharge_rate_per_second, float discharge_rate_per_second)
+{
+    if (index < 0 || index > 9)
+        return;
+    oxygen_zones[index].label = label;
+    oxygen_zones[index].oxygen_level = oxygen_max;
+    oxygen_zones[index].oxygen_max = oxygen_max;
+    oxygen_zones[index].recharge_rate_per_second = recharge_rate_per_second;
+    oxygen_zones[index].discharge_rate_per_second = discharge_rate_per_second;
+}
+
 void ShipTemplate::setRestocksMissilesDocked(bool enabled)
 {
     restocks_missiles_docked = enabled;
@@ -536,12 +574,17 @@ void ShipTemplate::setWeaponStorage(EMissileWeapons weapon, int amount)
 
 void ShipTemplate::addRoom(sf::Vector2i position, sf::Vector2i size)
 {
-    rooms.push_back(ShipRoomTemplate(position, size, SYS_None));
+    rooms.push_back(ShipRoomTemplate(position, size, SYS_None, ""));
 }
 
 void ShipTemplate::addRoomSystem(sf::Vector2i position, sf::Vector2i size, ESystem system)
 {
-    rooms.push_back(ShipRoomTemplate(position, size, system));
+    rooms.push_back(ShipRoomTemplate(position, size, system, ""));
+}
+
+void ShipTemplate::addRoomTitle(sf::Vector2i position, sf::Vector2i size, string title)
+{
+    rooms.push_back(ShipRoomTemplate(position, size, SYS_None, title));
 }
 
 void ShipTemplate::addDoor(sf::Vector2i position, bool horizontal)
@@ -637,7 +680,9 @@ P<ShipTemplate> ShipTemplate::copy(string new_name)
     result->repair_docked = repair_docked;
     result->restocks_scan_probes = restocks_scan_probes;
     result->restocks_missiles_docked = restocks_missiles_docked;
+    result->has_reactor = has_reactor;
     result->has_jump_drive = has_jump_drive;
+    result->has_oxygen_generator = has_oxygen_generator;
     result->has_cloaking = has_cloaking;
     for(int n=0; n<MW_Count; n++)
         result->weapon_storage[n] = weapon_storage[n];
@@ -645,6 +690,14 @@ P<ShipTemplate> ShipTemplate::copy(string new_name)
 
     result->rooms = rooms;
     result->doors = doors;
+    for(int n=0; n<10; n++)
+    {
+        result->oxygen_zones[n].label = oxygen_zones[n].label;
+        result->oxygen_zones[n].oxygen_level = oxygen_zones[n].oxygen_level;
+        result->oxygen_zones[n].oxygen_max = oxygen_zones[n].oxygen_max;
+        result->oxygen_zones[n].recharge_rate_per_second = oxygen_zones[n].recharge_rate_per_second;
+        result->oxygen_zones[n].discharge_rate_per_second = oxygen_zones[n].discharge_rate_per_second;
+    }
     result->drones = drones;
     result->launcher_dock_count = launcher_dock_count;
     result->energy_dock_count = energy_dock_count;

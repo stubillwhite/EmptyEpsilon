@@ -71,6 +71,14 @@ REGISTER_SCRIPT_SUBCLASS_NO_CREATE(SpaceShip, ShipTemplateBasedObject)
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setCombatManeuver);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, hasReactor);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setReactor);
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, hasOxygenGenerator);
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setOxygenGenerator);
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setOxygenZone);
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getOxygenZoneLabel);
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getOxygenZoneLevel);
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getOxygenZoneMax);
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getOxygenZoneRecharge);
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getOxygenZoneDischarge); 
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, hasJumpDrive);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setJumpDrive);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setJumpDriveRange);
@@ -210,6 +218,7 @@ SpaceShip::SpaceShip(string multiplayerClassName, float multiplayer_significant_
     registerMemberReplication(&impulse_request, 0.1);
     registerMemberReplication(&current_impulse, 0.5);
     registerMemberReplication(&has_reactor);
+    registerMemberReplication(&has_oxygen_generator);
     registerMemberReplication(&has_warp_drive);
     registerMemberReplication(&warp_request, 0.1);
     registerMemberReplication(&current_warp, 0.1);
@@ -241,6 +250,15 @@ SpaceShip::SpaceShip(string multiplayerClassName, float multiplayer_significant_
     {
         target_id[n] = -1;
         registerMemberReplication(&target_id[n]);
+    }
+
+    for(int n=0; n<10; n++)
+    {
+        registerMemberReplication(&oxygen_zones[n].label);
+        registerMemberReplication(&oxygen_zones[n].oxygen_level);
+        registerMemberReplication(&oxygen_zones[n].oxygen_max);
+        registerMemberReplication(&oxygen_zones[n].recharge_rate_per_second);
+        registerMemberReplication(&oxygen_zones[n].discharge_rate_per_second);
     }
 
     for(int n=0; n<SYS_COUNT; n++)
@@ -353,6 +371,15 @@ void SpaceShip::applyTemplateValues()
     combat_maneuver_boost_speed = ship_template->combat_maneuver_boost_speed;
     combat_maneuver_strafe_speed = ship_template->combat_maneuver_strafe_speed;
     has_reactor = ship_template->has_reactor;
+    has_oxygen_generator = ship_template->has_oxygen_generator;
+    for(int n=0; n<10; n++)
+    {
+        oxygen_zones[n].label = ship_template->oxygen_zones[n].label;
+        oxygen_zones[n].oxygen_level = ship_template->oxygen_zones[n].oxygen_level;
+        oxygen_zones[n].oxygen_max = ship_template->oxygen_zones[n].oxygen_max;
+        oxygen_zones[n].recharge_rate_per_second = ship_template->oxygen_zones[n].recharge_rate_per_second;
+        oxygen_zones[n].discharge_rate_per_second = ship_template->oxygen_zones[n].discharge_rate_per_second;
+    }
     has_warp_drive = ship_template->warp_speed > 0.0;
     warp_speed_per_warp_level = ship_template->warp_speed;
     has_jump_drive = ship_template->has_jump_drive;
@@ -908,6 +935,17 @@ void SpaceShip::update(float delta)
     // Add heat to systems consuming combat maneuver boost.
     addHeat(SYS_Impulse, fabs(combat_maneuver_boost_active) * delta * heat_per_combat_maneuver_boost);
     addHeat(SYS_Maneuver, fabs(combat_maneuver_strafe_active) * delta * heat_per_combat_maneuver_strafe);
+    
+    // Update Oxygen by zone
+    for(unsigned int n=0; n<10; n++)
+    {
+        float oxygen_rate = getZoneRechargeRate(n);
+        oxygen_zones[n].oxygen_level += oxygen_rate * delta;
+        if (oxygen_zones[n].oxygen_level > oxygen_zones[n].oxygen_max)
+            oxygen_zones[n].oxygen_level = oxygen_zones[n].oxygen_max;
+        if (oxygen_zones[n].oxygen_level < 0.0)
+            oxygen_zones[n].oxygen_level = 0.0;
+    }
 
     for(int n = 0; n < max_beam_weapons; n++)
     {
@@ -935,6 +973,12 @@ void SpaceShip::update(float delta)
         model_info.warp_scale = (10.0f - jump_delay) / 10.0f;
     else
         model_info.warp_scale = 0.0;
+}
+
+float SpaceShip::getZoneRechargeRate(unsigned int zone_index)
+{
+    float rate = -oxygen_zones[zone_index].discharge_rate_per_second + getSystemEffectiveness(SYS_Oxygen) * oxygen_zones[zone_index].recharge_rate_per_second;
+    return rate;
 }
 
 float SpaceShip::getShieldRechargeRate(int shield_index)
@@ -1347,6 +1391,8 @@ bool SpaceShip::hasSystem(ESystem system)
         return shield_count > 1;
     case SYS_Reactor:
         return has_reactor;
+    case SYS_Oxygen:
+        return has_oxygen_generator;
     case SYS_BeamWeapons:
         return true;
     case SYS_Maneuver:
@@ -1716,6 +1762,17 @@ bool SpaceShip::tryDockDrone(SpaceShip* other){
 
 float SpaceShip::getDronesControlRange() { 
     return Tween<float>::easeInQuad(getSystemEffectiveness(SYS_Drones), 0.0, 3.0, 0.001, 50000.0); 
+}
+
+void SpaceShip::setOxygenZone(int index, string label, float oxygen_level, float oxygen_max, float recharge_rate_per_second, float discharge_rate_per_second)
+{
+    if (index < 0 || index > 9)
+        return;
+    oxygen_zones[index].label = label;
+    oxygen_zones[index].oxygen_level = oxygen_level;
+    oxygen_zones[index].oxygen_max = oxygen_max;
+    oxygen_zones[index].recharge_rate_per_second = recharge_rate_per_second;
+    oxygen_zones[index].discharge_rate_per_second = discharge_rate_per_second;
 }
 
 string getMissileWeaponName(EMissileWeapons missile)

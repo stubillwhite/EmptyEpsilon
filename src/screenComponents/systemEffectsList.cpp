@@ -52,6 +52,20 @@ void GuiSystemEffectsList::onDraw(sf::RenderTarget& window)
             if (effectiveness > 1.0f)
                 effectiveness = (1.0f + effectiveness) / 2.0f;
             break;
+        case SYS_Oxygen:
+            for(unsigned int n=0; n<10; n++)
+            {
+                OxygenZone zone = my_spaceship->oxygen_zones[n];
+                if (zone.oxygen_max > 0.0 || zone.label != "")
+                {
+                    float oxygen_rate = my_spaceship->getZoneRechargeRate(n) * 60;
+                    if (oxygen_rate >= 0.0)
+                        addSystemEffect("Oxygen: " + zone.label, "+" + string(oxygen_rate, 1) + "/min");
+                    else
+                        addSystemEffect("Oxygen: " + zone.label, string(oxygen_rate, 1) + "/min");
+                }
+            }
+            break;
         case SYS_BeamWeapons:
             addSystemEffect(tr("Firing rate"), string(int(effectiveness * 100)) + "%");
             // If the ship has a turret, also note that the rotation rate

@@ -54,6 +54,7 @@ private:
 
     GuiTextEntry* type_name;
     GuiToggleButton* reactor_toggle;
+    GuiToggleButton* oxygen_generator_toggle;
     GuiToggleButton* warp_toggle;
     GuiToggleButton* jump_toggle;
     GuiSlider* impulse_speed_slider;
@@ -183,6 +184,29 @@ private:
     GuiProgressbar* system_instability_level[SYS_COUNT];
 public:
     GuiShipTweakSystems(GuiContainer* owner);
+
+    virtual void open(P<SpaceObject> target) override;
+
+    virtual void onDraw(sf::RenderTarget& window) override;
+};
+
+class GuiShipTweakOxygen : public GuiTweakPage
+{
+private:
+    P<SpaceShip> target;
+
+    int zone_index;
+    GuiTextEntry* zone_label;
+    GuiElement* zone_box[10];
+    GuiToggleButton* zone_selector[10];
+    GuiSlider* zone_oxygen_level[10];
+    GuiSlider* zone_oxygen_max[10];
+    GuiSlider* zone_recharge_rate[10];
+    GuiLabel* zone_recharge_rate_label[10];
+    GuiSlider* zone_discharge_rate[10];
+    GuiLabel* zone_discharge_rate_label[10];
+public:
+    GuiShipTweakOxygen(GuiContainer* owner);
 
     virtual void open(P<SpaceObject> target) override;
 

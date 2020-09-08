@@ -37,10 +37,10 @@ template:addRoomSystem(0, 3, 1, 2, "RearShield");
 template:addRoomSystem(1, 3, 2, 2, "Reactor");
 template:addRoomSystem(3, 3, 2, 2, "Warp");
 template:addRoomSystem(5, 3, 1, 2, "JumpDrive");
-template:addRoom(6, 3, 2, 1);
+template:addRoomTitle(6, 3, 2, 1, "Commands center");
 template:addRoomSystem(6, 4, 2, 1, "Docks");
 template:addRoomSystem(8, 3, 1, 2, "FrontShield");
-template:addRoom(2, 5, 2, 1);
+template:addRoomTitle(2, 5, 2, 1, "Sick Bay");
 template:addRoomSystem(1, 6, 2, 1, "MissileSystem");
 template:addRoomSystem(1, 7, 2, 1, "Impulse");
 template:addDoor(1, 1, true);
@@ -57,6 +57,8 @@ template:addDoor(6, 4, false);
 template:addDoor(8, 3, false);
 template:addDoor(8, 4, false);
 
+template:setHasOxygenGenerator(true);
+template:setOxygenZone(0, "Test", 100.0, 0.1, 0.1);
 
 -- To choose recorded ship template or not
 template = ShipTemplate():setName("Not recorded ship"):setClass("Secret", "Secret"):setModel("AtlasHeavyFighterYellow"):setRecorded(false)
