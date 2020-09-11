@@ -68,6 +68,8 @@ public:
     constexpr static int max_routes = 7;
     constexpr static int max_waypoints_in_route = 20;
     constexpr static int max_waypoints = 99;
+    // Scanning noise
+    float scanning_noise = 0.0f;
 
     constexpr static int16_t CMD_PLAY_CLIENT_SOUND = 0x0001;
 
@@ -363,6 +365,10 @@ public:
     int getRepairCrewCount();
     void setRepairCrewCount(int amount);
     EAlertLevel getAlertLevel() { return alert_level; }
+
+    // Ship noise scanning functions
+    float getScanningNoise() { return scanning_noise; }
+    void setScanningNoise(float value){ scanning_noise = value; }
 
     // Ship update functions
     virtual void update(float delta) override;

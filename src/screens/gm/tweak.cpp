@@ -876,6 +876,17 @@ GuiShipTweakPlayer::GuiShipTweakPlayer(GuiContainer* owner)
     });
     combat_maneuver_strafe_speed_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 40);
 
+    // Edit scanning noise (< 0 for help)
+    (new GuiLabel(left_col, "", "Scanning nois (<0 for help):", 30))->setSize(GuiElement::GuiSizeMax, 50);
+    scanning_noise_slider = new GuiSlider(left_col, "", -10.0, 10.0, 0.0, [this](float value) {
+        target->scanning_noise = value / 10.0;
+    });
+    scanning_noise_slider->setSize(GuiElement::GuiSizeMax, 40);
+    scanning_noise_slider->addSnapValue(0.0, 1.0f);
+    // Override overlay label.
+    scanning_noise_label = new GuiLabel(scanning_noise_slider, "", "", 30);
+    scanning_noise_label->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
+
     // Right column
     // Count and list ship positions and whether they're occupied.
     position_count = new GuiLabel(right_col, "", "Positions occupied: ", 30);
@@ -919,6 +930,10 @@ void GuiShipTweakPlayer::onDraw(sf::RenderTarget& window)
 
     // Update reputation points.
     reputation_point_slider->setValue(target->getReputationPoints());
+
+    // Update scanning noise.
+    scanning_noise_slider->setValue(target->scanning_noise * 10.0);
+    scanning_noise_label->setText(target->scanning_noise);
 }
 
 void GuiShipTweakPlayer::open(P<SpaceObject> target)
@@ -938,6 +953,9 @@ void GuiShipTweakPlayer::open(P<SpaceObject> target)
         // Set and snap strafe speed slider to current value
         combat_maneuver_strafe_speed_slider->setValue(player->combat_maneuver_strafe_speed);
         combat_maneuver_strafe_speed_slider->clearSnapValues()->addSnapValue(player->combat_maneuver_strafe_speed, 20.0f);
+
+        // Set and snap scanning noise slider to current value
+        scanning_noise_slider->setValue(player->scanning_noise);
     }
 }
 

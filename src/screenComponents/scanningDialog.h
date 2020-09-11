@@ -24,6 +24,7 @@ private:
     GuiButton* cancel_button;
 
     float target[max_sliders];
+    int noise_direction[max_sliders];
     bool locked;
     float lock_start_time;
     int scan_depth;

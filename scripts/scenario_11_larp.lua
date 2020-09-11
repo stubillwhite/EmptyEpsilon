@@ -11,6 +11,10 @@ function init()
     -----------------------------------
     ------------ In Progress ----------
     -----------------------------------
+
+    -- Scanning noise
+    -- You can affect scanning dialog for science screen with the function setScanningNoise. If > 0, slider will be randomly affected by the noise (between 0 and 1). If < 0, slider will be automatically moved to the right position (between 0 and -1)
+    player:setScanningNoise(-0.5)  
     
     -- Personalize name of ship's rooms
     -- During template configuration, can use addRoomTitle to create a zone with a label. This label will be shown in the center of the room. RP only.

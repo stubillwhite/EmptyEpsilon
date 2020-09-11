@@ -31,6 +31,8 @@ GuiScanningDialog::GuiScanningDialog(GuiContainer* owner, string id)
     {
         sliders[n] = new GuiSlider(box, id + "_SLIDER_" + string(n), 0.0, 1.0, 0.0, nullptr);
         sliders[n]->setPosition(0, 200 + n * 70, ATopCenter)->setSize(450, 50);
+        
+        noise_direction[n] = 1;
     }
     cancel_button = new GuiButton(box, id + "_CANCEL", "Cancel", []() {
         if (my_spaceship)
@@ -54,6 +56,27 @@ void GuiScanningDialog::onDraw(sf::RenderTarget& window)
                 box->show();
                 scan_depth = 0;
                 setupParameters();
+            }
+
+            // Instability and help for scanning
+            for(int n=0; n<max_sliders; n++)
+            {
+                if (n < my_spaceship->scanning_complexity)
+                {
+                    float noise = my_spaceship->scanning_noise;
+                    if (noise > 0)
+                    {
+                        noise_direction[n] *= random(0.0, 1.0) < 0.99 ? 1 : -1;
+                        noise *= noise_direction[n];
+                    }
+                    float gap = target[n] - sliders[n]->getValue();
+                    if (gap > 0.0)
+                        gap = std::min(0.5f, std::max(0.1f, gap));
+                    else
+                        gap = std::min(-0.1f, std::max(-0.5f, gap));
+                    float move = gap * (-noise) * 0.001;
+                    sliders[n]->setValue(std::min(1.0f, std::max(0.0f, sliders[n]->getValue() + move)));
+                }
             }
 
             if (locked && engine->getElapsedTime() - lock_start_time > lock_delay)

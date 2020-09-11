@@ -70,6 +70,9 @@ REGISTER_SCRIPT_SUBCLASS(PlayerSpaceship, SpaceShip)
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, setMaxScanProbeCount);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, getMaxScanProbeCount);
 
+    REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, getScanningNoise);
+    REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, setScanningNoise);
+
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, addCustomButton);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, addCustomInfo);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, addCustomMessage);
@@ -350,6 +353,7 @@ PlayerSpaceship::PlayerSpaceship()
     alert_level = AL_Normal;
     shields_active = false;
     control_code = "";
+    scanning_noise = 0.0;
     setFactionId(1);
 
     // For now, set player ships to always be fully scanned to all other ships
@@ -400,6 +404,7 @@ PlayerSpaceship::PlayerSpaceship()
     registerMemberReplication(&alert_level);
     registerMemberReplication(&linked_science_probe_id);
     registerMemberReplication(&control_code);
+    registerMemberReplication(&scanning_noise);
     registerMemberReplication(&far_range_radar_range);
     registerMemberReplication(&long_range_radar_range);
     registerMemberReplication(&short_range_radar_range);
