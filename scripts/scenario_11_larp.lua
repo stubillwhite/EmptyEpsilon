@@ -12,6 +12,10 @@ function init()
     ------------ In Progress ----------
     -----------------------------------
 
+    -- Scanning capability
+    -- Set the maximal level of scanning available for a playership
+    player:setScanningCapability(SCANNED_STATES.SS_SIMPLE_SCAN)
+
     -- Scanning noise
     -- You can affect scanning dialog for science screen with the function setScanningNoise. If > 0, slider will be randomly affected by the noise (between 0 and 1). If < 0, slider will be automatically moved to the right position (between 0 and -1)
     player:setScanningNoise(-0.5)  

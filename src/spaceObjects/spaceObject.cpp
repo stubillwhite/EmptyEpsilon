@@ -287,6 +287,7 @@ SpaceObject::SpaceObject(float collision_range, string multiplayer_name, float m
 
     scanning_complexity_value = 0;
     scanning_depth_value = 0;
+    scanning_capability = SS_FullScan;
 
     registerMemberReplication(&callsign);
     registerMemberReplication(&faction_id);
@@ -302,6 +303,7 @@ SpaceObject::SpaceObject(float collision_range, string multiplayer_name, float m
     registerMemberReplication(&radar_signature.biological);
     registerMemberReplication(&scanning_complexity_value);
     registerMemberReplication(&scanning_depth_value);
+    registerMemberReplication(&scanning_capability);
     registerMemberReplication(&position_z);
     registerCollisionableReplication(multiplayer_significant_range);
 }
@@ -352,11 +354,26 @@ bool SpaceObject::canBeScannedBy(P<SpaceObject> other)
 {
     if (getScannedStateFor(other) == SS_FullScan)
         return false;
+    if (other->scanning_capability <= getScannedStateFor(other))
+        return false;
     if (scanning_complexity_value > 0)
         return true;
     if (scanning_depth_value > 0)
         return true;
     return false;
+}
+
+string getScannedStateName(EScannedState scan)
+{
+    switch(scan)
+    {
+    case SS_NotScanned: return tr("scan", "Not scanned");
+    case SS_FriendOrFoeIdentified: return tr("scan", "Friend of Foe identified");
+    case SS_SimpleScan: return tr("scan", "simple scanned");
+    case SS_FullScan: return tr("scan", "full scanned");
+    default:
+        return "UNKNOWN";
+    }
 }
 
 bool SpaceObject::canBeHackedBy(P<SpaceObject> other)

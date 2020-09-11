@@ -326,7 +326,7 @@ public:
     /// Dummy virtual function to add heat on a system. The player ship class has an actual implementation of this as only player ships model heat right now.
     virtual void addHeat(ESystem system, float amount) {}
 
-    virtual bool canBeScannedBy(P<SpaceObject> other) override { return getScannedStateFor(other) != SS_FullScan; }
+    virtual bool canBeScannedBy(P<SpaceObject> other) override { return getScannedStateFor(other) != SS_FullScan && other->scanning_capability > getScannedStateFor(other); }
     virtual int scanningComplexity(P<SpaceObject> other) override;
     virtual int scanningChannelDepth(P<SpaceObject> other) override;
     virtual void scannedBy(P<SpaceObject> other) override;

@@ -840,52 +840,62 @@ GuiShipTweakPlayer::GuiShipTweakPlayer(GuiContainer* owner)
     });
 
     // Edit reputation.
-    (new GuiLabel(left_col, "", "Reputation:", 30))->setSize(GuiElement::GuiSizeMax, 50);
+    (new GuiLabel(left_col, "", "Reputation:", 30))->setSize(GuiElement::GuiSizeMax, 40);
 
     reputation_point_slider = new GuiSlider(left_col, "", 0.0, 9999.0, 0.0, [this](float value) {
         target->setReputationPoints(value);
     });
-    reputation_point_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 40);
+    reputation_point_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 30);
 
     // Edit energy level.
-    (new GuiLabel(left_col, "", "Max energy:", 30))->setSize(GuiElement::GuiSizeMax, 50);
+    (new GuiLabel(left_col, "", "Max energy:", 30))->setSize(GuiElement::GuiSizeMax, 40);
 
     max_energy_level_slider = new GuiSlider(left_col, "", 0.0, 2000, 0.0, [this](float value) {
         target->max_energy_level = value;
         target->energy_level = std::min(target->energy_level, target->max_energy_level);
     });
-    max_energy_level_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 40);
+    max_energy_level_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 30);
 
-    (new GuiLabel(left_col, "", "Current energy:", 30))->setSize(GuiElement::GuiSizeMax, 50);
+    (new GuiLabel(left_col, "", "Current energy:", 30))->setSize(GuiElement::GuiSizeMax, 40);
 
     energy_level_slider = new GuiSlider(left_col, "", 0.0, 2000, 0.0, [this](float value) {
         target->energy_level = std::min(value, target->max_energy_level);
     });
-    energy_level_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 40);
+    energy_level_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 30);
 
     // Display Boost/Strafe speed sliders
-    (new GuiLabel(left_col, "", "Boost Speed:", 30))->setSize(GuiElement::GuiSizeMax, 50);
+    (new GuiLabel(left_col, "", "Boost Speed:", 30))->setSize(GuiElement::GuiSizeMax, 40);
     combat_maneuver_boost_speed_slider = new GuiSlider(left_col, "", 0.0, 1000, 0.0, [this](float value) {
         target->combat_maneuver_boost_speed = value;
     });
-    combat_maneuver_boost_speed_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 40);
+    combat_maneuver_boost_speed_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 30);
 
-    (new GuiLabel(left_col, "", "Strafe Speed:", 30))->setSize(GuiElement::GuiSizeMax, 50);
+    (new GuiLabel(left_col, "", "Strafe Speed:", 30))->setSize(GuiElement::GuiSizeMax, 40);
     combat_maneuver_strafe_speed_slider = new GuiSlider(left_col, "", 0.0, 1000, 0.0, [this](float value) {
         target->combat_maneuver_strafe_speed = value;
     });
-    combat_maneuver_strafe_speed_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 40);
+    combat_maneuver_strafe_speed_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 30);
 
     // Edit scanning noise (< 0 for help)
-    (new GuiLabel(left_col, "", "Scanning nois (<0 for help):", 30))->setSize(GuiElement::GuiSizeMax, 50);
+    (new GuiLabel(left_col, "", "Scanning noise (<0 for help):", 30))->setSize(GuiElement::GuiSizeMax, 40);
     scanning_noise_slider = new GuiSlider(left_col, "", -10.0, 10.0, 0.0, [this](float value) {
         target->scanning_noise = value / 10.0;
     });
-    scanning_noise_slider->setSize(GuiElement::GuiSizeMax, 40);
+    scanning_noise_slider->setSize(GuiElement::GuiSizeMax, 30);
     scanning_noise_slider->addSnapValue(0.0, 1.0f);
     // Override overlay label.
     scanning_noise_label = new GuiLabel(scanning_noise_slider, "", "", 30);
     scanning_noise_label->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
+
+    (new GuiLabel(left_col, "", "Scanning capability :", 30))->setSize(GuiElement::GuiSizeMax, 40);
+    scanning_capability_slider = new GuiSlider(left_col, "", 0, 3, 3, [this](int value) {
+        target->scanning_capability = EScannedState(value);
+    });
+    scanning_capability_slider->setSize(GuiElement::GuiSizeMax, 30);
+    scanning_capability_slider->addSnapValue(0.0, 1.0f);
+    // Override overlay label.
+    scanning_capability_label = new GuiLabel(scanning_capability_slider, "", "", 30);
+    scanning_capability_label->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
 
     // Right column
     // Count and list ship positions and whether they're occupied.
@@ -931,9 +941,11 @@ void GuiShipTweakPlayer::onDraw(sf::RenderTarget& window)
     // Update reputation points.
     reputation_point_slider->setValue(target->getReputationPoints());
 
-    // Update scanning noise.
+    // Update scanning noise and capability
     scanning_noise_slider->setValue(target->scanning_noise * 10.0);
     scanning_noise_label->setText(target->scanning_noise);
+    scanning_capability_slider->setValue(target->scanning_capability);
+    scanning_capability_label->setText(getScannedStateName(target->scanning_capability));
 }
 
 void GuiShipTweakPlayer::open(P<SpaceObject> target)

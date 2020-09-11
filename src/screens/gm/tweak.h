@@ -226,6 +226,8 @@ private:
     GuiSlider* combat_maneuver_strafe_speed_slider;
     GuiSlider* scanning_noise_slider;
     GuiLabel* scanning_noise_label;
+    GuiSlider* scanning_capability_slider;
+    GuiLabel* scanning_capability_label;
     GuiLabel* position_count;
     GuiKeyValueDisplay* position[max_crew_positions];
 public:

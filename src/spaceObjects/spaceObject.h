@@ -69,11 +69,12 @@ public:
 
 enum EScannedState
 {
-    SS_NotScanned,
+    SS_NotScanned = 0,
     SS_FriendOrFoeIdentified,
     SS_SimpleScan,
     SS_FullScan
 };
+string getScannedStateName(EScannedState scan);
 
 class SpaceObject;
 class PlayerSpaceship;
@@ -107,6 +108,7 @@ public:
 
     int scanning_complexity_value;
     int scanning_depth_value;
+    EScannedState scanning_capability;
     string callsign;
     float position_z;
     float hull;

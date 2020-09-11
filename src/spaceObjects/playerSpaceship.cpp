@@ -72,6 +72,8 @@ REGISTER_SCRIPT_SUBCLASS(PlayerSpaceship, SpaceShip)
 
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, getScanningNoise);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, setScanningNoise);
+    REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, getScanningCapability);
+    REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, setScanningCapability);
 
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, addCustomButton);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, addCustomInfo);
@@ -376,6 +378,7 @@ PlayerSpaceship::PlayerSpaceship()
     registerMemberReplication(&scanning_delay, 0.5);
     registerMemberReplication(&scanning_complexity);
     registerMemberReplication(&scanning_depth);
+    registerMemberReplication(&scanning_noise);
     registerMemberReplication(&shields_active);
     registerMemberReplication(&shield_calibration_delay, 0.5);
     registerMemberReplication(&auto_repair_enabled);
@@ -404,7 +407,6 @@ PlayerSpaceship::PlayerSpaceship()
     registerMemberReplication(&alert_level);
     registerMemberReplication(&linked_science_probe_id);
     registerMemberReplication(&control_code);
-    registerMemberReplication(&scanning_noise);
     registerMemberReplication(&far_range_radar_range);
     registerMemberReplication(&long_range_radar_range);
     registerMemberReplication(&short_range_radar_range);
