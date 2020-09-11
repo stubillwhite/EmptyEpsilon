@@ -7,7 +7,7 @@ template<> void convert<ESystem>::param(lua_State* L, int& idx, ESystem& es)
     string str = string(luaL_checkstring(L, idx++)).lower();
     if (str == "reactor")
         es = SYS_Reactor;
-    if (str == "oxygen")
+    else if (str == "oxygen")
         es = SYS_Oxygen;
     else if (str == "beamweapons")
         es = SYS_BeamWeapons;

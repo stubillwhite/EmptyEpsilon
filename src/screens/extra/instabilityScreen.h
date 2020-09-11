@@ -15,6 +15,7 @@ class GuiAutoLayout;
 class GuiSelector;
 class GuiElement;
 class GuiSystemEffectsList;
+class GuiToggleButton;
 
 class InstabilityControlScreen : public GuiOverlay
 {
@@ -25,7 +26,8 @@ private:
     GuiElement* instability_container;
     GuiSystemEffectsList* system_effects_container;
     
-    GuiSelector* system_selector;
+    GuiAutoLayout* system_layout;
+    GuiToggleButton* system_selector[SYS_COUNT];
     
     GuiProgressbar* damage_bar;
     GuiProgressbar* heat_bar;
@@ -34,7 +36,6 @@ private:
     GuiProgressbar* repair_bar;
     GuiProgressbar* effectiveness_bar;
     
-    GuiLabel* system_title;
     GuiLabel* damage_title;
     GuiLabel* damage_label;
     GuiLabel* heat_title;

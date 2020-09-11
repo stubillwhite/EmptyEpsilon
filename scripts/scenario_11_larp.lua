@@ -6,11 +6,15 @@ require("ee.lua")
 
 function init()
     
-    player = PlayerSpaceship():setFaction("Human Navy"):setTemplate("Battle docker"):setPosition(-10000, 0)
+    player = PlayerSpaceship():setFaction("Human Navy"):setTemplate("Ship_Test_Larp"):setPosition(-10000, 0)
     
     -----------------------------------
     ------------ In Progress ----------
     -----------------------------------
+    
+    -- Personalize name of ship's rooms
+    -- During template configuration, can use addRoomTitle to create a zone with a label. This label will be shown in the center of the room. RP only.
+    -- See shipTemplate_Larp.lua for an example
     
     -- Change Power Use Factor
     -- Each system use a fixed amount of energy, affected by the power and the efficiency of the system. Here is the default values
@@ -70,11 +74,12 @@ function init()
     -- Instability for systems
     -- You can active a instability processus for one or many systems. If Instability factor is more than 0, instability is active. Instability Factor must be between 0.0 and 1.0 (float) and is the probability of change of sliders for instability control
     -- Instability Difficulty must be between 0 and 4 (integer), and is the number of slider to control the instability (like the scanning dialog)
-    player:setSystemInstabilityFactor("reactor",0.10):setSystemInstabilityDifficulty("reactor",3)
+    player:setSystemInstabilityFactor("oxygen",0.10):setSystemInstabilityDifficulty("oxygen",3)
+    player:setSystemInstabilityFactor("reactor",0.20):setSystemInstabilityDifficulty("reactor",2)
     -- You can personalize label of each slider
-    player:setSystemInstabilityLabel("reactor",1,"thermal expansion")
-    player:setSystemInstabilityLabel("reactor",2,"boiler water")
-    player:setSystemInstabilityLabel("reactor",3,"neutrons")
+    player:setSystemInstabilityLabel("oxygen",1,"thermal expansion")
+    player:setSystemInstabilityLabel("oxygen",2,"boiler water")
+    player:setSystemInstabilityLabel("oxygen",3,"neutrons")
     
     -- Nano repair system
     -- You can avoid using repair crew into room systems and use instead nano repair crew. nano repair crew works as coolant.

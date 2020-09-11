@@ -8,7 +8,6 @@
 #include "radarView.h"
 #include "missileTubeControls.h"
 #include "targetsContainer.h"
-#include "preferenceManager.h"
 
 GuiRadarView::GuiRadarView(GuiContainer* owner, string id, TargetsContainer* targets, P<PlayerSpaceship> targetSpaceship)
 : GuiElement(owner, id),
@@ -295,7 +294,7 @@ void GuiRadarView::drawSectorGrid(sf::RenderTarget& window)
     float sector_size = 20000;
     float sub_sector_size = sector_size / 8;
     
-    if (PreferencesManager::get("advanced_sector_system","0") == "1")
+    if (gameGlobalInfo->use_advanced_sector_system)
     {
         sector_size = GameGlobalInfo::sector_size * std::pow(sub_sectors_count, scale_magnitude);
         sub_sector_size = sector_size / sub_sectors_count;
@@ -314,7 +313,7 @@ void GuiRadarView::drawSectorGrid(sf::RenderTarget& window)
             float y = sector_y * sector_size;
             sf::Vector2f pos = worldToScreen(sf::Vector2f(x+(30/scale),y+(30/scale)));
             
-            if (PreferencesManager::get("advanced_sector_system","0") == "1")
+            if (gameGlobalInfo->use_advanced_sector_system)
             {
                 // Sector name
                 string sector_name = getSectorName(sf::Vector2f(x + 1, y + 1), 0);
@@ -362,7 +361,7 @@ void GuiRadarView::drawSectorGrid(sf::RenderTarget& window)
     {
         float x = sector_x * sector_size;
         lines_x[(sector_x - sector_x_min)*2].position = worldToScreen(sf::Vector2f(x, (sector_y_min-1)*sector_size));
-        if (PreferencesManager::get("advanced_sector_system","0") == "1")
+        if (gameGlobalInfo->use_advanced_sector_system)
             color = grid_colors[calcGridScaleMagnitude(scale_magnitude, sector_x)];
         lines_x[(sector_x - sector_x_min)*2].color = color;
         lines_x[(sector_x - sector_x_min)*2+1].position = worldToScreen(sf::Vector2f(x, (sector_y_max+1)*sector_size));
@@ -372,7 +371,7 @@ void GuiRadarView::drawSectorGrid(sf::RenderTarget& window)
     {
         float y = sector_y * sector_size;
         lines_y[(sector_y - sector_y_min)*2].position = worldToScreen(sf::Vector2f((sector_x_min-1)*sector_size, y));
-        if (PreferencesManager::get("advanced_sector_system","0") == "1")
+        if (gameGlobalInfo->use_advanced_sector_system)
             color = grid_colors[calcGridScaleMagnitude(scale_magnitude, sector_y)];
         lines_y[(sector_y - sector_y_min)*2].color = color;
         lines_y[(sector_y - sector_y_min)*2+1].position = worldToScreen(sf::Vector2f((sector_x_max+1)*sector_size, y));

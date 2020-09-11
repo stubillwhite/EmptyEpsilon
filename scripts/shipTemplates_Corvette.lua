@@ -46,6 +46,15 @@ variation:weaponTubeDisallowMissle(0, "Mine"):weaponTubeDisallowMissle(1, "Mine"
 variation:weaponTubeDisallowMissle(2, "Mine"):weaponTubeDisallowMissle(3, "Mine")
 variation:setTubeDirection(4, 180):setWeaponTubeExclusiveFor(4, "Mine")
 
+variation:setDocks(2, 1, 1, 1, 1, 1)
+variation:addDrones("L3 Mouse", 1)
+variation:addDrones("L3 Cat", 1)
+variation:addDrones("H9 Owl", 1)
+variation:addDrones("M19 Rino", 1)
+
+variation:setHasOxygenGenerator(true);
+variation:setOxygenZone(0, "Cockpit", 100.0, 0.1, 0.1);
+
 variation:addRoomSystem(1, 0, 2, 1, "Maneuver");
 variation:addRoomSystem(1, 1, 2, 1, "BeamWeapons");
 variation:addRoomSystem(2, 2, 2, 1, "Drones");
@@ -54,7 +63,7 @@ variation:addRoomSystem(0, 3, 1, 2, "RearShield");
 variation:addRoomSystem(1, 3, 2, 2, "Reactor");
 variation:addRoomSystem(3, 3, 2, 2, "Warp");
 variation:addRoomSystem(5, 3, 1, 2, "JumpDrive");
-variation:addRoom(6, 3, 2, 1);
+variation:addRoomSystem(6, 3, 2, 1, "Oxygen");
 variation:addRoomSystem(6, 4, 2, 1, "Docks");
 variation:addRoomSystem(8, 3, 1, 2, "FrontShield");
 

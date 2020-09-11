@@ -423,8 +423,8 @@ string alertLevelToLocaleString(EAlertLevel level);
 
 static const sf::Vector2f empty_waypoint = sf::Vector2f(FLT_MAX, FLT_MAX);
 static const sf::Color routeColors[PlayerSpaceship::max_routes] = {
-    sf::Color::Blue, sf::Color::White, sf::Color::Green, 
-    sf::Color::Red, sf::Color::Yellow, sf::Color::Magenta, 
+    sf::Color::Magenta, sf::Color::White, sf::Color::Green, 
+    sf::Color::Red, sf::Color::Yellow, sf::Color::Blue, 
     sf::Color::Cyan};
 
 #ifdef _MSC_VER

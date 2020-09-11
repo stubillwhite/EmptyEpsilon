@@ -128,16 +128,18 @@ RelayScreen::RelayScreen(GuiContainer* owner, bool allow_comms)
     link_to_science_button->setSize(GuiElement::GuiSizeMax, 50)->setVisible(my_spaceship && my_spaceship->getCanLaunchProbe());
     
     // Manage routes.
-    if (PreferencesManager::get("advanced_sector_system","0") == "1")
+    if (gameGlobalInfo->use_advanced_sector_system)
     {
         route_selector = new GuiSelector(option_buttons, "ROUTE_SELECTOR", [this](int index, string value) {
             if (index < PlayerSpaceship::max_routes && index >= -1){
                 route_index = index;
             }
-            //targets.setRouteIndex(route_index);
         });
         for(int r = 0; r < PlayerSpaceship::max_routes; r++)
+        {
             route_selector->addEntry("Route " + string(r+1), r);
+            route_selector->setEntryColor(r, routeColors[r]);
+        }
         route_selector->setSize(GuiElement::GuiSizeMax, 50);
         route_selector->setSelectionIndex(0);
     }

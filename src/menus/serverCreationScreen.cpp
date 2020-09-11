@@ -31,7 +31,8 @@ ServerCreationScreen::ServerCreationScreen()
     gameGlobalInfo->hacking_games = EHackingGames(PreferencesManager::get("server_config_hacking_games", "2").toInt());
     gameGlobalInfo->use_beam_shield_frequencies = PreferencesManager::get("server_config_use_beam_shield_frequencies", "1").toInt();
     gameGlobalInfo->use_system_damage = PreferencesManager::get("server_config_use_system_damage", "1").toInt();
-    gameGlobalInfo->use_complex_radar_signatures = PreferencesManager::get("server_config_use_complex_radar_signatures", "1").toInt();
+    gameGlobalInfo->use_advanced_sector_system = PreferencesManager::get("server_config_use_advanced_sector_system", "1").toInt();
+    gameGlobalInfo->use_complex_radar_signatures = PreferencesManager::get("server_config_use_complex_radar_signatures", "0").toInt();
     gameGlobalInfo->allow_main_screen_tactical_radar = PreferencesManager::get("server_config_allow_main_screen_tactical_radar", "1").toInt();
     gameGlobalInfo->allow_main_screen_long_range_radar = PreferencesManager::get("server_config_allow_main_screen_long_range_radar", "1").toInt();
     gameGlobalInfo->allow_main_screen_far_range_radar = PreferencesManager::get("server_config_allow_main_screen_far_range_radar", "1").toInt();

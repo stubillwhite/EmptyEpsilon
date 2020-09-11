@@ -41,7 +41,7 @@ void GuiSelector::onDraw(sf::RenderTarget& window)
 
     drawStretched(window, rect, "gui/SelectorBackground", color);
     if (selection_index >= 0 && selection_index < (int)entries.size())
-        drawText(window, rect, entries[selection_index].name, ACenter, text_size, main_font, color);
+        drawText(window, rect, entries[selection_index].name, ACenter, text_size, main_font, entries[selection_index].color);
 
     if (!focus)
         popup->hide();

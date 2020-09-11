@@ -37,6 +37,7 @@ GameGlobalInfo::GameGlobalInfo()
     hacking_games = HG_All;
     use_beam_shield_frequencies = true;
     use_system_damage = true;
+    use_advanced_sector_system = true;
     use_complex_radar_signatures = false;
     allow_main_screen_tactical_radar = true;
     allow_main_screen_long_range_radar = true;
@@ -59,6 +60,7 @@ GameGlobalInfo::GameGlobalInfo()
     registerMemberReplication(&use_beam_shield_frequencies);
     registerMemberReplication(&use_system_damage);
     registerMemberReplication(&use_complex_radar_signatures);
+    registerMemberReplication(&use_advanced_sector_system);
     registerMemberReplication(&allow_main_screen_tactical_radar);
     registerMemberReplication(&allow_main_screen_long_range_radar);
     registerMemberReplication(&allow_main_screen_far_range_radar);
@@ -247,7 +249,7 @@ string getSectorName(sf::Vector2f position, int scale_magnitude)
     string y;
     string name = "";
 
-    if (PreferencesManager::get("advanced_sector_system","0") == "1")
+    if (gameGlobalInfo->use_advanced_sector_system)
     {
         if (scale_magnitude != 0 && scale_magnitude != 2 && scale_magnitude != 4)
             return "";

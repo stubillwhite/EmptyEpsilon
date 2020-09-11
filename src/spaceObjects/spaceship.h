@@ -391,9 +391,9 @@ public:
     void setSystemPowerUseFactor(ESystem system, float factor) { if (system >= SYS_COUNT) return; if (system <= SYS_None) return; systems[system].power_user_factor = factor; }
     float getSystemInstabilityLevel(ESystem system) { if (system >= SYS_COUNT) return 0.0; if (system <= SYS_None) return 0.0; return systems[system].instability_level; }
     void setSystemInstabilityLevel(ESystem system, float instability) { if (system >= SYS_COUNT) return; if (system <= SYS_None) return; systems[system].instability_level = std::min(1.0f, std::max(0.0f, instability)); }
-    float getSystemInstabilityFactor(ESystem system) { if (system >= SYS_COUNT) return 0; if (system <= SYS_None) return 0; return systems[system].instability_factor; }
+    float getSystemInstabilityFactor(ESystem system) { if (system >= SYS_COUNT) return 0.0; if (system <= SYS_None) return 0.0; return systems[system].instability_factor; }
     void setSystemInstabilityFactor(ESystem system, float factor) { if (system >= SYS_COUNT) return; if (system <= SYS_None) return; systems[system].instability_factor = std::min(1.0f, std::max(0.0f, factor)); }
-    float getSystemInstabilityDifficulty(ESystem system) { if (system >= SYS_COUNT) return 0; if (system <= SYS_None) return 0; return systems[system].instability_difficulty; }
+    int getSystemInstabilityDifficulty(ESystem system) { if (system >= SYS_COUNT) return 0; if (system <= SYS_None) return 0; return systems[system].instability_difficulty; }
     void setSystemInstabilityDifficulty(ESystem system, int difficulty) { if (system >= SYS_COUNT) return; if (system <= SYS_None) return; systems[system].instability_difficulty = std::min(4, std::max(0, difficulty)); }
     float getSystemInstabilityValue(ESystem system, int slider) { if (system >= SYS_COUNT) return 0; if (system <= SYS_None) return 0; if (slider < 1) return 0; if (slider > 4) return 0; return systems[system].instability_value[slider-1]; }
     void setSystemInstabilityValue(ESystem system, int slider, float value) { if (system >= SYS_COUNT) return; if (system <= SYS_None) return; if (slider < 1) return; if (slider > 4) return; systems[system].instability_value[slider-1] = std::min(1.0f, std::max(-1.0f, value)); }

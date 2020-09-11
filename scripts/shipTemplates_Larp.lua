@@ -1,4 +1,4 @@
-template = ShipTemplate():setName("Battle docker"):setLocaleName(_("Battle docker")):setClass(_("Corvette"), _("Destroyer")):setModel("battleship_destroyer_1_upgraded"):setType("playership")
+template = ShipTemplate():setName("Ship_Test_Larp"):setLocaleName(_("Ship_Test_Larp")):setClass(_("Corvette"), _("Destroyer")):setModel("battleship_destroyer_1_upgraded"):setType("playership")
 template:setDescription(_([[The battle Docker can send drones to explore , fight and support a war field.]]))
 template:setDockClasses("Drone")
 template:setRadarTrace("radar_dread.png")
@@ -40,7 +40,7 @@ template:addRoomSystem(5, 3, 1, 2, "JumpDrive");
 template:addRoomTitle(6, 3, 2, 1, "Commands center");
 template:addRoomSystem(6, 4, 2, 1, "Docks");
 template:addRoomSystem(8, 3, 1, 2, "FrontShield");
-template:addRoomTitle(2, 5, 2, 1, "Sick Bay");
+template:addRoomSystem(2, 5, 2, 1, "Oxygen");
 template:addRoomSystem(1, 6, 2, 1, "MissileSystem");
 template:addRoomSystem(1, 7, 2, 1, "Impulse");
 template:addDoor(1, 1, true);

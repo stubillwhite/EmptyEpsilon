@@ -19,7 +19,7 @@
 #include "gui/gui2_element.h"
 
 InstabilityControlScreen::InstabilityControlScreen(GuiContainer* owner, ECrewPosition crew_position)
-: GuiOverlay(owner, "SYSTEM_SCREEN", colorConfig.background), selected_system(SYS_Reactor)
+: GuiOverlay(owner, "SYSTEM_SCREEN", colorConfig.background), selected_system(SYS_None)
 {
     // Render the background decorations.
     background_crosses = new GuiOverlay(this, "BACKGROUND_CROSSES", sf::Color::White);
@@ -27,28 +27,19 @@ InstabilityControlScreen::InstabilityControlScreen(GuiContainer* owner, ECrewPos
 
     // Render the alert level color overlay.
     (new AlertLevelOverlay(this));
-    
-    system_selector = new GuiSelector(this, "SYSTEM_SELECTOR", [this](int index, string value)
-    {
-        selectSystem(ESystem(index));
-    });
-    int count_systems=0;
+
+    GuiAutoLayout* system_layout = new GuiAutoLayout(this, "LEFT_LAYOUT", GuiAutoLayout::LayoutVerticalTopToBottom);
+    system_layout->setPosition(25, 25, ATopLeft)->setSize(300, GuiElement::GuiSizeMax);
+
     for(int n=0; n<SYS_COUNT; n++)
     {
-        if (my_spaceship && my_spaceship->hasSystem(ESystem(n)) && my_spaceship->systems[n].instability_factor > 0.0)
-        {
-            system_selector->addEntry(getLocaleSystemName(ESystem(n)), string(n));
-            count_systems ++;
-        }
+        ESystem system = ESystem(n);
+        
+        system_selector[n] = new GuiToggleButton(system_layout, "", getLocaleSystemName(system), [this, n](bool value) {
+            selectSystem(ESystem(n));
+        });
+        system_selector[n]->setSize(GuiElement::GuiSizeMax, 40);        
     }
-    system_selector->setVisible(count_systems > 1);
-    system_selector->setSelectionIndex(0);
-    system_selector->setPosition(20, 20, ATopLeft)->setSize(250, 50);
-    
-    system_title = new GuiLabel(this, "SYSTEM_TITLE", "", 50);
-    system_title->setPosition(20, 20, ATopLeft);
-    system_title->setAlignment(ACenterLeft)->setSize(250, 50);
-    system_title->setVisible(count_systems <= 1);
     
     system_effects_container = new GuiSystemEffectsList(this,"",GuiAutoLayout::LayoutVerticalBottomToTop);
     system_effects_container->setPosition(20, -520, ABottomLeft)->setSize(270, 400);
@@ -128,7 +119,17 @@ InstabilityControlScreen::InstabilityControlScreen(GuiContainer* owner, ECrewPos
         });
         instability_slider[n]->setSize(340, 25);
     }
-    selectSystem(ESystem(0));
+
+    // Select the first system
+    selectSystem(SYS_None);
+    for(int n=0; n<SYS_COUNT; n++)
+    {        
+        if (my_spaceship && my_spaceship->hasSystem(ESystem(n)) && my_spaceship->systems[n].instability_factor > 0.0 && selected_system == SYS_None)
+        {
+            selectSystem(ESystem(n));
+            system_selector[n]->setValue(true);
+        }
+    }
     
     (new GuiCustomShipFunctions(this, crew_position, "", my_spaceship))->setPosition(-20, 120, ATopRight)->setSize(250, GuiElement::GuiSizeMax);
 }
@@ -139,9 +140,16 @@ void InstabilityControlScreen::onDraw(sf::RenderTarget& window)
 
     if (my_spaceship)
     {
+        // System selector update
+        for(int n=0; n<SYS_COUNT; n++)
+        {
+            system_selector[n]->setVisible(my_spaceship->hasSystem(ESystem(n)) && my_spaceship->systems[n].instability_factor > 0.0);
+            system_selector[n]->setValue(ESystem(n) == selected_system);
+        }
+    
         if (selected_system != SYS_None)
         {
-            ShipSystem& system = my_spaceship->systems[selected_system];
+            ShipSystem system = my_spaceship->systems[selected_system];
 
             for(int n=0; n<4; n++)
             {
@@ -241,8 +249,6 @@ void InstabilityControlScreen::selectSystem(ESystem system)
     
     selected_system = system;
     system_effects_container->selectSystem(system);
-    
-    system_title->setText(getLocaleSystemName(system));
 }
 
 void InstabilityControlScreen::onHotkey(const HotkeyResult& key)

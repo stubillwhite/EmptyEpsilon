@@ -44,6 +44,14 @@ void GuiEntryList::setEntryValue(int index, string value)
     entriesChanged();
 }
 
+void GuiEntryList::setEntryColor(int index, sf::Color color)
+{
+    if (index < 0 || index >= (int)entries.size())
+        return;
+    entries[index].color = color;
+    entriesChanged();
+}
+
 void GuiEntryList::setEntry(int index, string name, string value)
 {
     if (index < 0 || index >= (int)entries.size())
@@ -97,6 +105,13 @@ string GuiEntryList::getEntryValue(int index) const
     if (index < 0 || index >= int(entries.size()))
         return "";
     return entries[index].value;
+}
+
+sf::Color GuiEntryList::getEntryColor(int index) const
+{
+    if (index < 0 || index >= (int)entries.size())
+        return sf::Color::White;
+    return entries[index].color;
 }
 
 int GuiEntryList::getSelectionIndex() const
