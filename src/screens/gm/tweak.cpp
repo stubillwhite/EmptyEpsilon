@@ -725,13 +725,14 @@ GuiShipTweakOxygen::GuiShipTweakOxygen(GuiContainer* owner)
     GuiAutoLayout* right_col = new GuiAutoLayout(this, "RIGHT_LAYOUT", GuiAutoLayout::LayoutVerticalTopToBottom);
     right_col->setPosition(-25, 25, ATopRight)->setSize(300, GuiElement::GuiSizeMax);
 
-    for(unsigned int n=0; n<10; n++)
+    for(int n=0; n<10; n++)
     {
         zone_selector[n] = new GuiToggleButton(left_col, "", "Zone " + string(n+1), [this, n](bool value) {
             zone_index = n;
         });
         zone_selector[n]->setSize(GuiElement::GuiSizeMax, 40);
     }
+    zone_index = 0;
     
     (new GuiLabel(left_col, "", tr("Change zone name:"), 20))->setSize(GuiElement::GuiSizeMax, 30);
     zone_label = new GuiTextEntry(left_col, "", "");
@@ -740,7 +741,7 @@ GuiShipTweakOxygen::GuiShipTweakOxygen(GuiContainer* owner)
         target->oxygen_zones[zone_index].label = text.upper();
     });
         
-    for(unsigned int n=0; n<10; n++)
+    for(int n=0; n<10; n++)
     {
         zone_box[n] = new GuiAutoLayout(right_col, "", GuiAutoLayout::LayoutVerticalTopToBottom);
         zone_box[n]->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
@@ -794,7 +795,7 @@ GuiShipTweakOxygen::GuiShipTweakOxygen(GuiContainer* owner)
 
 void GuiShipTweakOxygen::onDraw(sf::RenderTarget& window)
 {
-    for(unsigned int n=0; n<10; n++)
+    for(int n=0; n<10; n++)
     {
         zone_selector[n]->setValue(n == zone_index);
         zone_box[n]->setVisible(n == zone_index);
@@ -811,8 +812,7 @@ void GuiShipTweakOxygen::onDraw(sf::RenderTarget& window)
 
 void GuiShipTweakOxygen::open(P<SpaceObject> target)
 {
-    P<SpaceShip> ship = target;
-    this->target = ship;
+    this->target = target;
 }
 
 GuiShipTweakPlayer::GuiShipTweakPlayer(GuiContainer* owner)

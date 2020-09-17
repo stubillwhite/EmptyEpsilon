@@ -103,7 +103,6 @@ public:
     float max_energy_level;
     Dock docks[max_docks_count];
     OxygenZone oxygen_zones[10];
-    //std::vector<ShipOxygenZoneTemplate> oxygen_zones;
 
     ShipSystem systems[SYS_COUNT];
     /*!
