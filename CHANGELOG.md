@@ -1,5 +1,40 @@
 # Change Log
 
+### Daid Empty Epsilon Update on 17/09/2020
+
+### EE LARP release 1.4-beta
+
+- Scanning capability
+  - Set the maximal level of scanning available for a playership
+- Scanning noise
+  - You can affect scanning dialog for science screen with the function setScanningNoise. Between 0 and 1, slider will be randomly affected by the noise. Between -1 and 0, slider will be automatically moved to the right position
+- Personalize name of ship's rooms
+  - During template configuration, can use addRoomTitle to create a zone with a label. This label will be shown in the center of the room. RP only.
+- Change Power Use Factor
+  - Add capacity to change the fixed amount of energy used by system
+- Oxygen system
+  - Ship can have up to 10 oxygen zones (0 to 9), with a level and a max of oxygen, and the discharge rate and recharge_rate
+  - Each zone must be set in the template file or in the script file, and can after be changed by tweak.
+  - You also need a oxygen generator to access to the oxygen rate generator (false by default)
+- New main screen radar
+  - Add a far range radar (aka relay screen)
+- Template recorded or not in the database
+  - Into the templates configuration files, you can choose to avoid a template from the database. It allow you to configure multiple ship template from a same base (for example with different texture color). Only the base is recorded and the rest is removed from the database.
+- Station and drone recorded in the database
+- Dynamic Factions and Personality
+  - setPersonalityId can modify personality of object and behaviour with another object : 0 = Normal (with faction behaviour), 1 = Pacifist (don't attack anyone), 2 = Hostile (attack everybody with another faction), 3 = Solo (attack everybody, except another solo objects)
+  - Factions behaviour between themselves can be changed by GM during the game 
+    
+- Logs by station
+  - Logs can now append on several stations. You activate this feature in options.ini with the parameter server_config_logs_by_station. If enabled, logs are only visible in a station if at least one log entry exist for the considered station. Ship logs screen shown all the logs with an indication of the station.
+
+### EE LARP release 1.3-beta
+
+- Instability for systems
+  - You can active a instability processus for one or many systems.
+- Nano repair system
+  - You can avoid using repair crew into room systems and use instead nano repair crew. nano repair crew works as coolant.
+
 ### EE LARP release 1.2-beta
 
 - Position Z for all object to simulate space
@@ -29,8 +64,6 @@
 - GM access allowed from clients
 - Advanced sector system
 - Drones, fighters and docks system
-
-### Daid Empty Epsilon Update on 03/08/2020
 
 ## [...]
 
