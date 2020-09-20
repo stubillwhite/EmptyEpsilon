@@ -24,7 +24,6 @@
 - Dynamic Factions and Personality
   - setPersonalityId can modify personality of object and behaviour with another object : 0 = Normal (with faction behaviour), 1 = Pacifist (don't attack anyone), 2 = Hostile (attack everybody with another faction), 3 = Solo (attack everybody, except another solo objects)
   - Factions behaviour between themselves can be changed by GM during the game 
-    
 - Logs by station
   - Logs can now append on several stations. You activate this feature in options.ini with the parameter server_config_logs_by_station. If enabled, logs are only visible in a station if at least one log entry exist for the considered station. Ship logs screen shown all the logs with an indication of the station.
 
