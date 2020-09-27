@@ -175,7 +175,7 @@ void GuiScanningDialog::setupParameters()
     updateSignal();
 
     string label = "[" + string(scan_depth + 1) + "/" + string(my_spaceship->scanning_depth) + "] ";
-    std::vector<string> signal_labels = my_spaceship->getSignalLabels();
+    std::vector<string> signal_labels = my_spaceship->getScanLabels();
     label += signal_labels[irandom(0, signal_labels.size() - 1)];
     signal_label->setText(label);
 }

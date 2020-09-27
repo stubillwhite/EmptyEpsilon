@@ -62,6 +62,7 @@ private:
     bool long_range;
     bool show_ghost_dots;
     bool show_sectors;
+    bool show_terrain;
     bool show_waypoints;
     bool show_routes;
     bool show_target_projection;
@@ -90,6 +91,8 @@ public:
     GuiRadarView* disableGhostDots() { show_ghost_dots = false; return this; }
     GuiRadarView* enableWaypoints() { show_waypoints = true; return this; }
     GuiRadarView* disableWaypoints() { show_waypoints = false; return this; }
+    GuiRadarView* enableTerrain() { show_terrain = true; return this; }
+    GuiRadarView* disableTerrain() { show_terrain = false; return this; }
     GuiRadarView* enableTargetProjections(GuiMissileTubeControls* missile_tube_controls) { show_target_projection = true; this->missile_tube_controls = missile_tube_controls; return this; }
     GuiRadarView* disableTargetProjections() { show_target_projection = false; return this; }
     GuiRadarView* enableMissileTubeIndicators() { show_missile_tubes = true; return this; }
@@ -146,6 +149,7 @@ private:
     void drawTargets(sf::RenderTarget& window);
     void drawHeadingIndicators(sf::RenderTarget& window);
     void drawRadarCutoff(sf::RenderTarget& window);
+    void drawTerrain(sf::RenderTarget &window);
     float getRadius();
 };
 

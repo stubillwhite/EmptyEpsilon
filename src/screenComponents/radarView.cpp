@@ -24,6 +24,7 @@ GuiRadarView::GuiRadarView(GuiContainer* owner, string id, TargetsContainer* tar
     long_range(false),
     show_ghost_dots(false),
     show_sectors(true),
+    show_terrain(false),
     show_waypoints(false),
     show_target_projection(false),
     show_missile_tubes(false),
@@ -64,6 +65,7 @@ GuiRadarView::GuiRadarView(GuiContainer* owner, string id, float distance, Targe
     long_range(false),
     show_ghost_dots(false),
     show_sectors(true),
+    show_terrain(false),
     show_waypoints(false),
     show_target_projection(false),
     show_missile_tubes(false),
@@ -148,6 +150,8 @@ void GuiRadarView::onDraw(sf::RenderTarget& window)
         drawRenderTexture(mask_texture, background_texture, sf::Color::White, sf::BlendMultiply);
     if (show_sectors)
         drawSectorGrid(background_texture);
+    if (show_terrain)
+        drawTerrain(background_texture);
     drawRangeIndicators(background_texture);
     if (show_target_projection)
         drawTargetProjections(background_texture);
@@ -914,15 +918,17 @@ int GuiRadarView::calcGridScaleMagnitude(int scale_magnitude, int position)
     return scale_magnitude;
 }
 
-//bool GuiRadarView::onMouseDown(sf::Vector2f position)
-//{
-//    if (style == Circular || style == CircularMasked|| style == CircularSector)
-//    {
-//        if (position - getCenterPoint() > getRadius())
-//            return false;
-//    }
-//    return SectorsView::onMouseDown(position);
-//}
+void GuiRadarView::drawTerrain(sf::RenderTarget &window){
+    if (gameGlobalInfo->terrain.defined){
+        sf::Sprite terrainMap;
+        textureManager.getTexture(gameGlobalInfo->terrain.textureName)->setSmooth(true);
+        textureManager.setTexture(terrainMap, gameGlobalInfo->terrain.textureName);
+        terrainMap.setPosition(worldToScreen(gameGlobalInfo->terrain.coordinates));
+        terrainMap.setScale(getScale() * gameGlobalInfo->terrain.scale, getScale()* gameGlobalInfo->terrain.scale);
+        terrainMap.setColor(sf::Color(255, 255, 255, 128)); // half transparent
+        window.draw(terrainMap);
+    }
+}
 
 bool GuiRadarView::onMouseDown(sf::Vector2f position)
 {

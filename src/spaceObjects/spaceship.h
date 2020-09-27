@@ -166,6 +166,11 @@ public:
     float current_warp;
 
     /*!
+     * [output] Current maximum warp amount, from 0.0 to 4.0
+     */
+    float max_warp;
+
+    /*!
      * [config] Amount of speed per warp level, in m/s
      */
     float warp_speed_per_warp_level;

@@ -18,6 +18,15 @@ public:
     string textureName;
 };
 
+class TerrainInfo
+{
+public:
+    bool defined;
+    string textureName;
+    sf::Vector2f coordinates;
+    float scale; 
+};
+
 enum EPlayerWarpJumpDrive
 {
     PWJ_ShipDefault = 0,
@@ -65,6 +74,7 @@ private:
      * \brief List of known scripts
      */
     PVector<Script> script_list;
+    sf::Image terrainImage; // server only (no registerMemberReplication) terrain image data
 public:
     string global_message;
     float global_message_timeout;
@@ -80,6 +90,7 @@ public:
     EHackingGames hacking_games;
     bool use_beam_shield_frequencies;
     bool use_system_damage;
+    bool use_warp_terrain;
     bool use_complex_radar_signatures;
     bool use_advanced_sector_system;
     bool allow_main_screen_tactical_radar;
@@ -106,6 +117,8 @@ public:
     ScriptSimpleCallback on_new_player_ship;
     bool allow_new_player_ships = true;
     std::function<void(sf::Vector2f)> on_gm_click;
+
+    TerrainInfo terrain;
 
     GameGlobalInfo();
     virtual ~GameGlobalInfo();
@@ -138,6 +151,8 @@ public:
     std::vector<std::pair<string, string> > locals_name;
 
     string getNextShipCallsign();
+    void setTerrain(string textureName, sf::Vector2f coordinates, float scale);
+    sf::Color getTerrainPixel(sf::Vector2f coordinates);
 };
 
 string playerWarpJumpDriveToString(EPlayerWarpJumpDrive player_warp_jump_drive);

@@ -86,6 +86,10 @@ function init()
     addLocalName("-1/0 63.0","Zeta")
     addLocalName("0/0 0.0","Gamma")
 
+    -- Terrain for WARP
+    setTerrain("cosmic-map-3.png", 0, 0, 7000)
+    setTerrain("space dilation_00004_00001.png", 0, 0, 7000)
+
     enemyList = {}
     friendlyList = {}
     stationList = {}

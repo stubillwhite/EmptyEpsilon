@@ -29,6 +29,10 @@ GameGlobalInfo::GameGlobalInfo()
         registerMemberReplication(&nebula_info[n].vector);
         registerMemberReplication(&nebula_info[n].textureName);
     }
+    registerMemberReplication(&terrain.textureName);
+    registerMemberReplication(&terrain.scale);
+    registerMemberReplication(&terrain.coordinates);
+    registerMemberReplication(&terrain.defined);
 
     global_message_timeout = 0.0;
     player_warp_jump_drive_setting = PWJ_ShipDefault;
@@ -49,6 +53,7 @@ GameGlobalInfo::GameGlobalInfo()
     color_by_faction = true;
     all_can_be_targeted = true;
     logs_by_station = true;
+    use_warp_terrain = true;
 
     registerMemberReplication(&scanning_complexity);
     registerMemberReplication(&hacking_difficulty);
@@ -65,6 +70,7 @@ GameGlobalInfo::GameGlobalInfo()
     registerMemberReplication(&allow_main_screen_long_range_radar);
     registerMemberReplication(&allow_main_screen_far_range_radar);
     registerMemberReplication(&use_nano_repair_crew);
+    registerMemberReplication(&use_warp_terrain);
     registerMemberReplication(&gm_control_code);
     registerMemberReplication(&elapsed_time, 0.1);
     registerMemberReplication(&gm_callback_names);
@@ -224,6 +230,35 @@ void GameGlobalInfo::destroy()
     MultiplayerObject::destroy();
     if (state_logger)
         state_logger->destroy();
+}
+
+void GameGlobalInfo::setTerrain(string textureName, sf::Vector2f coordinates, float scale){
+    if (game_server){
+        // only server can effectively load terrainImage data
+        P<ResourceStream> stream = getResourceStream(textureName);
+        if (!stream) stream = getResourceStream(textureName + ".png");
+        if (stream && terrainImage.loadFromStream(**stream)){
+            terrain.defined = true;
+            terrain.textureName = textureName;
+            terrain.coordinates = coordinates;
+            terrain.scale = scale;
+            LOG(INFO) << "Loaded: texture image " << textureName;
+        } else {
+            LOG(WARNING) << "Failed to load terrain texture image: " << textureName;
+        }
+    } else {
+        LOG(ERROR) << "GameGlobalInfo::setTerrain can only be called locally on the server";
+    }
+}
+
+sf::Color GameGlobalInfo::getTerrainPixel(sf::Vector2f coordinates){ 
+    coordinates = (sf::Vector2f(terrainImage.getSize()) * 0.5f) + ((coordinates + terrain.coordinates) / terrain.scale);
+    if (coordinates.x < 0 || coordinates.x > terrainImage.getSize().x || 
+        coordinates.y < 0 || coordinates.y > terrainImage.getSize().y)
+        // outside of image boundaries
+        return sf::Color::Transparent;
+     else 
+        return terrainImage.getPixel(coordinates.x, coordinates.y);
 }
 
 string playerWarpJumpDriveToString(EPlayerWarpJumpDrive player_warp_jump_drive)
@@ -544,3 +579,16 @@ static int allowNewPlayerShips(lua_State* L)
 /// Set if the server is allowed to create new player ships from the ship creation screen.
 /// allowNewPlayerShip(false) -- disallow new player ships to be created
 REGISTER_SCRIPT_FUNCTION(allowNewPlayerShips);
+
+static int setTerrain(lua_State *L)
+{
+    string textureName = luaL_checkstring(L, 1);
+    float x = luaL_checknumber(L, 2);
+    float y = luaL_checknumber(L, 3);
+    float scale = luaL_checknumber(L, 4);
+    gameGlobalInfo->setTerrain(textureName, sf::Vector2f(x, y), scale);
+    return 0;
+}
+/// setTerrain(textureName, x, y, scale)
+/// set the terrain texture of the map
+REGISTER_SCRIPT_FUNCTION(setTerrain);
