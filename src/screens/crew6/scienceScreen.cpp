@@ -106,10 +106,11 @@ ScienceScreen::ScienceScreen(GuiContainer* owner, ECrewPosition crew_position)
     info_type = new GuiKeyValueDisplay(info_sidebar, "SCIENCE_TYPE", 0.4, tr("science","Type"), "");
     info_type->setSize(GuiElement::GuiSizeMax, 30);
     info_type_button = new GuiButton(info_type, "SCIENCE_TYPE_BUTTON", tr("database", "DB"), [this]() {
-        P<SpaceShip> ship = targets.get();
-        if (ship)
+        //P<SpaceShip> ship = targets.get();
+        P<ShipTemplateBasedObject> shipTemplate = targets.get();
+        if (shipTemplate)
         {
-            if (database_view->findAndDisplayEntry(ship->getTypeName()))
+            if (database_view->findAndDisplayEntry(shipTemplate->getTypeName()))
             {
                 view_mode_selection->setSelectionIndex(1);
                 radar_view->hide();
@@ -129,6 +130,9 @@ ScienceScreen::ScienceScreen(GuiContainer* owner, ECrewPosition crew_position)
     // Draw and hide the sidebar pager.
     sidebar_pager = new GuiSelector(info_sidebar, "SIDEBAR_PAGER", [this](int index, string value) {});
     sidebar_pager->setSize(GuiElement::GuiSizeMax, 50)->hide();
+    
+    // Add sidebar page for signature
+    sidebar_pager->addEntry("Signals", "Signals");
 
     // If the server uses frequencies, add the Tactical sidebar page.
     if (gameGlobalInfo->use_beam_shield_frequencies)
@@ -169,6 +173,22 @@ ScienceScreen::ScienceScreen(GuiContainer* owner, ECrewPosition crew_position)
     // Prep and hide the description text area.
     info_description = new GuiScrollText(info_sidebar, "SCIENCE_DESC", "");
     info_description->setTextSize(28)->setMargins(20, 20, 0, 0)->setSize(GuiElement::GuiSizeMax, 400)->hide();
+    
+     // Prep and hide the detailed signal bands.
+    info_electrical_signal_band = new GuiSignalQualityIndicator(info_sidebar, "ELECTRICAL_SIGNAL");
+    info_electrical_signal_band->showGreen(false)->showBlue(false)->setSize(GuiElement::GuiSizeMax, 80)->hide();
+    info_electrical_signal_label = new GuiLabel(info_electrical_signal_band, "", "Electrical", 30);
+    info_electrical_signal_label->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
+
+    info_gravity_signal_band = new GuiSignalQualityIndicator(info_sidebar, "GRAVITY_SIGNAL");
+    info_gravity_signal_band->showRed(false)->showBlue(false)->setSize(GuiElement::GuiSizeMax, 80)->hide();
+    info_gravity_signal_label = new GuiLabel(info_gravity_signal_band, "", "Gravitational", 30);
+    info_gravity_signal_label->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
+
+    info_biological_signal_band = new GuiSignalQualityIndicator(info_sidebar, "BIOLOGICAL_SIGNAL");
+    info_biological_signal_band->showRed(false)->showGreen(false)->setSize(GuiElement::GuiSizeMax, 80)->hide();
+    info_biological_signal_label = new GuiLabel(info_biological_signal_band, "", "Biological", 30);
+    info_biological_signal_label->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
 
     // Prep and hide the database view.
     database_view = new DatabaseViewComponent(this);
@@ -275,6 +295,9 @@ void ScienceScreen::onDraw(sf::RenderTarget& window)
     info_shield_frequency->setFrequency(-1)->hide();
     info_beam_frequency->setFrequency(-1)->hide();
     info_description->hide();
+    info_electrical_signal_band->hide();
+    info_gravity_signal_band->hide();
+    info_biological_signal_band->hide();
     info_type_button->hide();
     sidebar_pager->hide();
 
@@ -298,6 +321,7 @@ void ScienceScreen::onDraw(sf::RenderTarget& window)
     {
         P<SpaceObject> obj = targets.get();
         P<SpaceShip> ship = obj;
+        P<ShipTemplateBasedObject> shipTemplate = obj;
         P<SpaceStation> station = obj;
 
         sf::Vector2f position_diff = obj->getPosition() - my_spaceship->getPosition();
@@ -319,113 +343,159 @@ void ScienceScreen::onDraw(sf::RenderTarget& window)
         string description = obj->getDescriptionFor(my_spaceship);
         string sidebar_pager_selection = sidebar_pager->getSelectionValue();
 
-        if (description.size() > 0)
+        sidebar_pager->setVisible(false);
+        
+        // Check each Scan level
+        switch(obj->getScannedStateFor(my_spaceship))
         {
-            info_description->setText(description)->show();
-
-            if (!sidebar_pager->indexByValue("Description"))
+        case SS_NotScanned:
+            break;
+        case SS_FriendOrFoeIdentified:
+        case SS_SimpleScan:
+            info_faction->setValue(factionInfo[obj->getFactionId()]->getLocaleName());
+            info_hull->setValue(int(ceil(obj->hull)));
+            if (shipTemplate)
             {
-                sidebar_pager->addEntry("Description", "Description");
-            }
-        }
-        else
-        {
-            sidebar_pager->removeEntry(sidebar_pager->indexByValue("Description"));
-        }
-
-        // If the target is a ship, show information about the ship based on how
-        // deeply we've scanned it.
-        if (ship)
-        {
-            // On a simple scan or deeper, show the faction, ship type, shields,
-            // hull integrity, and database reference button.
-            if (ship->getScannedStateFor(my_spaceship) >= SS_SimpleScan)
-            {
-                info_faction->setValue(factionInfo[obj->getFactionId()]->getLocaleName());
-                info_type->setValue(ship->getTypeName());
+                info_hull->setValue(int(ceil(shipTemplate->getHull())));
+                info_type->setValue(shipTemplate->getTypeName());
                 info_type_button->show();
-                info_shields->setValue(ship->getShieldDataString());
-                info_hull->setValue(int(ceil(ship->getHull())));
+                info_shields->setValue(shipTemplate->getShieldDataString());
             }
-
-            // On a full scan, show tactical and systems data (if any), and its
-            // description (if one is set).
-            if (ship->getScannedStateFor(my_spaceship) >= SS_FullScan)
+            break;
+        case SS_FullScan:
+            info_faction->setValue(factionInfo[obj->getFactionId()]->getLocaleName());
+            info_hull->setValue(int(ceil(obj->hull)));
+            if (shipTemplate)
             {
-                sidebar_pager->setVisible(sidebar_pager->entryCount() > 1);
-
-                // Check sidebar pager state.
-                if (sidebar_pager_selection == "Tactical")
-                {
-                    info_shield_frequency->show();
-                    info_beam_frequency->show();
-
-                    for(int n = 0; n < SYS_COUNT; n++)
-                    {
-                        info_system[n]->hide();
-                    }
-
-                    info_description->hide();
-                }
-                else if (sidebar_pager_selection == "Systems")
-                {
-                    info_shield_frequency->hide();
-                    info_beam_frequency->hide();
-
-                    for(int n = 0; n < SYS_COUNT; n++)
-                    {
-                        info_system[n]->show();
-                    }
-
-                    info_description->hide();
-                }
-                else if (sidebar_pager_selection == "Description")
-                {
-                    info_shield_frequency->hide();
-                    info_beam_frequency->hide();
-
-                    for(int n = 0; n < SYS_COUNT; n++)
-                    {
-                        info_system[n]->hide();
-                    }
-
-                    info_description->show();
-                }
-                else
-                {
-                    LOG(WARNING) << "Invalid pager state: " << sidebar_pager_selection;
-                }
-
-                // If beam and shield frequencies are enabled on the server,
-                // populate their graphs.
-                if (gameGlobalInfo->use_beam_shield_frequencies)
-                {
-                    info_shield_frequency->setFrequency(ship->shield_frequency);
-                    info_beam_frequency->setFrequency(ship->beam_frequency);
-                }
-
-                // Show the status of each subsystem.
+                info_hull->setValue(int(ceil(shipTemplate->getHull())));
+                info_type->setValue(shipTemplate->getTypeName());
+                info_type_button->show();
+                info_shields->setValue(shipTemplate->getShieldDataString());
+            }
+            sidebar_pager->setVisible(true);
+            // Check sidebar pager state.
+            if (sidebar_pager_selection == "Tactical")
+            {
+                info_shield_frequency->show();
+                info_beam_frequency->show();
+                
                 for(int n = 0; n < SYS_COUNT; n++)
                 {
-                    float system_health = ship->systems[n].health;
-                    info_system[n]->setValue(string(int(system_health * 100.0f)) + "%")->setColor(sf::Color(255, 127.5 * (system_health + 1), 127.5 * (system_health + 1), 255));
+                    info_system[n]->hide();
+                }
+
+                info_description->hide();
+                info_electrical_signal_band->hide();
+                info_gravity_signal_band->hide();
+                info_biological_signal_band->hide();
+                
+                if (ship && gameGlobalInfo->use_beam_shield_frequencies)
+                {
+                    info_shield_frequency->show();
+                    info_shield_frequency->setFrequency(ship->shield_frequency);
+                    info_beam_frequency->show();
+                    info_beam_frequency->setFrequency(ship->beam_frequency);
                 }
             }
-        }
-
-        // If the target isn't a ship, show basic info.
-        else
-        {
-            sidebar_pager->hide();
-            info_faction->setValue(factionInfo[obj->getFactionId()]->getLocaleName());
-
-            // If the target is a station, show basic tactical info.
-            if (station)
+            else if (sidebar_pager_selection == "Systems")
             {
-                info_type->setValue(station->template_name);
-                info_shields->setValue(station->getShieldDataString());
-                info_hull->setValue(int(ceil(station->getHull())));
+                info_shield_frequency->hide();
+                info_beam_frequency->hide();
+
+                for(int n = 0; n < SYS_COUNT; n++)
+                {
+                    info_system[n]->hide();
+                }
+
+                info_description->hide();
+                info_electrical_signal_band->hide();
+                info_gravity_signal_band->hide();
+                info_biological_signal_band->hide();
+                
+                // Show the status of each subsystem.
+                if (ship)
+                {
+                    for(int n = 0; n < SYS_COUNT; n++)
+                    {
+                        if (ship->hasSystem(ESystem(n)))
+                        {
+                            info_system[n]->show();
+                            float system_health = ship->systems[n].health;
+                            info_system[n]->setValue(string(int(system_health * 100.0f)) + "%")->setColor(sf::Color(255, 127.5 * (system_health + 1), 127.5 * (system_health + 1), 255));
+                        }
+                    }
+                }
             }
+            else if (sidebar_pager_selection == "Description")
+            {
+                info_shield_frequency->hide();
+                info_beam_frequency->hide();
+
+                for(int n = 0; n < SYS_COUNT; n++)
+                {
+                    info_system[n]->hide();
+                }
+
+                info_description->show();
+                info_electrical_signal_band->hide();
+                info_gravity_signal_band->hide();
+                info_biological_signal_band->hide();
+            }
+            else if (sidebar_pager_selection == "Signals")
+            {
+                info_shield_frequency->hide();
+                info_beam_frequency->hide();
+
+                for(int n = 0; n < SYS_COUNT; n++)
+                {
+                    info_system[n]->hide();
+                }
+
+                info_description->hide();
+                info_electrical_signal_band->show();
+                info_gravity_signal_band->show();
+                info_biological_signal_band->show();
+                
+                // Calculate signal noise for unscanned objects more than SRRR away.
+                float distance_variance = 0.0f;
+                float signal = 0.0f;
+
+                if (distance > my_spaceship->getShortRangeRadarRange() && !obj->isScannedBy(my_spaceship))
+                    distance_variance = (random(0.01f, (distance - my_spaceship->getShortRangeRadarRange())) / (my_spaceship->getLongRangeRadarRange() - my_spaceship->getShortRangeRadarRange())) / 10;
+                    
+                RawRadarSignatureInfo info;
+                P<SpaceShip> ship = obj;
+
+                if (ship)
+                {
+                    // Use dynamic signatures for ships.
+                    info = ship->getDynamicRadarSignatureInfo();
+                } else {
+                    // Otherwise, use the baseline only.
+                    info = obj->getRadarSignatureInfo();
+                }
+
+                // Calculate their waveforms.
+                signal = std::max(0.0f, info.electrical - distance_variance);
+                info_electrical_signal_band->setMaxAmp(signal);
+                info_electrical_signal_band->setNoiseError(std::max(0.0f, (signal - 1.0f) / 10));
+                info_electrical_signal_label->setText("Electrical: " + string(signal) + " MJ");
+
+                signal = std::max(0.0f, info.gravity - distance_variance);
+                info_gravity_signal_band->setMaxAmp(signal);
+                info_gravity_signal_band->setPeriodError(std::max(0.0f, (signal - 1.0f) / 10));
+                info_gravity_signal_label->setText("Gravitational: " + string(signal) + " dN");
+
+                signal = std::max(0.0f, info.biological - distance_variance);
+                info_biological_signal_band->setMaxAmp(signal);
+                info_biological_signal_band->setPhaseError(std::max(0.0f, (signal - 1.0f) / 10));
+                info_biological_signal_label->setText("Biological: " + string(signal) + " um");
+            }
+            else
+            {
+                LOG(WARNING) << "Invalid pager state: " << sidebar_pager_selection;
+            }
+            break;
         }
     }
 

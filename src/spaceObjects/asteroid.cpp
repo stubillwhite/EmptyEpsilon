@@ -21,6 +21,7 @@ Asteroid::Asteroid()
     rotation_speed = random(0.1, 0.8);
     z = random(-50, 50);
     size = getRadius();
+    hull = random(1, 15);
     model_number = irandom(1, 10);
     setRadarSignatureInfo(0.05, 0, 0);
 

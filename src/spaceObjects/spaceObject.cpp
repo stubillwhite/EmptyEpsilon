@@ -360,7 +360,7 @@ bool SpaceObject::canBeScannedBy(P<SpaceObject> other)
         return true;
     if (scanning_depth_value > 0)
         return true;
-    return false;
+    return true;
 }
 
 string getScannedStateName(EScannedState scan)

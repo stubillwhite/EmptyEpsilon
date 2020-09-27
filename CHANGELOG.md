@@ -13,6 +13,7 @@
   - Remove comms overlay for each player station
   - Avoid weak amount of coolant or repair if not requested
   - Probe can be selected during their travel
+  - All objects can now be scanned (even if there is no information)
 - New screens
   - Radar screen : tactical, long, far
   - Probe screen : camera on probe linked to science
