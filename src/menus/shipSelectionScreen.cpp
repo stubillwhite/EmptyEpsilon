@@ -522,6 +522,10 @@ void ShipSelectionScreen::updateCrewTypeOptions()
         break;
     case 3:
         crew_position_button[shipLog]->show();
+        crew_position_button[tacticalRadar]->show();
+        crew_position_button[longRangeRadar]->show();
+        crew_position_button[farRangeRadar]->show();
+        crew_position_button[probeScreen]->show();
         break;
     case 4:
         main_screen_button->hide();

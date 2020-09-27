@@ -37,6 +37,8 @@ public:
     virtual void draw3D() override;
 
     void setSize(float size);
+    virtual bool canBeTargetedBy(P<SpaceObject> other) { return false; };
+    virtual bool canBeSelectedBy(P<SpaceObject> other) { return false; };
 
     virtual string getExportLine() override { return "VisualAsteroid():setPosition(" + string(getPosition().x, 0) + ", " + string(getPosition().y, 0) + ")"; }
 };

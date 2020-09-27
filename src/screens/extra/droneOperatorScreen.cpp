@@ -63,7 +63,7 @@ DroneOperatorScreen::DroneOperatorScreen(GuiContainer *owner)
     no_drones_label = new GuiLabel(this, "SHIP_SELECTION_NO_SHIPS_LABEL", "No active drones in range", 30);
     no_drones_label->setPosition(0, 100, ATopCenter)->setSize(460, 50);
     // Prep the alert overlay.
-    (new GuiPowerDamageIndicator(this, "DOCKS_DPI", SYS_Drones, ATopCenter, my_spaceship))->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
+    (new GuiPowerDamageIndicator(this, "DOCKS_DPI", SYS_Scanner, ATopCenter, my_spaceship))->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
 }
 
 void DroneOperatorScreen::disconnected()
@@ -84,7 +84,7 @@ bool DroneOperatorScreen::isConnectable(P<PlayerSpaceship> ship)
 float DroneOperatorScreen::getConnectionQuality(P<PlayerSpaceship> ship)
 {
     float rangeFactor = 1 - std::min(1.0f, (length(ship->getPosition() - my_spaceship->getPosition()) / my_spaceship->getDronesControlRange()));
-    float droneStateFactor = std::min(1.0f, ship->getSystemEffectiveness(SYS_Drones));
+    float droneStateFactor = std::min(1.0f, ship->getSystemEffectiveness(SYS_Scanner));
     return rangeFactor * droneStateFactor;
 }
 void DroneOperatorScreen::onDraw(sf::RenderTarget &window)

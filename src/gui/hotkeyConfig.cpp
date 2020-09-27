@@ -108,7 +108,7 @@ HotkeyConfig::HotkeyConfig()
     newKey("SELECT_FRONT_SHIELDS", std::make_tuple("Select front shields system", "F"));
     newKey("SELECT_REAR_SHIELDS", std::make_tuple("Select rear shields system", "W"));
     newKey("SELECT_DOCKS", std::make_tuple("Select docks system", "X"));
-    newKey("SELECT_DRONES", std::make_tuple("Select drones system", "C"));
+    newKey("SELECT_SCANNER", std::make_tuple("Select scanner system", "C"));
     newKey("SELECT_NEXT_SYSTEM", std::make_tuple("Select next system", "F2"));
     newKey("SELECT_PREVIOUS_SYSTEM", std::make_tuple("Select previous system", "F3"));
     newKey("RESET_SYSTEMS", std::make_tuple("Reset all systems setting", "Space"));
@@ -174,6 +174,10 @@ HotkeyConfig::HotkeyConfig()
     newKey("DECREASE_SLIDER_3", std::make_tuple("Decrease slider 3", "W"));
     newKey("DECREASE_SLIDER_4", std::make_tuple("Decrease slider 4", ""));
     
+    newCategory("RADAR", "Radar");
+    newKey("INC_ZOOM", std::make_tuple("Increase zoom level", "Add"));
+    newKey("DEC_ZOOM", std::make_tuple("Decrease zoom level", "Subtract"));
+
 }
 
 static std::vector<std::pair<string, sf::Keyboard::Key> > sfml_key_names = {

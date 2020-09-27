@@ -6,6 +6,7 @@
 class GuiButton;
 class GuiProgressbar;
 class TargetsContainer;
+class GuiPowerDamageIndicator;
 
 class GuiScanTargetButton : public GuiElement
 {
@@ -13,6 +14,7 @@ private:
     TargetsContainer* targets;
     GuiButton* button;
     GuiProgressbar* progress;
+    GuiPowerDamageIndicator* pdi;
 public:
     GuiScanTargetButton(GuiContainer* owner, string id, TargetsContainer* targets);
 

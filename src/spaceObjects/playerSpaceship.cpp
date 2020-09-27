@@ -238,7 +238,7 @@ float PlayerSpaceship::system_power_user_factor[] = {
     /*SYS_FrontShield*/   5.0 * 0.08,
     /*SYS_RearShield*/    5.0 * 0.08,
     /*SYS_Docks*/         1.0 * 0.08,
-    /*SYS_Drones*/        3.0 * 0.08,
+    /*SYS_Scanner*/        3.0 * 0.08,
 };
 
 static const int16_t CMD_TARGET_ROTATION = 0x0001;
@@ -967,10 +967,13 @@ void PlayerSpaceship::setSystemCoolantRequest(ESystem system, float request)
             if (!hasSystem(ESystem(n))) continue;
             if (n == system) continue;
 
-            if (total_coolant > 0)
-                systems[n].coolant_request = std::min(systems[n].coolant_request * (max_coolant - request) / total_coolant, (float) max_coolant_per_system);
-            else
-                systems[n].coolant_request = std::min((max_coolant - request) / float(cnt), float(max_coolant_per_system));
+            if (systems[n].coolant_request > 0)
+            {
+                if (total_coolant > 0)
+                    systems[n].coolant_request = std::min(systems[n].coolant_request * (max_coolant - request) / total_coolant, (float) max_coolant_per_system);
+                else
+                    systems[n].coolant_request = std::min((max_coolant - request) / float(cnt), float(max_coolant_per_system));
+            }
         }
     }
 
@@ -1006,10 +1009,13 @@ void PlayerSpaceship::setSystemRepairRequest(ESystem system, float request)
             if (!hasSystem(ESystem(n))) continue;
             if (n == system) continue;
 
-            if (total_repair > 0)
-                systems[n].repair_request = std::min(systems[n].repair_request * (max_repair - request) / total_repair, (float) max_repair_per_system);
-            else
-                systems[n].repair_request = std::min((max_repair - request) / float(cnt), float(max_repair_per_system));
+            if (systems[n].repair_request > 0)
+            {
+                if (total_repair > 0)
+                    systems[n].repair_request = std::min(systems[n].repair_request * (max_repair - request) / total_repair, (float) max_repair_per_system);
+                else
+                    systems[n].repair_request = std::min((max_repair - request) / float(cnt), float(max_repair_per_system));
+            }
         }
     }
 
@@ -1570,8 +1576,8 @@ void PlayerSpaceship::onReceiveClientCommand(int32_t client_id, sf::Packet& pack
             ESystem system;
             float request;
             packet >> system >> request;
-            if (system < SYS_COUNT && request >= 0.0 && request <= 10.0)
-                systems[system].coolant_request = request;
+            if (system < SYS_COUNT && request >= 0.0 && request <= max_coolant_per_system)
+                setSystemCoolantRequest(system, request);
         }
         break;
     case CMD_SET_SYSTEM_INSTABILITY:
@@ -1589,7 +1595,7 @@ void PlayerSpaceship::onReceiveClientCommand(int32_t client_id, sf::Packet& pack
             ESystem system;
             float request;
             packet >> system >> request;
-            if (system < SYS_COUNT && request >= 0.0 && request <= 10.0)
+            if (system < SYS_COUNT && request >= 0.0 && request <= max_repair_per_system)
                 setSystemRepairRequest(system, request);
         }
         break;
@@ -2139,7 +2145,7 @@ void PlayerSpaceship::commandSetSystemPowerRequest(ESystem system, float power_r
 void PlayerSpaceship::commandSetSystemCoolantRequest(ESystem system, float coolant_request)
 {
     sf::Packet packet;
-    systems[system].coolant_request = coolant_request;
+    //systems[system].coolant_request = coolant_request;
     packet << CMD_SET_SYSTEM_COOLANT_REQUEST << system << coolant_request;
     sendClientCommand(packet);
 }
@@ -2154,7 +2160,7 @@ void PlayerSpaceship::commandSetSystemInstability(ESystem system, int slider, fl
 void PlayerSpaceship::commandSetSystemRepairRequest(ESystem system, float repair_request)
 {
     sf::Packet packet;
-    systems[system].repair_request = repair_request;
+    //systems[system].repair_request = repair_request;
     packet << CMD_SET_SYSTEM_REPAIR_REQUEST << system << repair_request;
     sendClientCommand(packet);
 }

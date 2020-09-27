@@ -450,7 +450,7 @@ string getSystemName(ESystem system)
     case SYS_FrontShield: return "Front Shield Generator";
     case SYS_RearShield: return "Rear Shield Generator";
     case SYS_Docks: return "Cargo Docks";
-    case SYS_Drones: return "Drones Control";
+    case SYS_Scanner: return "Scanner";
     default:
         return "UNKNOWN";
     }
@@ -471,7 +471,7 @@ string getLocaleSystemName(ESystem system)
     case SYS_FrontShield: return tr("system", "Front Shield Generator");
     case SYS_RearShield: return tr("system", "Rear Shield Generator");
     case SYS_Docks: return tr("system", "Cargo Docks");
-    case SYS_Drones: return tr("system", "Drones Control");
+    case SYS_Scanner: return tr("system", "Scanner");
     default:
         return "UNKNOWN";
     }

@@ -2,6 +2,7 @@
 #include "playerInfo.h"
 #include "targetsContainer.h"
 #include "spaceObjects/playerSpaceship.h"
+#include "powerDamageIndicator.h"
 #include "gui/gui2_button.h"
 #include "gui/gui2_progressbar.h"
 
@@ -15,6 +16,9 @@ GuiScanTargetButton::GuiScanTargetButton(GuiContainer* owner, string id, Targets
     button->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
     progress = new GuiProgressbar(this, id + "_PROGRESS", 0, PlayerSpaceship::max_scanning_delay, 0.0);
     progress->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
+
+    pdi = new GuiPowerDamageIndicator(this, id + "_DPI", SYS_Scanner, ACenterLeft, my_spaceship);
+    pdi->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
 }
 
 void GuiScanTargetButton::onUpdate()
@@ -40,7 +44,7 @@ void GuiScanTargetButton::onDraw(sf::RenderTarget& window)
             obj = targets->get();
 
         button->show();
-        if (obj && obj->canBeScannedBy(my_spaceship))
+        if (obj && obj->canBeScannedBy(my_spaceship) && my_spaceship->getSystemEffectiveness(SYS_Scanner) > 0.1)
             button->enable();
         else
             button->disable();

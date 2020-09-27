@@ -3,8 +3,8 @@
 #include "powerDamageIndicator.h"
 #include "spaceObjects/warpJammer.h"
 
-GuiPowerDamageIndicator::GuiPowerDamageIndicator(GuiContainer* owner, string name, ESystem system, EGuiAlign icon_align, P<PlayerSpaceship> targetSpaceship)
-: GuiElement(owner, name), system(system), text_size(30), icon_align(icon_align), target_spaceship(targetSpaceship)
+GuiPowerDamageIndicator::GuiPowerDamageIndicator(GuiContainer* owner, string name, ESystem system, EGuiAlign icon_align, P<PlayerSpaceship> targetSpaceship, bool displayed_text)
+: GuiElement(owner, name), system(system), text_size(30), icon_align(icon_align), target_spaceship(targetSpaceship), displayed_text(displayed_text)
 {
 }
 
@@ -55,15 +55,22 @@ void GuiPowerDamageIndicator::onDraw(sf::RenderTarget& window)
     {
         color = colorConfig.overlay_hacked;
         display_text = "HACKED";
+    }else if ((system == SYS_Warp && my_spaceship->current_warp > 0) || (system == SYS_JumpDrive && my_spaceship->jump_delay > 0) || (system == SYS_FrontShield && my_spaceship->shields_active) || (system == SYS_RearShield && my_spaceship->shields_active))
+    {
+        color = sf::Color::White;
+        display_text = "";
     }else{
         return;
     }
     drawStretched(window, rect, "gui/damage_power_overlay", color);
 
-    if (rect.height > rect.width)
-        drawVerticalText(window, rect, display_text, ACenter, text_size, bold_font, color);
-    else
-        drawText(window, rect, display_text, ACenter, text_size, bold_font, color);
+    if (displayed_text)
+    {
+        if (rect.height > rect.width)
+            drawVerticalText(window, rect, display_text, ACenter, text_size, bold_font, color);
+        else
+            drawText(window, rect, display_text, ACenter, text_size, bold_font, color);
+    }
 
     icon_size = std::min(rect.width, rect.height) * 0.8;
     switch(icon_align)
@@ -129,6 +136,22 @@ void GuiPowerDamageIndicator::onDraw(sf::RenderTarget& window)
     if (heat > 0.90)
     {
         drawIcon(window, "gui/icons/status_overheat", colorConfig.overlay_overheating);
+    }
+    if (system == SYS_Warp && my_spaceship->current_warp > 0)
+    {
+        drawIcon(window, "gui/icons/system_warpdrive", sf::Color::White);
+    }
+    if (system == SYS_JumpDrive && my_spaceship->jump_delay > 0)
+    {
+        drawIcon(window, "gui/icons/system_jumpdrive", sf::Color::White);
+    }
+    if (system == SYS_FrontShield && my_spaceship->shields_active)
+    {
+        drawIcon(window, "gui/icons/shields-fore", sf::Color::White);
+    }
+    if (system == SYS_RearShield && my_spaceship->shields_active)
+    {
+        drawIcon(window, "gui/icons/shields-aft", sf::Color::White);
     }
 }
 

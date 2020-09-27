@@ -30,28 +30,40 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
 
     // Render the alert level color overlay.
     (new AlertLevelOverlay(this));
-    int i = 100;
-    energy_display = new GuiKeyValueDisplay(this, "ENERGY_DISPLAY", 0.45, tr("Energy"), "");
-    energy_display->setIcon("gui/icons/energy")->setTextSize(20)->setPosition(20, i, ATopLeft)->setSize(240, 40);
+    int i = 80;
+    energy_bar = new GuiProgressbar(this, "ENERGY_BAR", 0.0, 1.0, 0.0);
+    energy_bar->setColor(sf::Color(96, 96, 96, 128));
+    energy_bar->setPosition(20, i, ATopLeft)->setSize(240, 40);
+    energy_display = new GuiKeyValueDisplay(energy_bar, "ENERGY_DISPLAY", 0.45, tr("Energy"), "");
+    energy_display->isBackground(false)->setIcon("gui/icons/energy")->setTextSize(20)->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
     i += 40;
-    hull_display = new GuiKeyValueDisplay(this, "HULL_DISPLAY", 0.45, tr("health","Hull"), "");
-    hull_display->setIcon("gui/icons/hull")->setTextSize(20)->setPosition(20, i, ATopLeft)->setSize(240, 40);
+    hull_bar = new GuiProgressbar(this, "HULL_BAR", 0.0, 1.0, 0.0);
+    hull_bar->setColor(sf::Color(96, 96, 96, 128));
+    hull_bar->setPosition(20, i, ATopLeft)->setSize(240, 40);
+    hull_display = new GuiKeyValueDisplay(hull_bar, "HULL_DISPLAY", 0.45, tr("health","Hull"), "");
+    hull_display->isBackground(false)->setIcon("gui/icons/hull")->setTextSize(20)->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
     i += 40;
-    shield_display = new GuiKeyValueDisplay(this, "SHIELDS_DISPLAY", 0.45, tr("shields", "Front"), "");
-    shield_display->setIcon("gui/icons/shields-fore")->setTextSize(20)->setPosition(20, i, ATopLeft)->setSize(240, 40);
+    shield_bar = new GuiProgressbar(this, "SHIELDS_BAR", 0.0, 1.0, 0.0);
+    shield_bar->setColor(sf::Color(96, 96, 96, 128));
+    shield_bar->setPosition(20, i, ATopLeft)->setSize(240, 40);
+    shield_display = new GuiKeyValueDisplay(shield_bar, "SHIELD_DISPLAY", 0.45, tr("shields", "Front"), "");
+    shield_display->isBackground(false)->setIcon("gui/icons/shields-fore")->setTextSize(20)->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
     i += 40;
-    coolant_display = new GuiKeyValueDisplay(this, "COOLANT_DISPLAY", 0.45, tr("total","Coolant"), "");
+    oxygen_bar = new GuiProgressbar(this, "OXYGEN_BAR", 0.0, 1.0, 0.0);
+    oxygen_bar->setColor(sf::Color(96, 96, 96, 128));
+    oxygen_bar->setPosition(20, i, ATopLeft)->setSize(240, 40);
+    oxygen_display = new GuiKeyValueDisplay(oxygen_bar, "OXYGEN_DISPLAY", 0.45, tr("total","Oxygen"), "");
+    oxygen_display->isBackground(false)->setIcon("gui/icons/system_oxygen")->setTextSize(20)->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
+    i += 60;
+    coolant_display = new GuiKeyValueDisplay(this, "COOLANT_DISPLAY", 0.75, tr("total","Total of Coolant"), "");
     coolant_display->setIcon("gui/icons/coolant")->setTextSize(20)->setPosition(20, i, ATopLeft)->setSize(240, 40);
     if (gameGlobalInfo->use_nano_repair_crew and gameGlobalInfo->use_system_damage)
     {
         i += 40;
-        repair_display = new GuiKeyValueDisplay(this, "REPAIR_DISPLAY", 0.45, tr("total","Repair"), "");
+        repair_display = new GuiKeyValueDisplay(this, "REPAIR_DISPLAY", 0.75, tr("total","Total of Repair"), "");
         repair_display->setIcon("gui/icons/system_health")->setTextSize(20)->setPosition(20, i, ATopLeft)->setSize(240, 40);
     }
-    i += 40;
-    oxygen_display = new GuiKeyValueDisplay(this, "OXYGEN_DISPLAY", 0.45, tr("total","Oxygen"), "");
-    oxygen_display->setIcon("gui/icons/system_oxygen")->setTextSize(20)->setPosition(20, i, ATopLeft)->setSize(240, 40);
-    
+
     self_destruct_button = new GuiSelfDestructButton(this, "SELF_DESTRUCT");
     self_destruct_button->setPosition(20, 20, ATopLeft)->setSize(240, 100)->setVisible(my_spaceship && my_spaceship->getCanSelfDestruct());
 
@@ -161,11 +173,11 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
     system_rows[SYS_FrontShield].button->setIcon("gui/icons/shields-fore");
     system_rows[SYS_RearShield].button->setIcon("gui/icons/shields-aft");
     system_rows[SYS_Docks].button->setIcon("gui/icons/docking");
-    system_rows[SYS_Drones].button->setIcon("gui/icons/heading");
+    system_rows[SYS_Scanner].button->setIcon("gui/icons/station-relay");
 
     for(int n=0; n<SYS_COUNT; n++)
     {
-        (new GuiPowerDamageIndicator(system_rows[n].button, n + "_INDICATOR", ESystem(n), ACenterLeft, my_spaceship))->setPosition(0, 0, ABottomLeft)->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
+        (new GuiPowerDamageIndicator(system_rows[n].button, n + "_INDICATOR", ESystem(n), ACenterLeft, my_spaceship, false))->setPosition(0, 0, ABottomLeft)->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
     }
 
     if (gameGlobalInfo->use_nano_repair_crew)
@@ -224,8 +236,7 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
     }
 
     new ShipsLog(this, crew_position);
-    (new GuiCommsOverlay(this))->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
-
+    
     (new GuiCustomShipFunctions(this, crew_position, "", my_spaceship))->setPosition(-20, 120, ATopRight)->setSize(250, GuiElement::GuiSizeMax);
 
     previous_energy_level = 0.0;
@@ -260,16 +271,19 @@ void EngineeringScreen::onDraw(sf::RenderTarget& window)
             energy_display->setColor(sf::Color::Red);
         else
             energy_display->setColor(sf::Color::White);
+        energy_bar->setValue(my_spaceship->energy_level / my_spaceship->max_energy_level);
         hull_display->setValue(string(int(100 * my_spaceship->hull_strength / my_spaceship->hull_max)) + "%");
         if (my_spaceship->hull_strength < my_spaceship->hull_max / 4.0f)
             hull_display->setColor(sf::Color::Red);
         else
             hull_display->setColor(sf::Color::White);
+        hull_bar->setValue(my_spaceship->hull_strength / my_spaceship->hull_max);
         string shields = "";
         shields += string(my_spaceship->getShieldPercentage(0)) + "%";
         if (my_spaceship->getShieldPercentage(1) > 0)
             shields += "/" + string(my_spaceship->getShieldPercentage(1)) + "%";
         shield_display->setValue(shields);
+        shield_bar->setValue((my_spaceship->getShieldPercentage(0) / 100.0 + my_spaceship->getShieldPercentage(1) / 100.0) / 2.0);
         coolant_display->setValue(string(int(my_spaceship->max_coolant * 10)) + "%");
         if (gameGlobalInfo->use_nano_repair_crew)
         {
@@ -278,13 +292,20 @@ void EngineeringScreen::onDraw(sf::RenderTarget& window)
                 repair_display->setValue(string(int(my_spaceship->max_repair)));
         }
         string oxygen = string(my_spaceship->oxygen_zones[0].oxygen_level / my_spaceship->oxygen_zones[0].oxygen_max * 100,1) + "%";
+        float oxygen_level = my_spaceship->oxygen_zones[0].oxygen_level;
+        float oxygen_max = my_spaceship->oxygen_zones[0].oxygen_max;
         for(int n=1; n<10; n++)
         {
             if (my_spaceship->oxygen_zones[n].oxygen_max > 0)
+            {
                 oxygen += "/" + string(my_spaceship->oxygen_zones[n].oxygen_level / my_spaceship->oxygen_zones[n].oxygen_max * 100,1) + "%";
+                oxygen_level += my_spaceship->oxygen_zones[n].oxygen_level;
+                oxygen_max += my_spaceship->oxygen_zones[n].oxygen_max;
+            }
         }
         oxygen_display->setValue(oxygen);
-        oxygen_display->setVisible(my_spaceship->hasSystem(SYS_Oxygen));
+        oxygen_bar->setVisible(my_spaceship->hasSystem(SYS_Oxygen));
+        oxygen_bar->setValue(oxygen_level / oxygen_max);
         
         for(int n=0; n<SYS_COUNT; n++)
         {
@@ -411,7 +432,7 @@ void EngineeringScreen::onHotkey(const HotkeyResult& key)
         if (key.hotkey == "SELECT_FRONT_SHIELDS") selectSystem(SYS_FrontShield);
         if (key.hotkey == "SELECT_REAR_SHIELDS") selectSystem(SYS_RearShield);
         if (key.hotkey == "SELECT_DOCKS") selectSystem(SYS_Docks);
-        if (key.hotkey == "SELECT_DRONES") selectSystem(SYS_Drones);
+        if (key.hotkey == "SELECT_SCANNER") selectSystem(SYS_Scanner);
 
         if (key.hotkey == "SELECT_NEXT_SYSTEM")
         {

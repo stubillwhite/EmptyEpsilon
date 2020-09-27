@@ -8,7 +8,7 @@ class PlayerSpaceship;
 class GuiPowerDamageIndicator : public GuiElement
 {
 public:
-    GuiPowerDamageIndicator(GuiContainer* owner, string name, ESystem system, EGuiAlign icon_align, P<PlayerSpaceship> targetSpaceship);
+    GuiPowerDamageIndicator(GuiContainer* owner, string name, ESystem system, EGuiAlign icon_align, P<PlayerSpaceship> targetSpaceship, bool displayed_text = true);
 
     virtual void onDraw(sf::RenderTarget& window);
     void setTargetSpaceship(P<PlayerSpaceship> targetSpaceship){target_spaceship = targetSpaceship;}
@@ -21,6 +21,7 @@ private:
     sf::Vector2f icon_position;
     sf::Vector2f icon_offset;
     float icon_size;
+    bool displayed_text = true;
 
     void drawIcon(sf::RenderTarget& window, string icon_name, sf::Color color);
 

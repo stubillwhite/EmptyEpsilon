@@ -1402,8 +1402,9 @@ bool SpaceShip::hasSystem(ESystem system)
     case SYS_Impulse:
         return impulse_max_speed > 0.0;
     case SYS_Docks:
-    case SYS_Drones:
         return docks[0].dock_type != Dock_Disabled;
+    case SYS_Scanner:
+        return true;
     }
     return true;
 }
@@ -1763,7 +1764,7 @@ bool SpaceShip::tryDockDrone(SpaceShip* other){
 }
 
 float SpaceShip::getDronesControlRange() { 
-    return Tween<float>::easeInQuad(getSystemEffectiveness(SYS_Drones), 0.0, 3.0, 0.001, 50000.0); 
+    return Tween<float>::easeInQuad(getSystemEffectiveness(SYS_Scanner), 0.0, 3.0, 0.001, 50000.0); 
 }
 
 void SpaceShip::setOxygenZone(int index, string label, float oxygen_level, float oxygen_max, float recharge_rate_per_second, float discharge_rate_per_second)

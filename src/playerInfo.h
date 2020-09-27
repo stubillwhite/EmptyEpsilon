@@ -29,6 +29,10 @@ enum ECrewPosition
     tractorView,
     dronePilot,
     dockMaster,
+    tacticalRadar,
+    longRangeRadar,
+    farRangeRadar,
+    probeScreen,
     max_crew_positions
 };
 

@@ -1,6 +1,26 @@
 # Change Log
 
-### Daid Empty Epsilon Update on 17/09/2020
+### Daid Empty Epsilon Update on 27/09/2020
+
+### EE LARP release 1.5-beta
+
+- Lot of minors corrections
+  - Repair crew vs nano robots
+  - power indicator overlay
+  - Update of system list effect : Drone and docks
+  - Progress bar into dynamic keyvalue for engineering screen
+  - Viewport3D for cinematic screen
+  - Remove comms overlay for each player station
+  - Avoid weak amount of coolant or repair if not requested
+  - Probe can be selected during their travel
+- New screens
+  - Radar screen : tactical, long, far
+  - Probe screen : camera on probe linked to science
+- New indicator overlay for systems
+  - Warp, Jump, Shield : white color when activated
+- Scanner system instead of drone system
+  - Affect range of relay radar
+  - Affect scanning dialog (perturbation, help or stop)
 
 ### EE LARP release 1.4-beta
 

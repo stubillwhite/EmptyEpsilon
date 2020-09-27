@@ -52,7 +52,8 @@ RelayScreen::RelayScreen(GuiContainer* owner, bool allow_comms)
             switch(mode)
             {
             case TargetSelection:
-                targets.setToClosestTo(position, 10 / radar->getScale(), TargetsContainer::Targetable);
+                targets.setToClosestTo(position, 10 / radar->getScale(), TargetsContainer::Selectable);
+                //targets.setToClosestTo(position, 1000, TargetsContainer::Selectable);
                 break;
             case WaypointPlacement:
                 if (my_spaceship)
@@ -260,7 +261,7 @@ void RelayScreen::onDraw(sf::RenderTarget& window)
                     continue;
                 }
             }
-            if (obj->getPosition() - target->getPosition() < 5000.0f)
+            if (obj->getPosition() - target->getPosition() < 5000.0f * my_spaceship->getSystemEffectiveness(SYS_Scanner))
             {
                 near_friendly = true;
                 break;

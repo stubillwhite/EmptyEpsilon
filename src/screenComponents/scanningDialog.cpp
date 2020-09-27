@@ -57,13 +57,17 @@ void GuiScanningDialog::onDraw(sf::RenderTarget& window)
                 scan_depth = 0;
                 setupParameters();
             }
+            
+            // Stop scan if no power
+            if (my_spaceship->getSystemEffectiveness(SYS_Scanner) < 0.1)
+                my_spaceship->commandScanCancel();
 
             // Instability and help for scanning
             for(int n=0; n<max_sliders; n++)
             {
                 if (n < my_spaceship->scanning_complexity)
                 {
-                    float noise = my_spaceship->scanning_noise;
+                    float noise = my_spaceship->scanning_noise + (1.0 - my_spaceship->getSystemEffectiveness(SYS_Scanner));
                     if (noise > 0)
                     {
                         noise_direction[n] *= random(0.0, 1.0) < 0.99 ? 1 : -1;

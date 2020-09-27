@@ -28,7 +28,7 @@ enum ESystem
     SYS_FrontShield,
     SYS_RearShield,
     SYS_Docks,
-    SYS_Drones,
+    SYS_Scanner,
     SYS_COUNT
 };
 

@@ -261,7 +261,7 @@ void GuiRadarView::drawNoneFriendlyBlockedAreas(sf::RenderTarget& window)
     {
         float scale = std::min(rect.width, rect.height) / 2.0f / getDistance();
 
-        float r = 5000.0 * scale;
+        float r = 5000.0 * scale * my_spaceship->getSystemEffectiveness(SYS_Scanner);
         sf::CircleShape circle(r, 50);
         circle.setOrigin(r, r);
         circle.setFillColor(sf::Color(255, 255, 255, 255));
@@ -458,8 +458,9 @@ void GuiRadarView::drawNebulaBlockedAreas(sf::RenderTarget& window)
         }
     }
 
+    if (my_spaceship)
     {
-        float r = 5000.0f * scale;
+        float r = 5000.0f * getScale() * my_spaceship->getSystemEffectiveness(SYS_Scanner);
         sf::CircleShape circle(r, 32);
         circle.setOrigin(r, r);
         circle.setPosition(radar_screen_center + (scan_center - getViewPosition()) * getScale());
@@ -701,11 +702,12 @@ void GuiRadarView::drawObjects(sf::RenderTarget& window_normal, sf::RenderTarget
             }
 
             sf::Vector2f position = obj->getPosition();
-            PVector<Collisionable> obj_list = CollisionManager::queryArea(position - sf::Vector2f(5000, 5000), position + sf::Vector2f(5000, 5000));
+            float radar_range = 5000.0 * my_spaceship->getSystemEffectiveness(SYS_Scanner);
+            PVector<Collisionable> obj_list = CollisionManager::queryArea(position - sf::Vector2f(radar_range, radar_range), position + sf::Vector2f(radar_range, radar_range));
             foreach(Collisionable, c_obj, obj_list)
             {
                 P<SpaceObject> obj2 = c_obj;
-                if (obj2 && (obj->getPosition() - obj2->getPosition()) < 5000.0f + obj2->getRadius())
+                if (obj2 && (obj->getPosition() - obj2->getPosition()) < radar_range + obj2->getRadius())
                 {
                     visible_objects.insert(*obj2);
                 }

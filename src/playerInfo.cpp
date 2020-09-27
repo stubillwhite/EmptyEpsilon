@@ -25,6 +25,8 @@
 #include "screens/extra/dockMasterScreen.h"
 #include "screens/extra/shipLogScreen.h"
 #include "screens/extra/tractorBeamScreen.h"
+#include "screens/extra/radarScreen.h"
+#include "screens/extra/probeScreen.h"
 
 #include "screenComponents/mainScreenControls.h"
 #include "screenComponents/selfDestructEntry.h"
@@ -205,6 +207,14 @@ void PlayerInfo::spawnUI()
             screen->addStationTab(new DroneOperatorScreen(container), dronePilot, getCrewPositionName(dronePilot), getCrewPositionIcon(dronePilot));
         if (crew_position[dockMaster])
             screen->addStationTab(new DockMasterScreen(container), dockMaster, getCrewPositionName(dockMaster), getCrewPositionIcon(dockMaster));
+        if (crew_position[tacticalRadar])
+            screen->addStationTab(new RadarScreen(container, "tactical"), tacticalRadar, getCrewPositionName(tacticalRadar), getCrewPositionIcon(tacticalRadar));
+        if (crew_position[longRangeRadar])
+            screen->addStationTab(new RadarScreen(container, "long_range"), longRangeRadar, getCrewPositionName(longRangeRadar), getCrewPositionIcon(longRangeRadar));
+        if (crew_position[farRangeRadar])
+            screen->addStationTab(new RadarScreen(container, "far_range"), farRangeRadar, getCrewPositionName(farRangeRadar), getCrewPositionIcon(farRangeRadar));
+        if (crew_position[probeScreen])
+            screen->addStationTab(new ProbeScreen(container), probeScreen, getCrewPositionName(probeScreen), getCrewPositionIcon(probeScreen));
 
         GuiSelfDestructEntry* sde = new GuiSelfDestructEntry(container, "SELF_DESTRUCT_ENTRY");
         for(int n=0; n<max_crew_positions; n++)
@@ -256,6 +266,10 @@ string getCrewPositionName(ECrewPosition position)
     case tractorView: return tr("station","Tractor Beam");
     case dronePilot: return tr("station","Drone Pilot");
     case dockMaster: return tr("station","Dock Master");
+    case tacticalRadar: return tr("station","Tactical Radar");
+    case longRangeRadar: return tr("station","Long Range Radar");
+    case farRangeRadar: return tr("station","Far Range Radar");
+    case probeScreen: return tr("station","Probe Screen");
     default: return "ErrUnk: " + string(position);
     }
 }
@@ -284,6 +298,10 @@ string getCrewPositionIcon(ECrewPosition position)
     case tractorView: return "";
     case dronePilot: return "";
     case dockMaster: return "";
+    case tacticalRadar: return "";
+    case longRangeRadar: return "";
+    case farRangeRadar: return "";
+    case probeScreen: return "";
     default: return "ErrUnk: " + string(position);
     }
 }
@@ -340,6 +358,14 @@ template<> void convert<ECrewPosition>::param(lua_State* L, int& idx, ECrewPosit
         cp = dronePilot;
     else if (str == "dockmaster" || str == "dockmasterview")
         cp = dockMaster;
+    else if (str == "tacticalradar" || str == "tacticalradarview")
+        cp = dockMaster;
+    else if (str == "longrangeradar" || str == "longrangeradarview")
+        cp = dockMaster;
+    else if (str == "farrangeradar" || str == "farrangeradarview")
+        cp = dockMaster;
+    else if (str == "probe" || str == "probeview" || str == "probescreen")
+        cp = probeScreen;
     else
         luaL_error(L, "Unknown value for crew position: %s", str.c_str());
 }

@@ -23,9 +23,13 @@ private:
     GuiOverlay* background_crosses;
 
     GuiKeyValueDisplay* energy_display;
+    GuiProgressbar* energy_bar;
     GuiKeyValueDisplay* hull_display;
+    GuiProgressbar* hull_bar;
     GuiKeyValueDisplay* shield_display;
+    GuiProgressbar* shield_bar;
     GuiKeyValueDisplay* oxygen_display;
+    GuiProgressbar* oxygen_bar;
     GuiKeyValueDisplay* coolant_display;
     GuiKeyValueDisplay* repair_display;
     GuiSelfDestructButton* self_destruct_button;

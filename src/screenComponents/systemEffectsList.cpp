@@ -128,6 +128,23 @@ void GuiSystemEffectsList::onDraw(sf::RenderTarget& window)
                     addSystemEffect(tr("Damage negate"), string(int(damage_negate * 100)) + "%");
             }
             break;
+        case SYS_Docks:
+            addSystemEffect(tr("Drone transfert"), string(int(effectiveness * 100)) + "%");
+            break;
+        case SYS_Scanner:
+            addSystemEffect(tr("Drone range control"), string(my_spaceship->getDronesControlRange() / 1000.0f,1) + "U");
+            addSystemEffect(tr("Relay radar range"), string(5000.0 * my_spaceship->getSystemEffectiveness(SYS_Scanner)  / 1000.0f,1) + "U");
+            {
+                float noise = my_spaceship->scanning_noise + (1.0 - my_spaceship->getSystemEffectiveness(SYS_Scanner));
+                if (my_spaceship->getSystemEffectiveness(SYS_Scanner) < 0.1)
+                    addSystemEffect(tr("Scanner disabled"), "");
+                else if (noise > 0.0)
+                    addSystemEffect(tr("Scanning pertubation"), string(int(noise * 100)) + "%");
+                else if (noise < 0.0)
+                    addSystemEffect(tr("Scanning help"), string(int(-noise * 100)) + "%");
+                
+            }
+            break;
         default:
             break;
         }
