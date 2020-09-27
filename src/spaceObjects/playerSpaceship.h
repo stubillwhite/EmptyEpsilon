@@ -131,6 +131,7 @@ private:
     std::vector<int> comms_reply_id;
     std::vector<string> comms_reply_message;
     CommsScriptInterface comms_script_interface; // Server only
+    std::vector<string> scan_labels;
     // Ship's log container
     std::vector<ShipLogEntry> ships_log;
     std::vector<ShipLogEntry> sub_log;
@@ -231,6 +232,8 @@ public:
     void addCommsReply(int32_t id, string message);
     void switchCommsToGM();
     void closeComms();
+    void setScanLabels(std::vector<string> labels);
+    const std::vector<string> getScanLabels();
 
     void setEnergyLevel(float amount) { energy_level = std::max(0.0f, std::min(max_energy_level, amount)); }
     void setEnergyLevelMax(float amount) { max_energy_level = std::max(0.0f, amount); energy_level = std::min(energy_level, max_energy_level); }

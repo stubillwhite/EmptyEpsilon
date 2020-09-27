@@ -22,6 +22,7 @@
 - Scanner system instead of drone system
   - Affect range of relay radar
   - Affect scanning dialog (perturbation, help or stop)
+- Signature signals visualisation from science screen
 
 ### EE LARP release 1.4-beta
 
