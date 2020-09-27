@@ -224,6 +224,9 @@ REGISTER_SCRIPT_SUBCLASS(PlayerSpaceship, SpaceShip)
     /// Returns a float.
     /// Example: ship:getSelfDestructSize()
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, getSelfDestructSize);
+    // Changes the list of labels used to describe scans.
+    // Example: player:setScanLabels("Reticulating splines", "Reversing polarity")
+    REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, setScanLabels);
 }
 
 float PlayerSpaceship::system_power_user_factor[] = {
@@ -356,6 +359,21 @@ PlayerSpaceship::PlayerSpaceship()
     shields_active = false;
     control_code = "";
     scanning_noise = 0.0;
+    scan_labels.assign({
+        tr("Electric signature"),
+        tr("Biomass frequency"),
+        tr("Gravity well signature"),
+        tr("Radiation halftime"),
+        tr("Radio profile"),
+        tr("Ionic phase shift"),
+        tr("Infra-red color shift"),
+        tr("Doppler stability"),
+        tr("Raspberry jam prevention"),
+        tr("Infinity improbability"),
+        tr("Zerospace audio frequency"),
+        tr("Polarity inversion")
+    });
+
     setFactionId(1);
 
     // For now, set player ships to always be fully scanned to all other ships
@@ -410,6 +428,7 @@ PlayerSpaceship::PlayerSpaceship()
     registerMemberReplication(&far_range_radar_range);
     registerMemberReplication(&long_range_radar_range);
     registerMemberReplication(&short_range_radar_range);
+    registerMemberReplication(&scan_labels, 1.0);
     registerMemberReplication(&custom_functions);
     
     registerMemberReplication(&texture_front);
@@ -1430,6 +1449,15 @@ void PlayerSpaceship::closeComms()
         else
             comms_state = CS_Inactive;
     }
+}
+
+void PlayerSpaceship::setScanLabels(std::vector<string> labels) {
+    if (labels.size() > 0)
+        scan_labels = labels;
+}
+
+const std::vector<string> PlayerSpaceship::getScanLabels() {
+    return scan_labels;
 }
 
 void PlayerSpaceship::onReceiveClientCommand(int32_t client_id, sf::Packet& packet)
