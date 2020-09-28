@@ -166,9 +166,9 @@ public:
     float current_warp;
 
     /*!
-     * [output] Current maximum warp amount, from 0.0 to 4.0
+     * [output] warp factor due to terrain, from 0.0 to around 10.0
      */
-    float max_warp;
+    float warp_layer_factor;
 
     /*!
      * [config] Amount of speed per warp level, in m/s
@@ -220,6 +220,10 @@ public:
      * Frequency setting of the shields.
      */
     int shield_frequency;
+    /**
+     * Frequency setting of the warp.
+     */
+    int warp_frequency;
 
     /// MultiplayerObjectID of the targeted object, or -1 when no target is selected.
     /// Multi target for specific weapons stations
@@ -444,7 +448,10 @@ public:
         } else {
             return 0.0f;
         }
-     }
+    }
+    int getWarpFrequency(void){ return warp_frequency; }
+    void setWarpFrequency(float freq) { if ((freq > 10) || (freq < 0)) return; warp_frequency = freq;}
+
     float getJumpDriveCharge() { return jump_drive_charge; }
     void setJumpDriveCharge(float charge) { jump_drive_charge = charge; }
 

@@ -25,7 +25,7 @@ RelayScreen::RelayScreen(GuiContainer* owner, bool allow_comms)
 {
     targets.setAllowWaypointSelection();
     radar = new GuiRadarView(this, "RELAY_RADAR", 50000.0f, &targets, my_spaceship);
-    radar->longRange()->enableWaypoints()->enableTerrain()->enableCallsigns()->setStyle(GuiRadarView::Rectangular)->setFogOfWarStyle(GuiRadarView::FriendlysShortRangeFogOfWar);
+    radar->longRange()->enableWaypoints()->enableWarpLayer()->enableCallsigns()->setStyle(GuiRadarView::Rectangular)->setFogOfWarStyle(GuiRadarView::FriendlysShortRangeFogOfWar);
     radar->setAutoCentering(false);
     radar->setPosition(0, 0, ATopLeft)->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
     radar->setCallbacks(
@@ -82,6 +82,16 @@ RelayScreen::RelayScreen(GuiContainer* owner, bool allow_comms)
     GuiAutoLayout* sidebar = new GuiAutoLayout(this, "SIDE_BAR", GuiAutoLayout::LayoutVerticalTopToBottom);
     sidebar->setPosition(-20, 150, ATopRight)->setSize(250, GuiElement::GuiSizeMax);
     
+    // Reputation display.
+    info_reputation = new GuiKeyValueDisplay(sidebar, "INFO_REPUTATION", 0.7, tr("Reputation") + ":", "");
+    info_reputation->setSize(GuiElement::GuiSizeMax, 30);
+
+    // Scenario clock display.
+    info_clock = new GuiKeyValueDisplay(sidebar, "INFO_CLOCK", 0.7, tr("Clock") + ":", "");
+    info_clock->setSize(GuiElement::GuiSizeMax, 30);
+    
+    (new GuiLabel(sidebar, "SPACE", "", 30))->setSize(GuiElement::GuiSizeMax, 30);
+    
     info_distance = new GuiKeyValueDisplay(sidebar, "DISTANCE", 0.4, "Distance", "");
     info_distance->setSize(GuiElement::GuiSizeMax, 30);
 
@@ -102,6 +112,8 @@ RelayScreen::RelayScreen(GuiContainer* owner, bool allow_comms)
     // Option buttons for comms, waypoints, and probes.
     option_buttons = new GuiAutoLayout(this, "BUTTONS", GuiAutoLayout::LayoutVerticalTopToBottom);
     option_buttons->setPosition(20, 50, ATopLeft)->setSize(250, GuiElement::GuiSizeMax);
+    
+    (new GuiLabel(option_buttons, "INTERACTION_LABEL", tr("Interaction"), 30))->addBackground()->setSize(GuiElement::GuiSizeMax, 50);
 
     // Open comms button.
     if (allow_comms == true)
@@ -119,6 +131,16 @@ RelayScreen::RelayScreen(GuiContainer* owner, bool allow_comms)
     });
     hack_target_button->setSize(GuiElement::GuiSizeMax, 50);
 
+    (new GuiLabel(option_buttons, "SPACE", "", 30))->setSize(GuiElement::GuiSizeMax, 20);
+    (new GuiLabel(option_buttons, "PROBE_LABEL", tr("Probe"), 30))->addBackground()->setSize(GuiElement::GuiSizeMax, 50);
+    
+    // Launch probe button.
+    launch_probe_button = new GuiButton(option_buttons, "LAUNCH_PROBE_BUTTON", tr("Launch Probe"), [this]() {
+        mode = LaunchProbe;
+        option_buttons->hide();
+    });
+    launch_probe_button->setSize(GuiElement::GuiSizeMax, 50)->setVisible(my_spaceship && my_spaceship->getCanLaunchProbe());
+
     // Link probe to science button.
     link_to_science_button = new GuiToggleButton(option_buttons, "LINK_TO_SCIENCE", tr("Link to Science"), [this](bool value){
         if (value)
@@ -127,6 +149,23 @@ RelayScreen::RelayScreen(GuiContainer* owner, bool allow_comms)
             my_spaceship->commandSetScienceLink(-1);
     });
     link_to_science_button->setSize(GuiElement::GuiSizeMax, 50)->setVisible(my_spaceship && my_spaceship->getCanLaunchProbe());
+
+    (new GuiLabel(option_buttons, "SPACE", "", 30))->setSize(GuiElement::GuiSizeMax, 20);
+    (new GuiLabel(option_buttons, "WAYPOINT_LABEL", tr("Waypoint"), 30))->addBackground()->setSize(GuiElement::GuiSizeMax, 50);
+    
+    // Manage waypoints.
+    (new GuiButton(option_buttons, "WAYPOINT_PLACE_BUTTON", tr("Place Waypoint"), [this]() {
+        mode = WaypointPlacement;
+        option_buttons->hide();
+    }))->setSize(GuiElement::GuiSizeMax, 50);
+
+    delete_waypoint_button = new GuiButton(option_buttons, "WAYPOINT_DELETE_BUTTON", tr("Delete Waypoint"), [this]() {
+        if (my_spaceship && targets.getWaypointIndex() >= 0)
+        {
+            my_spaceship->commandRemoveWaypoint(targets.getWaypointIndex(), targets.getRouteIndex());
+        }
+    });
+    delete_waypoint_button->setSize(GuiElement::GuiSizeMax, 50);
     
     // Manage routes.
     if (gameGlobalInfo->use_advanced_sector_system)
@@ -144,35 +183,26 @@ RelayScreen::RelayScreen(GuiContainer* owner, bool allow_comms)
         route_selector->setSize(GuiElement::GuiSizeMax, 50);
         route_selector->setSelectionIndex(0);
     }
-
-    // Manage waypoints.
-    (new GuiButton(option_buttons, "WAYPOINT_PLACE_BUTTON", tr("Place Waypoint"), [this]() {
-        mode = WaypointPlacement;
-        option_buttons->hide();
-    }))->setSize(GuiElement::GuiSizeMax, 50);
-
-    delete_waypoint_button = new GuiButton(option_buttons, "WAYPOINT_DELETE_BUTTON", tr("Delete Waypoint"), [this]() {
-        if (my_spaceship && targets.getWaypointIndex() >= 0)
+    
+    // Show map layers.
+    if (gameGlobalInfo->use_warp_terrain)
+    {
+        (new GuiLabel(option_buttons, "SPACE", "", 30))->setSize(GuiElement::GuiSizeMax, 20);
+        (new GuiLabel(option_buttons, "WARP_LABEL", tr("Warp Frequency"), 30))->addBackground()->setSize(GuiElement::GuiSizeMax, 50);
+        
+        layer_selector = new GuiSelector(option_buttons, "LAYER_SELECTOR", [this](int index, string value) {
+            if (index < 10 && index >= 0){
+                radar->setWarpLayer(index);
+            }
+        });
+        for(int n = 0; n < 10; n++)
         {
-            my_spaceship->commandRemoveWaypoint(targets.getWaypointIndex(), targets.getRouteIndex());
+            if (gameGlobalInfo->layer[n].defined)
+                layer_selector->addEntry(gameGlobalInfo->layer[n].title, gameGlobalInfo->layer[n].title);
         }
-    });
-    delete_waypoint_button->setSize(GuiElement::GuiSizeMax, 50);
-
-    // Launch probe button.
-    launch_probe_button = new GuiButton(option_buttons, "LAUNCH_PROBE_BUTTON", tr("Launch Probe"), [this]() {
-        mode = LaunchProbe;
-        option_buttons->hide();
-    });
-    launch_probe_button->setSize(GuiElement::GuiSizeMax, 50)->setVisible(my_spaceship && my_spaceship->getCanLaunchProbe());
-
-    // Reputation display.
-    info_reputation = new GuiKeyValueDisplay(option_buttons, "INFO_REPUTATION", 0.7, tr("Reputation") + ":", "");
-    info_reputation->setSize(GuiElement::GuiSizeMax, 40);
-
-    // Scenario clock display.
-    info_clock = new GuiKeyValueDisplay(option_buttons, "INFO_CLOCK", 0.7, tr("Clock") + ":", "");
-    info_clock->setSize(GuiElement::GuiSizeMax, 40);
+        layer_selector->setSize(GuiElement::GuiSizeMax, 50);
+        layer_selector->setSelectionIndex(0);
+    }
 
     // Bottom layout.
     GuiAutoLayout* layout = new GuiAutoLayout(this, "", GuiAutoLayout::LayoutVerticalBottomToTop);

@@ -23,6 +23,12 @@
   - Affect range of relay radar
   - Affect scanning dialog (perturbation, help or stop)
 - Signature signals visualisation from science screen
+- Add warp layer effect on warp
+  - can be activated in options.ini with options server_config_use_warp_terrain
+  - add map layers into scripts to each warp frequency (max : 10)
+  - helms can change the warp  frequency of the ship
+  - relay can view the warp map layer for each frequency
+- Reorganisation of relay screen 
 
 ### EE LARP release 1.4-beta
 

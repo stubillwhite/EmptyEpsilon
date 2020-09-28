@@ -89,6 +89,7 @@ REGISTER_SCRIPT_SUBCLASS(PlayerSpaceship, SpaceShip)
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandTargetRotation);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandImpulse);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandWarp);
+    REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandSetWarpFrequency);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandJump);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandSetTarget);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandLoadTube);
@@ -297,6 +298,7 @@ static const int16_t CMD_SET_TRACTOR_BEAM_DIRECTION = 0x0035;
 static const int16_t CMD_SET_TRACTOR_BEAM_ARC = 0x0036;
 static const int16_t CMD_SET_TRACTOR_BEAM_RANGE = 0x0037;
 static const int16_t CMD_SET_TRACTOR_BEAM_MODE = 0x0038;
+static const int16_t CMD_SET_WARP_FREQUENCY = 0x0039;
 
 string alertLevelToString(EAlertLevel level)
 {
@@ -1483,6 +1485,18 @@ void PlayerSpaceship::onReceiveClientCommand(int32_t client_id, sf::Packet& pack
     case CMD_WARP:
         packet >> warp_request;
         break;
+    case CMD_SET_WARP_FREQUENCY:
+        {
+            int32_t new_frequency;
+            packet >> new_frequency;
+            warp_frequency = new_frequency;
+            if (warp_frequency < 0)
+                warp_frequency = 0;
+            if (warp_frequency > 10)
+                warp_frequency = 10;
+            addToShipLog("New warp frequency: " + frequencyToString(new_frequency),sf::Color::Yellow,helmsOfficer);
+        }
+        break;
     case CMD_JUMP:
         {
             float distance;
@@ -2078,6 +2092,13 @@ void PlayerSpaceship::commandWarp(int8_t target)
 {
     sf::Packet packet;
     packet << CMD_WARP << target;
+    sendClientCommand(packet);
+}
+
+void PlayerSpaceship::commandSetWarpFrequency(int32_t frequency)
+{
+    sf::Packet packet;
+    packet << CMD_SET_WARP_FREQUENCY << frequency;
     sendClientCommand(packet);
 }
 

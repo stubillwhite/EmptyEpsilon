@@ -66,7 +66,6 @@ void RadarScreen::onDraw(sf::RenderTarget& window)
             view_distance = distance_max;
         if (view_distance < distance_min)
             view_distance = distance_min;
-        LOG(INFO) << type << " : " << view_distance << " / " << distance_min << " / " << distance_max;
         radar->setDistance(view_distance);
     }
 }

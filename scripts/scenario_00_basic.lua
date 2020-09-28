@@ -87,8 +87,10 @@ function init()
     addLocalName("0/0 0.0","Gamma")
 
     -- Terrain for WARP
-    setTerrain("cosmic-map-3.png", 0, 0, 7000)
-    setTerrain("space dilation_00004_00001.png", 0, 0, 7000)
+    setMapLayer(0,"space dilation_00004_00001.png", 0, 0, 7000, "Highways 1")
+    setMapLayer(1,"space dilation_00004_00002.png", 0, 0, 7000, "Highways 2")
+    setMapLayer(2,"space dilation_00004_00003.png", 0, 0, 7000, "Highways 3")
+    setMapLayer(3,"space dilation_00004_00004.png", 0, 0, 7000, "Highways 4")
 
     enemyList = {}
     friendlyList = {}

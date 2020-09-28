@@ -279,6 +279,7 @@ public:
     void commandTurnSpeed(float turnSpeed);
     void commandImpulse(float target);
     void commandWarp(int8_t target);
+    void commandSetWarpFrequency(int32_t frequency);
     void commandJump(float distance);
     void commandSetTarget(P<SpaceObject> target, int8_t station = 0);
     void commandSetScienceLink(int32_t id);
@@ -435,7 +436,7 @@ string alertLevelToLocaleString(EAlertLevel level);
 
 static const sf::Vector2f empty_waypoint = sf::Vector2f(FLT_MAX, FLT_MAX);
 static const sf::Color routeColors[PlayerSpaceship::max_routes] = {
-    sf::Color::Magenta, sf::Color::White, sf::Color::Green, 
+    sf::Color::White, sf::Color::Magenta, sf::Color::Green, 
     sf::Color::Red, sf::Color::Yellow, sf::Color::Blue, 
     sf::Color::Cyan};
 

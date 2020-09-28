@@ -172,6 +172,7 @@ set(SOURCES
 	src/screenComponents/beamTargetSelector.cpp
 	src/screenComponents/shipInternalView.cpp
 	src/screenComponents/beamFrequencySelector.cpp
+	src/screenComponents/warpFrequencySelector.cpp
 	src/screenComponents/radarView.cpp
 	src/screenComponents/rawScannerDataRadarOverlay.cpp
 	src/screenComponents/scanTargetButton.cpp

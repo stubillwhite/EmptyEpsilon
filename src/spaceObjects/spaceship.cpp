@@ -100,6 +100,8 @@ REGISTER_SCRIPT_SUBCLASS_NO_CREATE(SpaceShip, ShipTemplateBasedObject)
     /// Example: ship:setWarpSpeed(500);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setWarpSpeed);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getWarpSpeed);
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getWarpFrequency);
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setWarpFrequency);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getBeamWeaponArc);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getBeamWeaponDirection);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getBeamWeaponRange);
@@ -187,7 +189,7 @@ SpaceShip::SpaceShip(string multiplayerClassName, float multiplayer_significant_
     has_warp_drive = true;
     warp_request = 0.0;
     current_warp = 0.0;
-    max_warp = 2.0;
+    warp_layer_factor = 1.0;
     warp_speed_per_warp_level = 1000.0;
     has_jump_drive = true;
     jump_drive_min_distance = 5000.0;
@@ -209,6 +211,7 @@ SpaceShip::SpaceShip(string multiplayerClassName, float multiplayer_significant_
     beam_frequency = irandom(0, max_frequency);
     beam_system_target = SYS_None;
     shield_frequency = irandom(0, max_frequency);
+    warp_frequency = 0;
     docking_state = DS_NotDocking;
     impulse_acceleration = 20.0;
     energy_level = 1000;
@@ -225,7 +228,7 @@ SpaceShip::SpaceShip(string multiplayerClassName, float multiplayer_significant_
     registerMemberReplication(&has_warp_drive);
     registerMemberReplication(&warp_request, 0.1);
     registerMemberReplication(&current_warp, 0.1);
-    registerMemberReplication(&max_warp, 0.5);
+    registerMemberReplication(&warp_layer_factor, 0.5);
     registerMemberReplication(&has_jump_drive);
     registerMemberReplication(&jump_drive_charge, 0.5);
     registerMemberReplication(&jump_delay, 0.5);
@@ -238,6 +241,7 @@ SpaceShip::SpaceShip(string multiplayerClassName, float multiplayer_significant_
     registerMemberReplication(&impulse_acceleration);
     registerMemberReplication(&warp_speed_per_warp_level);
     registerMemberReplication(&shield_frequency);
+    registerMemberReplication(&warp_frequency);
     registerMemberReplication(&docking_state);
     registerMemberReplication(&beam_frequency);
     registerMemberReplication(&combat_maneuver_charge, 0.5);
@@ -758,8 +762,8 @@ void SpaceShip::update(float delta)
         if ((docking_state == DS_Docked) || (docking_state == DS_Docking))
             warp_request = 0.0;
 
-        if (gameGlobalInfo->terrain.defined)
-            max_warp = 2.0f + 2.0f * float(gameGlobalInfo->getTerrainPixel(getPosition()).a) / 255;
+        if (gameGlobalInfo->use_warp_terrain)
+            warp_layer_factor = exp(2.0 * float(gameGlobalInfo->getLayerPixel(warp_frequency, getPosition()).a) / 255) / 2.0;
     }
 
     float rotationDiff;
@@ -827,6 +831,7 @@ void SpaceShip::update(float delta)
             if (current_impulse > 0.0)
                 current_impulse = 0.0;
         }else{
+            /*
             float actual_max_warp = std::min(float(warp_request), max_warp);
             if (current_warp < actual_max_warp)
             {
@@ -838,6 +843,18 @@ void SpaceShip::update(float delta)
                 current_warp -= std::max(1.0f, actual_max_warp - current_warp) * delta / warp_decharge_time;
                 if (current_warp < actual_max_warp)
                     current_warp = actual_max_warp;
+            }
+            */
+            if (current_warp < warp_request)
+            {
+                current_warp += delta / warp_charge_time;
+                if (current_warp > warp_request)
+                    current_warp = warp_request;
+            }else if (current_warp > warp_request)
+            {
+                current_warp -= delta / warp_decharge_time;
+                if (current_warp < warp_request)
+                    current_warp = warp_request;
             }
         }
     }else{
@@ -887,7 +904,7 @@ void SpaceShip::update(float delta)
 
     // Determine forward direction and velocity.
     sf::Vector2f forward = sf::vector2FromAngle(getRotation());
-    setVelocity(forward * (current_impulse * impulse_max_speed * getSystemEffectiveness(SYS_Impulse) + current_warp * warp_speed_per_warp_level * getSystemEffectiveness(SYS_Warp)));
+    setVelocity(forward * (current_impulse * impulse_max_speed * getSystemEffectiveness(SYS_Impulse) + current_warp * warp_layer_factor * warp_speed_per_warp_level * getSystemEffectiveness(SYS_Warp)));
 
     if (combat_maneuver_boost_active > combat_maneuver_boost_request)
     {

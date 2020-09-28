@@ -3,11 +3,13 @@
 #include "spaceObjects/playerSpaceship.h"
 #include "helmsScreen.h"
 #include "preferenceManager.h"
+#include "gameGlobalInfo.h"
 
 #include "screenComponents/combatManeuver.h"
 #include "screenComponents/radarView.h"
 #include "screenComponents/impulseControls.h"
 #include "screenComponents/warpControls.h"
+#include "screenComponents/warpFrequencySelector.h"
 #include "screenComponents/jumpControls.h"
 #include "screenComponents/dockingButton.h"
 #include "screenComponents/alertOverlay.h"
@@ -81,6 +83,14 @@ HelmsScreen::HelmsScreen(GuiContainer* owner)
     (new GuiImpulseControls(engine_layout, "IMPULSE", my_spaceship))->setSize(100, GuiElement::GuiSizeMax);
     warp_controls = (new GuiWarpControls(engine_layout, "WARP", my_spaceship))->setSize(100, GuiElement::GuiSizeMax);
     jump_controls = (new GuiJumpControls(engine_layout, "JUMP", my_spaceship))->setSize(100, GuiElement::GuiSizeMax);
+    
+    if (gameGlobalInfo->use_warp_terrain)
+    {
+        warp_info_box = new GuiElement(this, "WARP_INFO_BOX");
+        warp_info_box->setPosition(20, -430, ABottomLeft)->setSize(200, 100);
+        (new GuiLabel(warp_info_box, "WARP_INFO_LABEL", tr("Warp Frequency"), 30))->addBackground()->setSize(GuiElement::GuiSizeMax, 50);
+        (new GuiWarpFrequencySelector(warp_info_box, "WARP_FREQUENCY_SELECTOR"))->setPosition(0, 0, ABottomRight)->setSize(GuiElement::GuiSizeMax, 50);        
+    }
 
     docking_button = new GuiDockingButton(this, "DOCKING", my_spaceship);
     docking_button->setPosition(20, -20, ABottomLeft)->setSize(280, 50)->setVisible(my_spaceship && my_spaceship->getCanDock());
@@ -100,6 +110,8 @@ void HelmsScreen::onDraw(sf::RenderTarget& window)
         velocity_display->setValue(tr("{value} {unit}/min").format({{"value", string(velocity, 1)}, {"unit", DISTANCE_UNIT_1K}}));
 
         warp_controls->setVisible(my_spaceship->has_warp_drive);
+        if (gameGlobalInfo->use_warp_terrain)
+            warp_info_box->setVisible(my_spaceship->has_warp_drive);
         jump_controls->setVisible(my_spaceship->has_jump_drive);
     }
     GuiOverlay::onDraw(window);

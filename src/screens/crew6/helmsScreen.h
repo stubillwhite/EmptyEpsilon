@@ -19,6 +19,7 @@ private:
     GuiKeyValueDisplay* heading_display;
     GuiKeyValueDisplay* velocity_display;
     GuiElement* warp_controls;
+    GuiElement* warp_info_box;
     GuiElement* jump_controls;
     GuiLabel* heading_hint;
     GuiCombatManeuver* combat_maneuver;

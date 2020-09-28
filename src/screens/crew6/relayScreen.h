@@ -42,6 +42,7 @@ private:
     GuiButton* hack_target_button;
     GuiToggleButton* link_to_science_button;
     GuiSelector* route_selector;
+    GuiSelector* layer_selector;
     GuiButton* delete_waypoint_button;
     GuiButton* launch_probe_button;
 

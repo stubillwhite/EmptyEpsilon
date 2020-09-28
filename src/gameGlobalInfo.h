@@ -18,6 +18,7 @@ public:
     string textureName;
 };
 
+/*
 class TerrainInfo
 {
 public:
@@ -25,6 +26,18 @@ public:
     string textureName;
     sf::Vector2f coordinates;
     float scale; 
+};
+*/
+
+class MapLayer
+{
+public:
+    bool defined;
+    string title;
+    string textureName;
+    sf::Vector2f coordinates;
+    float scale; 
+    sf::Image image; // server only (no registerMemberReplication) pixels
 };
 
 enum EPlayerWarpJumpDrive
@@ -62,6 +75,10 @@ public:
      * \brief Maximum number of visual background nebulas.
      */
     static const int max_nebulas = 32;
+    /*!
+     * \brief Maximum number of warp layers
+     */
+    static const int max_map_layers = 10;
     /*!
      * \size of a sector.
      */
@@ -118,7 +135,7 @@ public:
     bool allow_new_player_ships = true;
     std::function<void(sf::Vector2f)> on_gm_click;
 
-    TerrainInfo terrain;
+    MapLayer layer[max_map_layers];
 
     GameGlobalInfo();
     virtual ~GameGlobalInfo();
@@ -151,8 +168,8 @@ public:
     std::vector<std::pair<string, string> > locals_name;
 
     string getNextShipCallsign();
-    void setTerrain(string textureName, sf::Vector2f coordinates, float scale);
-    sf::Color getTerrainPixel(sf::Vector2f coordinates);
+    void setMapLayer(int layerId, string textureName, sf::Vector2f coordinates, float scale, string title);
+    sf::Color getLayerPixel(int layerId, sf::Vector2f coordinates);
 };
 
 string playerWarpJumpDriveToString(EPlayerWarpJumpDrive player_warp_jump_drive);

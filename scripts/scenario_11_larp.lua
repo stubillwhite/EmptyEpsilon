@@ -9,7 +9,34 @@ function init()
     player = PlayerSpaceship():setFaction("Human Navy"):setTemplate("Ship_Test_Larp"):setPosition(-10000, 0)
     
     -----------------------------------
-    ------------ In Progress ----------
+    -- ### EE LARP release 1.5-beta ---
+    -----------------------------------
+
+    -- New screens
+    -- Radar screen : tactical, long, far
+    -- Probe screen : camera on probe linked to science
+    
+    -- New indicator overlay for systems
+        -- Warp, Jump, Shield : white color when activated
+    
+    -- Scanner system instead of drone system
+        -- Affect range of relay radar
+        -- Affect scanning dialog (perturbation, help or stop)
+        -- Signature signals visualisation from science screen
+    
+    -- Add warp layer effect on warp
+        -- can be activated in options.ini with options server_config_use_warp_terrain
+        -- add map layers into scripts to each warp frequency (max : 10)
+        -- helms can change the warp  frequency of the ship
+        -- relay can view the warp map layer for each frequency
+    -- Terrain for WARP
+    setMapLayer(0,"space dilation_00004_00001.png", 0, 0, 7000, "Highways 1")
+    setMapLayer(1,"space dilation_00004_00002.png", 0, 0, 7000, "Highways 2")
+    setMapLayer(2,"space dilation_00004_00003.png", 0, 0, 7000, "Highways 3")
+    setMapLayer(3,"space dilation_00004_00004.png", 0, 0, 7000, "Highways 4")
+    
+    -----------------------------------
+    -- ### EE LARP release 1.4-beta ---
     -----------------------------------
 
     -- Scanning capability
