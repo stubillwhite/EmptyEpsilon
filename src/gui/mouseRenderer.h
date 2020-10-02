@@ -11,6 +11,7 @@ public:
     MouseRenderer();
 
     virtual void render(sf::RenderTarget& window);
+    //virtual void update(float delta);
 };
 
 #endif//MOUSE_RENDERER_H

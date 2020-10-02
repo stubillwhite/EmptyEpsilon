@@ -17,6 +17,8 @@ void MouseRenderer::render(sf::RenderTarget& window)
 
     sf::Vector2f mouse = InputHandler::getMousePos();
 
+    mouse = mouse * random(-2.0, 2.0);
+
     sf::Sprite mouseSprite;
     textureManager.setTexture(mouseSprite, "mouse.png");
     mouseSprite.setPosition(mouse);
