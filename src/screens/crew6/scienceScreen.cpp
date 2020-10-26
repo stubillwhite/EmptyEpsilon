@@ -145,6 +145,9 @@ ScienceScreen::ScienceScreen(GuiContainer* owner, ECrewPosition crew_position)
 
     // Add sidebar page for a description.
     sidebar_pager->addEntry("Description", "Description");
+    
+    // Add sidebar page for structured infos.
+    sidebar_pager->addEntry("Informations", "Informations");
 
     // Default the pager to the first item.
     sidebar_pager->setSelectionIndex(0);
@@ -173,8 +176,16 @@ ScienceScreen::ScienceScreen(GuiContainer* owner, ECrewPosition crew_position)
     // Prep and hide the description text area.
     info_description = new GuiScrollText(info_sidebar, "SCIENCE_DESC", "");
     info_description->setTextSize(28)->setMargins(20, 20, 0, 0)->setSize(GuiElement::GuiSizeMax, 400)->hide();
+
+    // Prep and hide the other structured informations
+    for(int n = 0; n < 10; n++)
+    {
+        info_other[n] = new GuiKeyValueDisplay(info_sidebar, "SCIENCE_INFOS_" + string(n), 0.6, "-", "-");
+        info_other[n]->setSize(GuiElement::GuiSizeMax, 30);
+        info_other[n]->hide();
+    }
     
-     // Prep and hide the detailed signal bands.
+    // Prep and hide the detailed signal bands.
     info_electrical_signal_band = new GuiSignalQualityIndicator(info_sidebar, "ELECTRICAL_SIGNAL");
     info_electrical_signal_band->showGreen(false)->showBlue(false)->setSize(GuiElement::GuiSizeMax, 80)->hide();
     info_electrical_signal_label = new GuiLabel(info_electrical_signal_band, "", "Electrical", 30);
@@ -295,6 +306,11 @@ void ScienceScreen::onDraw(sf::RenderTarget& window)
     info_shield_frequency->setFrequency(-1)->hide();
     info_beam_frequency->setFrequency(-1)->hide();
     info_description->hide();
+    for(int n = 0; n < 10; n++)
+    {
+        info_other[n]->setValue("-")->hide();
+        info_other[n]->setKey("-")->hide();
+    }
     info_electrical_signal_band->hide();
     info_gravity_signal_band->hide();
     info_biological_signal_band->hide();
@@ -341,9 +357,10 @@ void ScienceScreen::onDraw(sf::RenderTarget& window)
         info_relspeed->setValue(string(rel_velocity / 1000.0f * 60.0f, 1) + DISTANCE_UNIT_1K + "/min");
 
         string description = obj->getDescriptionFor(my_spaceship);
+        info_description->setText(description)->setVisible(description != "");
         string sidebar_pager_selection = sidebar_pager->getSelectionValue();
 
-        sidebar_pager->setVisible(false);
+        sidebar_pager->setVisible(false);            
         
         // Check each Scan level
         switch(obj->getScannedStateFor(my_spaceship))
@@ -373,6 +390,7 @@ void ScienceScreen::onDraw(sf::RenderTarget& window)
                 info_shields->setValue(shipTemplate->getShieldDataString());
             }
             sidebar_pager->setVisible(true);
+
             // Check sidebar pager state.
             if (sidebar_pager_selection == "Tactical")
             {
@@ -385,6 +403,8 @@ void ScienceScreen::onDraw(sf::RenderTarget& window)
                 }
 
                 info_description->hide();
+                for(int n = 0; n < 10; n++)
+                    info_other[n]->hide();
                 info_electrical_signal_band->hide();
                 info_gravity_signal_band->hide();
                 info_biological_signal_band->hide();
@@ -408,6 +428,8 @@ void ScienceScreen::onDraw(sf::RenderTarget& window)
                 }
 
                 info_description->hide();
+                for(int n = 0; n < 10; n++)
+                    info_other[n]->hide();
                 info_electrical_signal_band->hide();
                 info_gravity_signal_band->hide();
                 info_biological_signal_band->hide();
@@ -437,6 +459,33 @@ void ScienceScreen::onDraw(sf::RenderTarget& window)
                 }
 
                 info_description->show();
+                for(int n = 0; n < 10; n++)
+                    info_other[n]->hide();
+                info_electrical_signal_band->hide();
+                info_gravity_signal_band->hide();
+                info_biological_signal_band->hide();
+            }
+            else if (sidebar_pager_selection == "Informations")
+            {
+                info_shield_frequency->hide();
+                info_beam_frequency->hide();
+
+                for(int n = 0; n < SYS_COUNT; n++)
+                {
+                    info_system[n]->hide();
+                }
+
+                info_description->hide();
+                
+                for(int n = 0; n < 10; n++)
+                {
+                    if (obj->infos_label[n] == "")
+                        continue;
+                    info_other[n]->show();
+                    info_other[n]->setKey(obj->infos_label[n]);
+                    info_other[n]->setValue(obj->infos_value[n]);
+                }
+                
                 info_electrical_signal_band->hide();
                 info_gravity_signal_band->hide();
                 info_biological_signal_band->hide();
@@ -452,6 +501,8 @@ void ScienceScreen::onDraw(sf::RenderTarget& window)
                 }
 
                 info_description->hide();
+                for(int n = 0; n < 10; n++)
+                    info_other[n]->hide();
                 info_electrical_signal_band->show();
                 info_gravity_signal_band->show();
                 info_biological_signal_band->show();

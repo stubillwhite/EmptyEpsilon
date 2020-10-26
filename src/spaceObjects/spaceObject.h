@@ -92,7 +92,6 @@ class SpaceObject : public Collisionable, public MultiplayerObject
         string simple_scan;
         string full_scan;
     } object_description;
-    RawRadarSignatureInfo radar_signature;
 
     /*!
      * Scan state per faction. Implementation wise, this vector is resized when
@@ -112,6 +111,11 @@ public:
     string callsign;
     float position_z;
     float hull;
+    
+    string infos_label[10];
+    string infos_value[10];
+    
+    RawRadarSignatureInfo radar_signature;
 
     SpaceObject(float collisionRange, string multiplayerName, float multiplayer_significant_range=-1);
     virtual ~SpaceObject();
@@ -167,6 +171,46 @@ public:
     string getDescriptionFor(P<SpaceObject> obj)
     {
         return getDescription(getScannedStateFor(obj));
+    }
+    
+    void addInfos(int index, string label, string value)
+    {
+        if (index < 0 || index > 9)
+            return;
+        infos_label[index] = label;
+        infos_value[index] = value;
+    }
+
+    string getInfosLabel(int index)
+    {
+        if (index < 0 || index > 9)
+            return "";
+        return infos_label[index];
+    }
+
+    string getInfosValue(int index)
+    {
+        if (index < 0 || index > 9)
+            return "";
+        return infos_value[index];
+    }
+
+    string getInfosValueByLabel(string label)
+    {
+        for(int n = 0; n < 10; n++)
+        {
+            if (infos_label[n] == label)
+                return infos_value[n];
+        }
+        return "";
+    }
+
+    void removeInfos(int index)
+    {
+        if (index < 0 || index > 9)
+            return;
+        infos_label[index] = "";
+        infos_value[index] = "";
     }
 
     float getHeading() { float ret = getRotation() - 270; while(ret < 0) ret += 360.0f; while(ret > 360.0f) ret -= 360.0f; return ret; }

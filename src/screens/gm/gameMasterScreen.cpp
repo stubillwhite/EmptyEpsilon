@@ -37,11 +37,25 @@ GameMasterScreen::GameMasterScreen()
 
     pause_button = new GuiToggleButton(this, "PAUSE_BUTTON", tr("button", "Pause"), [this](bool value) {
         if (!value)
+        {
             gameMasterActions->commandSetGameSpeed(1.0f);
-        else
+            speed_selector->setSelectionIndex(1);
+        }else{
             gameMasterActions->commandSetGameSpeed(0.0f);
+            speed_selector->setSelectionIndex(0);
+        }
     });
-    pause_button->setValue(engine->getGameSpeed() == 0.0f)->setPosition(20, 20, ATopLeft)->setSize(250, 50);
+    pause_button->setValue(engine->getGameSpeed() == 0.0f)->setPosition(20, 20, ATopLeft)->setSize(150, 50);
+    speed_selector = new GuiSelector(this, "SPEED_SELECTOR", [this](int index, string value) {
+        gameMasterActions->commandSetGameSpeed(std::stof(value));
+    });
+    speed_selector->addEntry(tr("", "x0"), "0.0f");
+    speed_selector->addEntry(tr("", "x1"), "1.0f");
+    speed_selector->addEntry(tr("", "x2"), "2.0f");
+    speed_selector->addEntry(tr("", "x3"), "3.0f");
+    speed_selector->addEntry(tr("", "x4"), "4.0f");
+    speed_selector->setPosition(170, 20, ATopLeft)->setSize(100, 50);
+    speed_selector->setSelectionIndex(1);
 
     intercept_comms_button = new GuiToggleButton(this, "INTERCEPT_COMMS_BUTTON", tr("button", "Intercept all comms"), [](bool value) {
         gameMasterActions->commandInterceptAllCommsToGm(value);
@@ -161,7 +175,7 @@ GameMasterScreen::GameMasterScreen()
         gm_script_options->setSelectionIndex(-1);
         gameMasterActions->commandCallGmScript(index, getSelection());
     });
-    gm_script_options->setPosition(20, 130, ATopLeft)->setSize(250, 500);
+    gm_script_options->setPosition(20, 170, ATopLeft)->setSize(250, 500);
 
     order_layout = new GuiAutoLayout(this, "ORDER_LAYOUT", GuiAutoLayout::LayoutVerticalBottomToTop);
     order_layout->setPosition(-20, -90, ABottomRight)->setSize(300, GuiElement::GuiSizeMax);

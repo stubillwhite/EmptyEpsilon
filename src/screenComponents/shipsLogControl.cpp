@@ -28,7 +28,7 @@ void ShipsLog::onDraw(sf::RenderTarget& window)
 
     const std::vector<PlayerSpaceship::ShipLogEntry>& logs = my_spaceship->getShipsLog(position);
 
-    setVisible(logs.size() != 0);
+    //setVisible(logs.size() != 0);
 
     if (open)
     {

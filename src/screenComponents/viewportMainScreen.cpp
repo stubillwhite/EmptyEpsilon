@@ -6,7 +6,7 @@
 GuiViewportMainScreen::GuiViewportMainScreen(GuiContainer* owner, string id)
 : GuiViewport3D(owner, id)
 {
-    uint8_t flags = PreferencesManager::get("ship_mainscreen_flags","7").toInt();
+    uint8_t flags = PreferencesManager::get("ship_mainscreen_flags","0").toInt();
     if (flags & flag_callsigns)
         showCallsigns();
     if (flags & flag_headings)
@@ -41,7 +41,7 @@ void GuiViewportMainScreen::onDraw(sf::RenderTarget& window)
 
         float camera_ship_distance = 420.0f;
         float camera_ship_height = 420.0f + my_spaceship->getPositionZ();
-        if (first_person)
+        if (!first_person)
         {
             camera_ship_distance = -my_spaceship->getRadius();
             camera_ship_height = my_spaceship->getRadius() / 10.f + my_spaceship->getPositionZ();
@@ -58,7 +58,7 @@ void GuiViewportMainScreen::onDraw(sf::RenderTarget& window)
             camera_pitch = 90.0f;
         }
 #endif
-        if (first_person)
+        if (!first_person)
         {
             camera_position = targetCameraPosition;
             camera_yaw = target_camera_yaw;

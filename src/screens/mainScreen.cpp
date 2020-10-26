@@ -25,7 +25,8 @@ ScreenMainScreen::ScreenMainScreen()
     viewport = new GuiViewportMainScreen(this, "VIEWPORT");
     viewport->setPosition(0, 0, ATopLeft)->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
 
-    (new GuiRadarView(viewport, "VIEWPORT_RADAR", nullptr, my_spaceship))->setStyle(GuiRadarView::CircularMasked)->setSize(200, 200)->setPosition(-20, 20, ATopRight);
+    if (PreferencesManager::get("ship_mainscreen_radar","0").toInt() == 1)
+        (new GuiRadarView(viewport, "VIEWPORT_RADAR", nullptr, my_spaceship))->setStyle(GuiRadarView::CircularMasked)->setSize(200, 200)->setPosition(-20, 20, ATopRight);
 
     tactical_radar = new GuiRadarView(this, "TACTICAL", nullptr, my_spaceship);
     tactical_radar->setPosition(0, 0, ATopLeft)->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);

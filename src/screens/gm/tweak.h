@@ -15,6 +15,7 @@ class GuiTextEntry;
 class GuiSlider;
 class GuiSelector;
 class GuiToggleButton;
+class GuiButton;
 class GuiProgressbar;
 
 enum ETweakType
@@ -266,7 +267,51 @@ public:
     virtual void onDraw(sf::RenderTarget& window) override;
 };
 
+class GuiShipTweakMessages : public GuiTweakPage
+{
+private:
+    P<PlayerSpaceship> target;
+
+    sf::Color color_message;
+    string message;
+
+    GuiSelector* color_selector;
+    GuiTextEntry* message_entry;
+    GuiButton* message_delete;
+    GuiButton* send_message_log;
+    GuiToggleButton* message_all_toggle;
+
+public:
+    GuiShipTweakMessages(GuiContainer* owner);
+
+    virtual void open(P<SpaceObject> target);
+
+    virtual void onDraw(sf::RenderTarget& window) override;
+};
+
 class GuiObjectTweakBase : public GuiTweakPage
+{
+private:
+    P<SpaceObject> target;
+
+    GuiSlider* heading_slider;
+    GuiSlider* position_z_slider;
+    GuiSlider* hull_slider;
+    GuiLabel* hull_label;
+    GuiSlider* scanning_complexity_slider;
+    GuiSlider* scanning_depth_slider;
+    GuiSlider* gravity_slider;
+    GuiSlider* electrical_slider;
+    GuiSlider* biological_slider;
+public:
+    GuiObjectTweakBase(GuiContainer* owner);
+
+    virtual void open(P<SpaceObject> target) override;
+
+    virtual void onDraw(sf::RenderTarget& window) override;
+};
+
+class GuiShipTweakDescription : public GuiTweakPage
 {
 private:
     P<SpaceObject> target;
@@ -276,15 +321,15 @@ private:
     GuiTextEntry* friend_or_foe_description;
     GuiTextEntry* simple_scan_description;
     GuiTextEntry* full_scan_description;
-    GuiSlider* heading_slider;
-    GuiSlider* position_z_slider;
-    GuiSlider* scanning_complexity_slider;
-    GuiSlider* scanning_depth_slider;
-public:
-    GuiObjectTweakBase(GuiContainer* owner);
+    GuiTextEntry* infos_label[10];
+    GuiTextEntry* infos_value[10];
 
-    virtual void open(P<SpaceObject> target) override;
+public:
+    GuiShipTweakDescription(GuiContainer* owner);
+
+    virtual void open(P<SpaceObject> target);
 
     virtual void onDraw(sf::RenderTarget& window) override;
 };
+
 #endif//TWEAK_H

@@ -12,6 +12,7 @@
 #include "gui/gui2_selector.h"
 #include "gui/gui2_slider.h"
 #include "gui/gui2_togglebutton.h"
+#include "gui/gui2_button.h"
 #include "gui/gui2_progressbar.h"
 
 GuiObjectTweak::GuiObjectTweak(GuiContainer* owner, ETweakType tweak_type)
@@ -32,6 +33,9 @@ GuiObjectTweak::GuiObjectTweak(GuiContainer* owner, ETweakType tweak_type)
 
     pages.push_back(new GuiObjectTweakBase(this));
     list->addEntry(tr("tab", "Base"), "");
+
+    pages.push_back(new GuiShipTweakDescription(this));
+    list->addEntry("Description", "");
 
     if (tweak_type == TW_Ship || tweak_type == TW_Player)
     {
@@ -71,6 +75,8 @@ GuiObjectTweak::GuiObjectTweak(GuiContainer* owner, ETweakType tweak_type)
         list->addEntry(tr("tab", "Player"), "");
         pages.push_back(new GuiShipTweakPlayer2(this));
         list->addEntry(tr("tab", "Player 2"), "");
+        pages.push_back(new GuiShipTweakMessages(this));
+        list->addEntry(tr("tab", "Messages"), "");
     }
 
     for(GuiTweakPage* page : pages)
@@ -1096,6 +1102,159 @@ void GuiShipTweakPlayer2::open(P<SpaceObject> target)
     this->target = target;
 }
 
+GuiShipTweakMessages::GuiShipTweakMessages(GuiContainer* owner)
+: GuiTweakPage(owner)
+{
+    color_message = sf::Color::White;
+    message = "";
+
+    (new GuiLabel(this, "", "Message:", 30))->setPosition(100, 50, ATopLeft);
+    message_entry = new GuiTextEntry(this, "", "");
+    message_entry->setSize(550, 50);
+    message_entry->setPosition(50, 70, ATopLeft);
+    message_entry->callback([this](string text) {
+        message = text;
+    });
+
+    message_delete = new GuiButton(this, "", "", [this]() {
+        message_entry -> setText("");
+        message = "";
+    });
+    message_delete->setPosition(-25, 70, ATopRight)->setSize(50, 50);
+    message_delete->setIcon("gui/icons/self-destruct");
+    
+    // Choose the target
+    (new GuiLabel(this, "", "Target:", 30))->setSize(100, 40)->setPosition(50, 130, ATopLeft);
+    GuiSelector* target_selector = new GuiSelector(this, "", [this](int index, string value)
+    {
+    });
+    target_selector->setSize(300, 40)->setPosition(200, 130, ATopLeft);
+    target_selector->addEntry("this player", "this player");
+    target_selector->addEntry("all players", "all players");
+    target_selector->setSelectionIndex(0);
+    
+    // Choose the screen
+    (new GuiLabel(this, "", "Screen:", 30))->setSize(100, 40)->setPosition(50, 170, ATopLeft);
+    GuiSelector* screen_selector = new GuiSelector(this, "", [this](int index, string value)
+    {
+    });
+    screen_selector->setSize(300, 40)->setPosition(200, 170, ATopLeft);
+    for(int n = 0; n < max_crew_positions; n++)
+        screen_selector->addEntry(getCrewPositionName(ECrewPosition(n)), getCrewPositionName(ECrewPosition(n)));
+    screen_selector->setSelectionIndex(0);
+
+    // Add two columns.
+    GuiAutoLayout* left_col = new GuiAutoLayout(this, "LEFT_LAYOUT", GuiAutoLayout::LayoutVerticalTopToBottom);
+    left_col->setPosition(50, 200, ATopLeft)->setSize(300, GuiElement::GuiSizeMax);
+
+    GuiAutoLayout* right_col = new GuiAutoLayout(this, "RIGHT_LAYOUT", GuiAutoLayout::LayoutVerticalTopToBottom);
+    right_col->setPosition(-25, 200, ATopRight)->setSize(300, GuiElement::GuiSizeMax);
+
+    // Left column
+    (new GuiLabel(left_col, "", "into log", 30))->setSize(GuiElement::GuiSizeMax, 100);
+
+    // Choose the color
+    GuiSelector* color_selector = new GuiSelector(left_col, "", [this](int index, string value)
+    {
+        color_message = sf::Color::White;
+        if (value == "white")
+            color_message = sf::Color::White;
+        if (value == "black")
+            color_message = sf::Color::Black;
+        if (value == "red")
+            color_message = sf::Color::Red;
+        if (value == "green")
+            color_message = sf::Color::Green;
+        if (value == "blue")
+            color_message = sf::Color::Blue;
+        if (value == "yellow")
+            color_message = sf::Color::Yellow;
+        if (value == "magenta")
+            color_message = sf::Color::Magenta;
+        if (value == "cyan")
+            color_message = sf::Color::Cyan;
+    });
+    color_selector->setSize(GuiElement::GuiSizeMax, 40);
+    color_selector->addEntry("white", "white");
+    color_selector->addEntry("black", "black");
+    color_selector->addEntry("red", "red");
+    color_selector->addEntry("green", "green");
+    color_selector->addEntry("blue", "blue");
+    color_selector->addEntry("yellow", "yellow");
+    color_selector->addEntry("magenta", "magenta");
+    color_selector->addEntry("cyan", "cyan");
+    color_selector->setSelectionIndex(0);
+
+    // Send the message
+    send_message_log = new GuiButton(left_col, "", "Send message", [this, target_selector, screen_selector]() {
+        if (target_selector->getSelectionValue() == "all players")
+        {
+            for(int n=0; n<GameGlobalInfo::max_player_ships; n++)
+            {
+                P<PlayerSpaceship> ship = gameGlobalInfo->getPlayerShip(n);
+                if (ship)
+                    ship -> addToShipLog(message,color_message,ECrewPosition(screen_selector->getSelectionIndex()));
+            }
+        }
+        else
+            target -> addToShipLog(message,color_message,ECrewPosition(screen_selector->getSelectionIndex()));
+    });
+    send_message_log->setSize(GuiElement::GuiSizeMax, 40);
+
+    // Right column
+    (new GuiLabel(right_col, "", "On screen", 30))->setSize(GuiElement::GuiSizeMax, 100);
+
+    (new GuiButton(right_col, "", "Send message", [this, target_selector, screen_selector]() {
+        if (target_selector->getSelectionValue() == "all players")
+        {
+            for(int n=0; n<GameGlobalInfo::max_player_ships; n++)
+            {
+                P<PlayerSpaceship> ship = gameGlobalInfo->getPlayerShip(n);
+                if (ship)
+                    ship->addCustomMessage(ECrewPosition(screen_selector->getSelectionIndex()), getCrewPositionName(ECrewPosition(screen_selector->getSelectionIndex())) + "_message", message);
+            }
+        }
+        else
+            target->addCustomMessage(ECrewPosition(screen_selector->getSelectionIndex()), getCrewPositionName(ECrewPosition(screen_selector->getSelectionIndex())) + "_message", message);
+    }))->setSize(GuiElement::GuiSizeMax, 40);
+
+    (new GuiButton(right_col, "", "Remove previous messages", [this, target_selector, screen_selector]() {
+        if (target_selector->getSelectionValue() == "all players")
+        {
+            for(int n=0; n<GameGlobalInfo::max_player_ships; n++)
+            {
+                P<PlayerSpaceship> ship = gameGlobalInfo->getPlayerShip(n);
+                if (ship)
+                {
+                    for(int n = 0; n < max_crew_positions; n++)
+                        ship->removeCustom(getCrewPositionName(ECrewPosition(n)) + "_message");
+                }
+            }
+        }
+        else
+        {
+            for(int n = 0; n < max_crew_positions; n++)
+                target->removeCustom(getCrewPositionName(ECrewPosition(n)) + "_message");
+        }
+    }))->setSize(GuiElement::GuiSizeMax, 40);
+
+}
+
+void GuiShipTweakMessages::onDraw(sf::RenderTarget& window)
+{
+
+}
+
+void GuiShipTweakMessages::open(P<SpaceObject> target)
+{
+    P<PlayerSpaceship> player = target;
+    this->target = player;
+
+    if (player)
+    {
+    }
+}
+
 GuiObjectTweakBase::GuiObjectTweakBase(GuiContainer* owner)
 : GuiTweakPage(owner)
 {
@@ -1106,6 +1265,104 @@ GuiObjectTweakBase::GuiObjectTweakBase(GuiContainer* owner)
     right_col->setPosition(-25, 25, ATopRight)->setSize(300, GuiElement::GuiSizeMax);
 
     // Left column
+
+    // Set object's heading.
+    (new GuiLabel(left_col, "", tr("Heading:"), 30))->setSize(GuiElement::GuiSizeMax, 50);
+    heading_slider = new GuiSlider(left_col, "", 0.0, 359.9, 0.0, [this](float value) {
+        target->setHeading(value);
+    });
+    heading_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 40);
+    
+    // Set object's z position.
+    (new GuiLabel(left_col, "", "Z Position:", 30))->setSize(GuiElement::GuiSizeMax, 50);
+    position_z_slider = new GuiSlider(left_col, "", -300.0, 300.0, 0.0, [this](float value) {
+        target->setPositionZ(value);
+    });
+    position_z_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 40);
+    position_z_slider->addSnapValue(-200.0, 0.01);
+    position_z_slider->addSnapValue(-100.0, 0.01);
+    position_z_slider->addSnapValue(0.0, 0.01);
+    position_z_slider->addSnapValue(100.0, 0.01);
+    position_z_slider->addSnapValue(200.0, 0.01);
+    
+    hull_label = new GuiLabel(left_col, "", "Hull:", 30);
+    hull_label->setSize(GuiElement::GuiSizeMax, 50);
+    hull_slider = new GuiSlider(left_col, "", 0.0, 500, 0.0, [this](float value) {
+        target->hull = value;
+    });
+    hull_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 40);
+    
+    // Right column
+    // Radar signature
+	(new GuiLabel(right_col, "", "Gravity signature (blue):", 30))->setSize(GuiElement::GuiSizeMax, 50);
+	gravity_slider = new GuiSlider(right_col, "", -100.0, 100.0, 0.0, [this](float value) {
+        target->radar_signature.gravity = value / 100.0f;
+    });
+    gravity_slider->addSnapValue(0.0f, 5.0f);
+    gravity_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 40);
+ 	(new GuiLabel(right_col, "", "Energy signature (red):", 30))->setSize(GuiElement::GuiSizeMax, 50);
+	electrical_slider = new GuiSlider(right_col, "", -100.0, 100.0, 0.0, [this](float value) {
+        target->radar_signature.electrical = value / 100.0f;
+    });
+    electrical_slider->addSnapValue(0.0f, 5.0f);
+    electrical_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 40);
+ 	(new GuiLabel(right_col, "", "Biology signature (green):", 30))->setSize(GuiElement::GuiSizeMax, 50);
+	biological_slider = new GuiSlider(right_col, "", -100.0, 100.0, 0.0, [this](float value) {
+        target->radar_signature.biological = value / 100.0f;
+    });
+    biological_slider->addSnapValue(0.0f, 5.0f);
+    biological_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 40);
+
+    (new GuiLabel(right_col, "", tr("Scanning Complexity:"), 30))->setSize(GuiElement::GuiSizeMax, 50);
+    scanning_complexity_slider = new GuiSlider(right_col, "", 0, 4, 0, [this](float value) {
+        target->setScanningParameters(value,target->scanningChannelDepth(target));
+    });
+    scanning_complexity_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 40);
+
+    (new GuiLabel(right_col, "", tr("Scanning Depth:"), 30))->setSize(GuiElement::GuiSizeMax, 50);
+    scanning_depth_slider = new GuiSlider(right_col, "", 1, 5, 0, [this](float value) {
+        target->setScanningParameters(target->scanningComplexity(target),value);
+    });
+    scanning_depth_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 40);
+}
+
+void GuiObjectTweakBase::onDraw(sf::RenderTarget& window)
+{
+    heading_slider->setValue(target->getHeading());
+    position_z_slider->setValue(target->getPositionZ());
+    hull_slider->setValue(target->hull);
+    P<ShipTemplateBasedObject> ship = target;
+    hull_label->setVisible(!ship);
+    hull_slider->setVisible(!ship);
+
+    // we probably dont need to set these each onDraw
+    // but doing it forces the slider to round to a integer
+    scanning_complexity_slider->setValue(target->scanningComplexity(target));
+    scanning_depth_slider->setValue(target->scanningChannelDepth(target));
+    gravity_slider->setValue(target->radar_signature.gravity * 100.0f);
+    electrical_slider->setValue(target->getRadarSignatureElectrical() * 100.0f);
+	biological_slider->setValue(target->getRadarSignatureBiological() * 100.0f);
+}
+
+void GuiObjectTweakBase::open(P<SpaceObject> target)
+{
+    this->target = target;
+}
+
+GuiShipTweakDescription::GuiShipTweakDescription(GuiContainer* owner)
+: GuiTweakPage(owner)
+{
+    GuiAutoLayout* left_col = new GuiAutoLayout(this, "LEFT_LAYOUT", GuiAutoLayout::LayoutVerticalTopToBottom);
+    left_col->setPosition(50, 25, ATopLeft)->setSize(300, GuiElement::GuiSizeMax);
+    
+    GuiAutoLayout* label_col = new GuiAutoLayout(this, "LABEL_LAYOUT", GuiAutoLayout::LayoutVerticalTopToBottom);
+    label_col->setPosition(-50-130-10, 25, ATopRight)->setSize(130, GuiElement::GuiSizeMax);
+    
+    GuiAutoLayout* value_col = new GuiAutoLayout(this, "VALUE_LAYOUT", GuiAutoLayout::LayoutVerticalTopToBottom);
+    value_col->setPosition(-50, 25, ATopRight)->setSize(130, GuiElement::GuiSizeMax);
+
+    // Left column
+    (new GuiLabel(left_col, "", "Description", 40))->setSize(GuiElement::GuiSizeMax, 50);
     // Edit object's callsign.
     (new GuiLabel(left_col, "", tr("Callsign:"), 30))->setSize(GuiElement::GuiSizeMax, 50);
 
@@ -1145,61 +1402,47 @@ GuiObjectTweakBase::GuiObjectTweakBase(GuiContainer* owner)
     full_scan_description->callback([this](string text) {
         target->setDescriptionForScanState(SS_FullScan,text);
     });
-
-    // Right column
-
-    // Set object's heading.
-    (new GuiLabel(right_col, "", tr("Heading:"), 30))->setSize(GuiElement::GuiSizeMax, 50);
-    heading_slider = new GuiSlider(right_col, "", 0.0, 359.9, 0.0, [this](float value) {
-        target->setHeading(value);
-    });
-    heading_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 40);
     
-    // Set object's z position.
-    (new GuiLabel(right_col, "", "Z Position:", 30))->setSize(GuiElement::GuiSizeMax, 50);
-    position_z_slider = new GuiSlider(right_col, "", -300.0, 300.0, 0.0, [this](float value) {
-        target->setPositionZ(value);
-    });
-    position_z_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 40);
-    position_z_slider->addSnapValue(-200.0, 0.01);
-    position_z_slider->addSnapValue(-100.0, 0.01);
-    position_z_slider->addSnapValue(0.0, 0.01);
-    position_z_slider->addSnapValue(100.0, 0.01);
-    position_z_slider->addSnapValue(200.0, 0.01);
+    // Right column
+    (new GuiLabel(label_col, "", "Label", 40))->setSize(GuiElement::GuiSizeMax, 50);
+    (new GuiLabel(value_col, "", "Value", 40))->setSize(GuiElement::GuiSizeMax, 50);
 
-    (new GuiLabel(right_col, "", tr("Scanning Complexity:"), 30))->setSize(GuiElement::GuiSizeMax, 50);
-    scanning_complexity_slider = new GuiSlider(right_col, "", 0, 4, 0, [this](float value) {
-        target->setScanningParameters(value,target->scanningChannelDepth(target));
-    });
-    scanning_complexity_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 40);
+    for(int n = 0; n < 10; n++)
+    {
+        infos_label[n] = new GuiTextEntry(label_col, "", "");
+        infos_label[n]->setSize(GuiElement::GuiSizeMax, 50);
+        infos_label[n]->callback([this, n](string text) {
+            target->infos_label[n] = text;
+        });
 
-    (new GuiLabel(right_col, "", tr("Scanning Depth:"), 30))->setSize(GuiElement::GuiSizeMax, 50);
-    scanning_depth_slider = new GuiSlider(right_col, "", 1, 5, 0, [this](float value) {
-        target->setScanningParameters(target->scanningComplexity(target),value);
-    });
-    scanning_depth_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 40);
+        infos_value[n] = new GuiTextEntry(value_col, "", "");
+        infos_value[n]->setSize(GuiElement::GuiSizeMax, 50);
+        infos_value[n]->callback([this, n](string text) {
+            target->infos_value[n] = text;
+        });
+    }
 }
 
-void GuiObjectTweakBase::onDraw(sf::RenderTarget& window)
+void GuiShipTweakDescription::onDraw(sf::RenderTarget& window)
 {
-    heading_slider->setValue(target->getHeading());
-    position_z_slider->setValue(target->getPositionZ());
-
-    callsign->setText(target->callsign);
+    // Update Callsign and description
+     callsign->setText(target->callsign);
     // TODO: Fix long strings in GuiTextEntry, or make a new GUI element for
     // editing long strings.
     unscanned_description->setText(target->getDescription(SS_NotScanned));
     friend_or_foe_description->setText(target->getDescription(SS_FriendOrFoeIdentified));
     simple_scan_description->setText(target->getDescription(SS_SimpleScan));
     full_scan_description->setText(target->getDescription(SS_FullScan));
-
-    // we probably dont need to set these each onDraw
-    // but doing it forces the slider to round to a integer
-    scanning_complexity_slider->setValue(target->scanningComplexity(target));
-    scanning_depth_slider->setValue(target->scanningChannelDepth(target));
+    
+    // Update infos.
+    for(int n = 0; n < 10; n++)
+    {
+        infos_label[n]->setText(target->infos_label[n]);
+        infos_value[n]->setText(target->infos_value[n]);
+    }
 }
 
-void GuiObjectTweakBase::open(P<SpaceObject> target)
+void GuiShipTweakDescription::open(P<SpaceObject> target)
 {
     this->target = target;
 }

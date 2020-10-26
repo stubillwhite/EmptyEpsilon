@@ -211,6 +211,33 @@ REGISTER_SCRIPT_CLASS_NO_CREATE(SpaceObject)
     ///   obj:getDescription()
     ///   obj:getDescription("friendorfoeidentified")
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceObject, getDescription);
+    /// Add structured infos to object. Visible if full scanned by science officer
+    /// Need 3 arguments :
+    ///    1 - Id of the infos (0-9)
+    ///    2 - String of the label
+    ///    3 - String of the value
+    /// Example :
+    /// obj:addInfos(1,"category 1","value 1") 
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceObject, addInfos);
+    /// Get the info label by its id
+    /// Need the Id of the infos (0-9)
+    /// Return a string
+    /// Example :
+    /// obj:getInfosLabel(1) 
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceObject, getInfosLabel);
+    /// Get the info value by its id
+    /// Need the Id of the infos (0-9)
+    /// Return a string
+    /// Example :
+    /// obj:getInfosValue(1) 
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceObject, getInfosValue);
+    /// Get the info value by its label
+    /// Need a string for the label
+    /// Return a string
+    /// Example :
+    /// obj:getInfosValueByLabel(1) 
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceObject, getInfosValueByLabel);
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceObject, removeInfos);
     /// Sets this object's radar signature, which creates noise on the Science
     /// station's raw radar signal ring.
     /// Certain SpaceObject types might modify their signatures using this value
@@ -284,6 +311,12 @@ SpaceObject::SpaceObject(float collision_range, string multiplayer_name, float m
     personality_id = 0;
     position_z = 0;
     hull = 0;
+    
+    for(int n = 0; n < 10; n++)
+    {
+        infos_label[n] = "";
+        infos_value[n] = "";
+    }
 
     scanning_complexity_value = 0;
     scanning_depth_value = 0;
@@ -305,6 +338,13 @@ SpaceObject::SpaceObject(float collision_range, string multiplayer_name, float m
     registerMemberReplication(&scanning_depth_value);
     registerMemberReplication(&scanning_capability);
     registerMemberReplication(&position_z);
+    
+    for (int n=0; n<10; n++)
+    {
+        registerMemberReplication(&infos_label[n]);
+        registerMemberReplication(&infos_value[n]);
+    }
+    
     registerCollisionableReplication(multiplayer_significant_range);
 }
 

@@ -7,6 +7,21 @@ require("ee.lua")
 function init()
     
     player = PlayerSpaceship():setFaction("Human Navy"):setTemplate("Ship_Test_Larp"):setPosition(-10000, 0)
+
+    -----------------------------------
+    ----------- New Features ----------
+    -----------------------------------
+    -- GM can speed up the game (from x1 to x4)
+    -- Lot of changes into tweak menu
+        -- Add structured infos
+        -- Change objects signatures
+        -- Add messages menu : can send message or log to player by screen
+        
+    -- Structured infos
+        -- Possibility to add structured infos for a object
+        -- Science can see these infos after a full scan
+        -- Need and id for each infos (0-9), a label (string) and a value (string)
+    Asteroid():setPosition(-2000,2000):addInfos(0,"Gold","2 cc"):addInfos(1,"Crystal","5 cc")
     
     -----------------------------------
     -- ### EE LARP release 1.5-beta ---

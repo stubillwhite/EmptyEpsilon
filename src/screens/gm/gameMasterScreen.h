@@ -54,6 +54,7 @@ private:
     GuiButton* player_comms_hail;
     GuiButton* global_message_button;
     GuiToggleButton* pause_button;
+    GuiSelector* speed_selector;
     GuiToggleButton* intercept_comms_button;
     GuiButton* tweak_button;
     GuiButton* factions_button;
