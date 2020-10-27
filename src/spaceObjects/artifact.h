@@ -6,7 +6,6 @@
 class Artifact : public SpaceObject, public Updatable
 {
 private:
-    string current_model_data_name;
     string model_data_name;
     float artifact_spin=0.0;
     bool allow_pickup;
@@ -26,6 +25,8 @@ public:
     void setSpin(float spin=0.0);
     void explode();
     void allowPickup(bool allow);
+
+    string current_model_data_name;
 
     virtual string getExportLine() override;
     void onPickUp(ScriptSimpleCallback callback);

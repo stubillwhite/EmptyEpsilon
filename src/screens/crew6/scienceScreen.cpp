@@ -350,7 +350,7 @@ void ScienceScreen::onDraw(sf::RenderTarget& window)
         P<ShipTemplateBasedObject> shipTemplate = obj;
         P<SpaceStation> station = obj;
         
-        if (my_spaceship)
+        if (my_spaceship and obj->getScannedStateFor(my_spaceship) >= SS_FullScan)
         {
             link_to_analysis_button->setValue(my_spaceship->linked_analysis_object_id == obj->getMultiplayerId());
             link_to_analysis_button->enable();

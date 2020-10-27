@@ -11,8 +11,23 @@ function init()
     -----------------------------------
     ----------- New Features ----------
     -----------------------------------
-    --
-    
+    -- A new screen is available, do support science screen
+    -- Once fully scanned, a object can be linked to analysis screen
+    -- The target analysis screen displayed all informations available for the object
+    -- From now : informations are ok for
+        -- ship, station
+        -- asteroid, artifact
+        -- planet
+    -- An full example with a planet     
+    planet1 = Planet():setPosition(-5000, -5000):setPlanetRadius(3000):setDistanceFromMovementPlane(-2000):setPlanetSurfaceTexture("planets/planet-2.png"):setPlanetCloudTexture("planets/clouds-1.png"):setPlanetAtmosphereTexture("planets/atmosphere.png"):setPlanetAtmosphereColor(0.2, 0.2, 1.0)
+    planet1:addInfos(0,"Rotation",math.floor(random(50,450))/10 .. " H.LO")
+	planet1:addInfos(1,"Revolution",math.floor(random(50,5000)) .. " J.LO")
+	planet1:addInfos(2,"Rotation axis",math.floor(random(1,360)).."'"..math.floor(random(1,60)).."''"..math.floor(random(1,60)).."'''")
+	planet1:addInfos(3,"Radius",math.floor(random(50,500)) * 100 .. " km")
+	planet1:addInfos(4,"Age",math.floor(random(5,100))*100 .. " M3 A.LO")
+	planet1:addInfos(5,"Pression",math.floor(random(1,40))/10 .. " Pa")
+	planet1:addInfos(6,"Gravity",math.floor(random(20,200))/10 .. " m/s2")
+	
     -- From ship selection screen, it is now possible to select stations from many list
     
     -- GM can speed up the game (from x1 to x4)
@@ -61,6 +76,8 @@ function init()
     -- Scanning capability
     -- Set the maximal level of scanning available for a playership
     player:setScanningCapability(SCANNED_STATES.SS_SIMPLE_SCAN)
+    -- Cancel with effect to facility of using this test
+    player:setScanningCapability(SCANNED_STATES.SS_FULL_SCAN)
 
     -- Scanning noise
     -- You can affect scanning dialog for science screen with the function setScanningNoise. If > 0, slider will be randomly affected by the noise (between 0 and 1). If < 0, slider will be automatically moved to the right position (between 0 and -1)

@@ -15,6 +15,8 @@
 #include "screenComponents/shipDestroyedPopup.h"
 #include "screenComponents/impulseSound.h"
 
+#include "screens/extra/targetAnalysisScreen.h"
+
 #include "gui/gui2_panel.h"
 #include "gui/gui2_overlay.h"
 
@@ -40,6 +42,9 @@ ScreenMainScreen::ScreenMainScreen()
     far_range_radar->setAutoCentering(true);
     far_range_radar->longRange()->enableWaypoints()->enableCallsigns()->setStyle(GuiRadarView::Rectangular)->setFogOfWarStyle(GuiRadarView::FriendlysShortRangeFogOfWar);
     far_range_radar->hide();
+    target_analysis = new TargetAnalysisScreen(this);
+    target_analysis->setPosition(0, 0, ATopLeft)->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
+    target_analysis->hide();
     onscreen_comms = new GuiCommsOverlay(this);
     onscreen_comms->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax)->setVisible(false);
 
@@ -98,24 +103,35 @@ void ScreenMainScreen::update(float delta)
             tactical_radar->hide();
             long_range_radar->hide();
             far_range_radar->hide();
+            target_analysis->hide();
             break;
         case MSS_Tactical:
             viewport->hide();
             tactical_radar->show();
             long_range_radar->hide();
             far_range_radar->hide();
+            target_analysis->hide();
             break;
         case MSS_LongRange:
             viewport->hide();
             tactical_radar->hide();
             long_range_radar->show();
             far_range_radar->hide();
+            target_analysis->hide();
             break;
         case MSS_FarRange:
             viewport->hide();
             tactical_radar->hide();
             long_range_radar->hide();
             far_range_radar->show();
+            target_analysis->hide();
+            break;
+        case MSS_TargetAnalysis:
+            viewport->hide();
+            tactical_radar->hide();
+            long_range_radar->hide();
+            far_range_radar->hide();
+            target_analysis->show();
             break;
         }
 
@@ -186,6 +202,10 @@ void ScreenMainScreen::onClick(sf::Vector2f mouse_position)
                 my_spaceship->commandMainScreenSetting(MSS_FarRange);
             break;
         case MSS_FarRange:
+            if (gameGlobalInfo->allow_main_screen_target_analysis)
+                my_spaceship->commandMainScreenSetting(MSS_TargetAnalysis);
+            break;
+        case MSS_TargetAnalysis:
             if (gameGlobalInfo->allow_main_screen_tactical_radar)
                 my_spaceship->commandMainScreenSetting(MSS_Tactical);
             break;
@@ -213,6 +233,8 @@ void ScreenMainScreen::onHotkey(const HotkeyResult& key)
             my_spaceship->commandMainScreenSetting(MSS_LongRange);
         else if (key.hotkey == "FAR_RANGE_RADAR")
             my_spaceship->commandMainScreenSetting(MSS_FarRange);
+        else if (key.hotkey == "TARGET_ANALYSIS")
+            my_spaceship->commandMainScreenSetting(MSS_TargetAnalysis);
         else if (key.hotkey == "FIRST_PERSON")
             viewport->first_person = !viewport->first_person;
     }

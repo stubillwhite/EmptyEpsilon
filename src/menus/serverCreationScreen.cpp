@@ -36,6 +36,7 @@ ServerCreationScreen::ServerCreationScreen()
     gameGlobalInfo->allow_main_screen_tactical_radar = PreferencesManager::get("server_config_allow_main_screen_tactical_radar", "1").toInt();
     gameGlobalInfo->allow_main_screen_long_range_radar = PreferencesManager::get("server_config_allow_main_screen_long_range_radar", "1").toInt();
     gameGlobalInfo->allow_main_screen_far_range_radar = PreferencesManager::get("server_config_allow_main_screen_far_range_radar", "1").toInt();
+    gameGlobalInfo->allow_main_screen_target_analysis = PreferencesManager::get("server_config_allow_main_screen_target_analysis", "1").toInt();
     gameGlobalInfo->use_nano_repair_crew = PreferencesManager::get("server_use_nano_repair_crew", "1").toInt();
     gameGlobalInfo->color_by_faction = PreferencesManager::get("server_config_color_by_faction", "1").toInt();
     gameGlobalInfo->all_can_be_targeted = PreferencesManager::get("server_config_all_can_be_targeted", "1").toInt();

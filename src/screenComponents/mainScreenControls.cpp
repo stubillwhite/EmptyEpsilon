@@ -21,6 +21,8 @@ GuiMainScreenControls::GuiMainScreenControls(GuiContainer* owner)
             long_range_button->setVisible(false);
         if (!gameGlobalInfo->allow_main_screen_far_range_radar)
             far_range_button->setVisible(false);
+        if (!gameGlobalInfo->allow_main_screen_target_analysis)
+            far_range_button->setVisible(false);
         if (show_comms_button && onscreen_comms_active)
             show_comms_button->setVisible(false);
         if (hide_comms_button && !onscreen_comms_active)
@@ -110,6 +112,17 @@ GuiMainScreenControls::GuiMainScreenControls(GuiContainer* owner)
         closePopup();
     }));
     far_range_button = buttons.back();
+
+    // Far-range radar button.
+    buttons.push_back(new GuiButton(this, "MAIN_SCREEN_TARGET_ANALYSIS_BUTTON", "Target analysis", [this]()
+    {
+        if (my_spaceship)
+        {
+            my_spaceship->commandMainScreenSetting(MSS_TargetAnalysis);
+        }
+        closePopup();
+    }));
+    target_analysis_button = buttons.back();
 
     // If the player has control over comms, they can toggle the comms overlay
     // on the main screen.

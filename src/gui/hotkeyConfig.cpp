@@ -24,6 +24,8 @@ HotkeyConfig::HotkeyConfig()
     newKey("VIEW_TARGET", std::make_tuple("Lock view on weapons target", "T"));
     newKey("TACTICAL_RADAR", std::make_tuple("View tactical radar", "Tab"));
     newKey("LONG_RANGE_RADAR", std::make_tuple("View long-range radar", "Q"));
+    newKey("FAR_RANGE_RADAR", std::make_tuple("View far-range radar", ""));
+    newKey("TARGET_ANALYSIS", std::make_tuple("View target analysis", ""));
     newKey("FIRST_PERSON", std::make_tuple("Toggle first-person view", "F"));
 
     newCategory("HELMS", "Helms");

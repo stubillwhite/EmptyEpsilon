@@ -12,6 +12,7 @@ class GuiRadarView;
 class GuiCommsOverlay;
 class GuiHelpOverlay;
 class ImpulseSound;
+class TargetAnalysisScreen;
 
 class ScreenMainScreen : public GuiCanvas, public Updatable
 {
@@ -23,6 +24,7 @@ private:
     GuiRadarView* tactical_radar;
     GuiRadarView* long_range_radar;
     GuiRadarView* far_range_radar;
+    TargetAnalysisScreen* target_analysis;
     GuiCommsOverlay* onscreen_comms;
     std::unique_ptr<ImpulseSound> impulse_sound;
 public:
