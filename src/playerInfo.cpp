@@ -27,6 +27,7 @@
 #include "screens/extra/tractorBeamScreen.h"
 #include "screens/extra/radarScreen.h"
 #include "screens/extra/probeScreen.h"
+#include "screens/extra/targetAnalysisScreen.h"
 
 #include "screenComponents/mainScreenControls.h"
 #include "screenComponents/selfDestructEntry.h"
@@ -215,6 +216,8 @@ void PlayerInfo::spawnUI()
             screen->addStationTab(new RadarScreen(container, "far_range"), farRangeRadar, getCrewPositionName(farRangeRadar), getCrewPositionIcon(farRangeRadar));
         if (crew_position[probeScreen])
             screen->addStationTab(new ProbeScreen(container), probeScreen, getCrewPositionName(probeScreen), getCrewPositionIcon(probeScreen));
+        if (crew_position[targetAnalysisScreen])
+            screen->addStationTab(new TargetAnalysisScreen(container), targetAnalysisScreen, getCrewPositionName(targetAnalysisScreen), getCrewPositionIcon(targetAnalysisScreen));
 
         GuiSelfDestructEntry* sde = new GuiSelfDestructEntry(container, "SELF_DESTRUCT_ENTRY");
         for(int n=0; n<max_crew_positions; n++)
@@ -270,6 +273,7 @@ string getCrewPositionName(ECrewPosition position)
     case longRangeRadar: return tr("station","Long Range Radar");
     case farRangeRadar: return tr("station","Far Range Radar");
     case probeScreen: return tr("station","Probe Screen");
+    case targetAnalysisScreen: return tr("station","Target Analysis Screen");
     default: return "ErrUnk: " + string(position);
     }
 }
@@ -302,6 +306,7 @@ string getCrewPositionIcon(ECrewPosition position)
     case longRangeRadar: return "";
     case farRangeRadar: return "";
     case probeScreen: return "";
+    case targetAnalysisScreen: return "";
     default: return "ErrUnk: " + string(position);
     }
 }
@@ -366,6 +371,8 @@ template<> void convert<ECrewPosition>::param(lua_State* L, int& idx, ECrewPosit
         cp = dockMaster;
     else if (str == "probe" || str == "probeview" || str == "probescreen")
         cp = probeScreen;
+    else if (str == "targetanalysis" || str == "analysis" || str == "targetanalysisscreen")
+        cp = targetAnalysisScreen;
     else
         luaL_error(L, "Unknown value for crew position: %s", str.c_str());
 }

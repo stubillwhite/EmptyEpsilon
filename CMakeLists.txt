@@ -151,6 +151,7 @@ set(SOURCES
 	src/screens/extra/droneOperatorScreen.cpp
 	src/screens/extra/dockMasterScreen.cpp
 	src/screens/extra/tractorBeamScreen.cpp
+        src/screens/extra/targetAnalysisScreen.cpp
 	src/screenComponents/aimLock.cpp
 	src/screenComponents/fireLock.cpp
 	src/screenComponents/alertOverlay.cpp

@@ -11,6 +11,10 @@ function init()
     -----------------------------------
     ----------- New Features ----------
     -----------------------------------
+    --
+    
+    -- From ship selection screen, it is now possible to select stations from many list
+    
     -- GM can speed up the game (from x1 to x4)
     -- Lot of changes into tweak menu
         -- Add structured infos

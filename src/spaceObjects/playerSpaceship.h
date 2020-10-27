@@ -202,6 +202,7 @@ public:
 
     //int32_t linked_science_probe_id;
     int32_t linked_science_probe_id = -1;
+    int32_t linked_analysis_object_id = -1;
 
     PlayerSpaceship();
     virtual ~PlayerSpaceship();
@@ -283,6 +284,7 @@ public:
     void commandJump(float distance);
     void commandSetTarget(P<SpaceObject> target, int8_t station = 0);
     void commandSetScienceLink(int32_t id);
+    void commandSetAnalysisLink(int32_t id);
     void commandLoadTube(int8_t tubeNumber, EMissileWeapons missileType);
     void commandUnloadTube(int8_t tubeNumber);
     void commandFireTube(int8_t tubeNumber, float missile_target_angle);

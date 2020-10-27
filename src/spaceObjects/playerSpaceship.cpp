@@ -128,6 +128,7 @@ REGISTER_SCRIPT_SUBCLASS(PlayerSpaceship, SpaceShip)
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandConfirmDestructCode);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandCombatManeuverBoost);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandSetScienceLink);
+    REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandSetAnalysisLink);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandSetAlertLevel);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandSetTractorBeamDirection);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandSetTractorBeamArc);
@@ -299,6 +300,7 @@ static const int16_t CMD_SET_TRACTOR_BEAM_ARC = 0x0036;
 static const int16_t CMD_SET_TRACTOR_BEAM_RANGE = 0x0037;
 static const int16_t CMD_SET_TRACTOR_BEAM_MODE = 0x0038;
 static const int16_t CMD_SET_WARP_FREQUENCY = 0x0039;
+static const int16_t CMD_SET_ANALYSIS_LINK = 0x003A;
 
 string alertLevelToString(EAlertLevel level)
 {
@@ -426,6 +428,7 @@ PlayerSpaceship::PlayerSpaceship()
     registerMemberReplication(&self_destruct_countdown, 0.2);
     registerMemberReplication(&alert_level);
     registerMemberReplication(&linked_science_probe_id);
+    registerMemberReplication(&linked_analysis_object_id);
     registerMemberReplication(&control_code);
     registerMemberReplication(&far_range_radar_range);
     registerMemberReplication(&long_range_radar_range);
@@ -1998,6 +2001,11 @@ void PlayerSpaceship::onReceiveClientCommand(int32_t client_id, sf::Packet& pack
             packet >> linked_science_probe_id;
         }
         break;
+    case CMD_SET_ANALYSIS_LINK:
+        {
+            packet >> linked_analysis_object_id;
+        }
+        break;
     case CMD_HACKING_FINISHED:
         {
             uint32_t id;
@@ -2441,6 +2449,12 @@ void PlayerSpaceship::commandCustomFunction(string name)
 void PlayerSpaceship::commandSetScienceLink(int32_t id){
     sf::Packet packet;
     packet << CMD_SET_SCIENCE_LINK << id;
+    sendClientCommand(packet);
+}
+
+void PlayerSpaceship::commandSetAnalysisLink(int32_t id){
+    sf::Packet packet;
+    packet << CMD_SET_ANALYSIS_LINK << id;
     sendClientCommand(packet);
 }
 

@@ -33,6 +33,7 @@ enum ECrewPosition
     longRangeRadar,
     farRangeRadar,
     probeScreen,
+    targetAnalysisScreen,
     max_crew_positions
 };
 

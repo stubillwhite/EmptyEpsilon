@@ -534,6 +534,7 @@ void ShipSelectionScreen::updateCrewTypeOptions()
         crew_position_button[longRangeRadar]->show();
         crew_position_button[farRangeRadar]->show();
         crew_position_button[probeScreen]->show();
+        crew_position_button[targetAnalysisScreen]->show();
         break;
     case 4:
         main_screen_button->hide();
