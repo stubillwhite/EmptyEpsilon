@@ -68,6 +68,8 @@ public:
     constexpr static int max_routes = 7;
     constexpr static int max_waypoints_in_route = 20;
     constexpr static int max_waypoints = 99;
+    // Engineering presets
+    constexpr static int max_engineer_presets_number = 9;
     // Scanning noise and capability
     float scanning_noise = 0.0f;
 
@@ -143,6 +145,12 @@ public:
     std::vector<CustomShipFunction> custom_functions;
 
     sf::Vector2f waypoints[max_routes][max_waypoints_in_route];
+
+    // Presets for engeneering screen
+    int active_engineer_presets_number;
+    int default_engineer_presets_number;
+    float power_presets[SYS_COUNT][max_engineer_presets_number];
+    float coolant_presets[SYS_COUNT][max_engineer_presets_number];
 
     // Ship functionality
     // Capable of scanning a target
@@ -294,7 +302,9 @@ public:
     void commandMainScreenOverlay(EMainScreenOverlay mainScreen);
     void commandScan(P<SpaceObject> object);
     void commandSetSystemPowerRequest(ESystem system, float power_level);
+    void commandSetSystemPowerPreset(ESystem system, int preset, float power_level);
     void commandSetSystemCoolantRequest(ESystem system, float coolant_level);
+    void commandSetSystemCoolantPreset(ESystem system, int preset, float coolant_level);
     void commandSetSystemInstability(ESystem system, int slider, float instability);
     void commandSetSystemRepairRequest(ESystem system, float repair_level);
     void commandDock(P<SpaceObject> station);
