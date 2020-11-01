@@ -295,7 +295,7 @@ string playerWarpJumpDriveToString(EPlayerWarpJumpDrive player_warp_jump_drive)
     }
 }
 
-string getSectorName(sf::Vector2f position, int scale_magnitude)
+string getSectorName(sf::Vector2f position, int scale_magnitude, bool show_all)
 {
     string x;
     string y;
@@ -311,11 +311,11 @@ string getSectorName(sf::Vector2f position, int scale_magnitude)
         int sector_y = floorf(position.y / GameGlobalInfo::sector_size);
         
         // Draw area only if first sector of the area
-        if (scale_magnitude == 2 && (sector_x % (8*8) != 0 || sector_y % (8*8) != 0))
+        if (!show_all && scale_magnitude == 2 && (sector_x % (8*8) != 0 || sector_y % (8*8) != 0))
             return "";
 
         // Draw region only if first area of the region
-        if (scale_magnitude == 4 && (sector_x % (8*8*8*8) != 0 || sector_y % (8*8*8*8) != 0))
+        if (!show_all && scale_magnitude == 4 && (sector_x % (8*8*8*8) != 0 || sector_y % (8*8*8*8) != 0))
             return "";
         
         // Area (scale_magnitude == 2)
@@ -402,6 +402,19 @@ static int setGMControlCode(lua_State* L)
 /// setGMControlCode(string)
 /// Show a password to allow access to spectator or GM screens.
 REGISTER_SCRIPT_FUNCTION(setGMControlCode);
+
+int getSectorNameByFactor(lua_State* L)
+{
+    float x = luaL_checknumber(L, 1);
+    float y = luaL_checknumber(L, 2);
+    int magnitude = luaL_checkinteger(L, 3);
+    sf::Vector2f position(x, y);
+    lua_pushstring(L, getSectorName(position, magnitude, true).c_str());
+    return 1;
+}
+/// getSectorNameByFactor(x, y, magnitude)
+/// Return the sector name for the point with coordinates (x, y). Compare SpaceObject:getSectorName().
+REGISTER_SCRIPT_FUNCTION(getSectorNameByFactor);
 
 static int victory(lua_State* L)
 {
@@ -579,6 +592,99 @@ static int playSoundFile(lua_State* L)
 /// Note that the sound is only played on the server. Not on any of the clients.
 REGISTER_SCRIPT_FUNCTION(playSoundFile);
 
+template<> int convert<EScanningComplexity>::returnType(lua_State* L, EScanningComplexity complexity)
+{
+    switch(complexity)
+    {
+    case SC_None:
+        lua_pushstring(L, "none");
+        return 1;
+    case SC_Simple:
+        lua_pushstring(L, "simple");
+        return 1;
+    case SC_Normal:
+        lua_pushstring(L, "normal");
+        return 1;
+    case SC_Advanced:
+        lua_pushstring(L, "advanced");
+        return 1;
+    default:
+        return 0;
+    }
+}
+
+static int getScanningComplexity(lua_State* L)
+{
+    return convert<EScanningComplexity>::returnType(L, gameGlobalInfo->scanning_complexity);
+}
+/// Get the scanning complexity setting (returns an EScanningComplexity representation)
+REGISTER_SCRIPT_FUNCTION(getScanningComplexity);
+
+static int getHackingDifficulty(lua_State* L)
+{
+    lua_pushinteger(L, gameGlobalInfo->hacking_difficulty);
+    return 1;
+}
+/// Get the hacking difficulty setting (returns an integer between 0 and 3)
+REGISTER_SCRIPT_FUNCTION(getHackingDifficulty);
+
+template<> int convert<EHackingGames>::returnType(lua_State* L, EHackingGames game)
+{
+    switch(game)
+    {
+    case HG_Mine:
+        lua_pushstring(L, "mines");
+        return 1;
+    case HG_Lights:
+        lua_pushstring(L, "lights");
+        return 1;
+    case HG_All:
+        lua_pushstring(L, "all");
+        return 1;
+    default:
+        return 0;
+    }
+}
+
+static int getHackingGames(lua_State* L)
+{
+    return convert<EHackingGames>::returnType(L, gameGlobalInfo->hacking_games);
+}
+/// Get the hacking games setting (returns an EHackingGames representation)
+REGISTER_SCRIPT_FUNCTION(getHackingGames);
+
+static int areBeamShieldFrequenciesUsed(lua_State* L)
+{
+    lua_pushboolean(L, gameGlobalInfo->use_beam_shield_frequencies);
+    return 1;
+}
+/// returns if the "Beam/Shield Frequencies" setting is enabled
+REGISTER_SCRIPT_FUNCTION(areBeamShieldFrequenciesUsed);
+
+static int isPerSystemDamageUsed(lua_State* L)
+{
+    lua_pushboolean(L, gameGlobalInfo->use_system_damage);
+    return 1;
+}
+/// returns if the "Per-System Damage" setting is enabled
+REGISTER_SCRIPT_FUNCTION(isPerSystemDamageUsed);
+
+static int isTacticalRadarAllowed(lua_State* L)
+{
+    lua_pushboolean(L, gameGlobalInfo->allow_main_screen_tactical_radar);
+    return 1;
+}
+/// returns if the "Tactical Radar" setting is enabled
+REGISTER_SCRIPT_FUNCTION(isTacticalRadarAllowed);
+
+static int isLongRangeRadarAllowed(lua_State* L)
+{
+    lua_pushboolean(L, gameGlobalInfo->allow_main_screen_long_range_radar);
+    return 1;
+}
+/// returns if the "Long Range Radar" setting is enabled
+REGISTER_SCRIPT_FUNCTION(isLongRangeRadarAllowed);
+
 static int onNewPlayerShip(lua_State* L)
 {
     int idx = 1;
@@ -632,3 +738,11 @@ P<MultiplayerObject> getObjectById(int32_t id){
         return game_server->getObjectById(id);
     return game_client->getObjectById(id);
 }
+
+static int getEEVersion(lua_State* L)
+{
+    lua_pushinteger(L, VERSION_NUMBER);
+    return 1;
+}
+/// Get a string with the current version number, like "20191231"
+REGISTER_SCRIPT_FUNCTION(getEEVersion);
