@@ -11,6 +11,13 @@ function init()
     -----------------------------------
     ----------- New Features ----------
     -----------------------------------
+    
+    -- Presets are available for engineering screen. 
+        -- Maximum Preset can be set with setActivePresetNumber and can be tweak
+        -- Preset are saved and can be load from options.ini
+        -- Hotkeys are available for apply and update presets
+    player:setActivePresetNumber(5)
+
     -- A new screen is available, do support science screen
     -- Once fully scanned, a object can be linked to analysis screen
     -- The target analysis screen displayed all informations available for the object

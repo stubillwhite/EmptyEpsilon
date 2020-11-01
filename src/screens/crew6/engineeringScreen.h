@@ -13,6 +13,7 @@ class GuiAutoLayout;
 class GuiImage;
 class GuiArrow;
 class GuiToggleButton;
+class GuiButton; 
 class GuiProgressbar;
 class GuiProgressSlider;
 class GuiSystemEffectsList;
@@ -40,6 +41,8 @@ private:
     GuiSlider* coolant_slider;
     GuiLabel* repair_label;
     GuiSlider* repair_slider;
+    GuiToggleButton* presets_button;
+    std::vector<GuiButton*> presets_buttons;
 
     class SystemRow
     {
@@ -74,6 +77,8 @@ public:
     virtual void onDraw(sf::RenderTarget& window) override;
     virtual void onHotkey(const HotkeyResult& key) override;
     virtual bool onJoystickAxis(const AxisAction& axisAction) override;
+    virtual void applyPreset(int preset);
+    virtual void updatePreset(int preset);
 };
 
 #endif//ENGINEERING_SCREEN_H
