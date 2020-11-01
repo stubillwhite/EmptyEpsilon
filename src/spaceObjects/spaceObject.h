@@ -126,6 +126,8 @@ public:
     float getPositionZ() { return position_z; }
     void setPositionZ(float z) { position_z = z; }
 
+    bool hasWeight() { return has_weight; }
+
     // Return the object's raw radar signature. The default signature is 0,0,0.
     virtual RawRadarSignatureInfo getRadarSignatureInfo() { return radar_signature; }
     void setRadarSignatureInfo(float grav, float elec, float bio) { radar_signature = RawRadarSignatureInfo(grav, elec, bio); }
@@ -287,6 +289,7 @@ public:
 
 protected:
     ModelInfo model_info;
+    bool has_weight = true;
 };
 
 // Define a script conversion function for the DamageInfo structure.

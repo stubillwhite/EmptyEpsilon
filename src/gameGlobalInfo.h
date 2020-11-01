@@ -174,9 +174,12 @@ public:
 };
 
 string playerWarpJumpDriveToString(EPlayerWarpJumpDrive player_warp_jump_drive);
-string getSectorName(sf::Vector2f position, int scale_magnitude = 0);
+string getSectorName(sf::Vector2f position, int scale_magnitude = 0, bool show_all = false);
 
 REGISTER_MULTIPLAYER_ENUM(EScanningComplexity);
 REGISTER_MULTIPLAYER_ENUM(EHackingGames);
+
+template<> int convert<EScanningComplexity>::returnType(lua_State* L, EScanningComplexity complexity);
+template<> int convert<EHackingGames>::returnType(lua_State* L, EHackingGames games);
 
 #endif//GAME_GLOBAL_INFO_H

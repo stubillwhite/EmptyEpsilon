@@ -158,6 +158,12 @@ void RepairCrew::update(float delta)
     if (!ship || !ship->ship_template)
         return;
 
+    if (ship->ship_template->rooms.size() == 0)
+    {
+        destroy();
+        return;
+    }
+
     if (position.x < -0.5)
     {
         ship->ship_template->interiorSize();
