@@ -12,6 +12,10 @@ function init()
     ----------- New Features ----------
     -----------------------------------
 
+    -----------------------------------
+    -- ### EE LARP release 1.6-beta ---
+    -----------------------------------
+
     -- Adds some features in tweak
         -- Warp speed
         -- Consumption or production factor by system

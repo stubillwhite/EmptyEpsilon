@@ -1,6 +1,72 @@
 # Change Log
 
-### Daid Empty Epsilon Update on 27/09/2020
+### Daid Empty Epsilon Update on 01/11/2020
+
+### EE LARP release 1.6-beta
+
+### Added
+
+- Presets are available for engineering screen. 
+  - Maximum Preset can be set with setActivePresetNumber and can be tweak
+  - Preset are saved and can be load from options.ini
+  - Hotkeys are available for apply and update presets  
+- new screen available : Target analysis screen
+  - Once fully scanned, a object can be linked to analysis screen
+  - The target analysis screen displayed all informations available for the object
+  - From now : ship, station, asteroid, artifact, planet
+- Structured infos
+  - Possibility to add structured infos for a object
+  - Science can see these infos after a full scan
+  - Need and id for each infos (0-9), a label (string) and a value (string)
+- New Tweak categories and features
+  - Description : affect description and structured informations for all object
+  - Message : to send messages to players
+  - Warp speed
+  - Consumption or production factor by system
+  - Change objects signatures
+- GM can speed up the game (from x1 to x4) 
+
+### Changed
+
+- Change of default options
+  - First person, no flags and no radar in main screen
+- From ship selection screen, it is now possible to select stations from many list
+- RP pause screen
+  - noise and 'power cut' information
+
+### Fixed
+
+- Lot of minors corrections
+  - log component now always displayed on screen
+  - Bug for object's description
+
+### EE LARP release 1.5-beta
+
+- Lot of minors corrections
+  - Repair crew vs nano robots
+  - power indicator overlay
+  - Update of system list effect : Drone and docks
+  - Progress bar into dynamic keyvalue for engineering screen
+  - Viewport3D for cinematic screen
+  - Remove comms overlay for each player station
+  - Avoid weak amount of coolant or repair if not requested
+  - Probe can be selected during their travel
+  - All objects can now be scanned (even if there is no information)
+- New screens
+  - Radar screen : tactical, long, far
+  - Probe screen : camera on probe linked to science
+- New indicator overlay for systems
+  - Warp, Jump, Shield : white color when activated
+- Scanner system instead of drone system
+  - Affect range of relay radar
+  - Affect scanning dialog (perturbation, help or stop)
+- Signature signals visualisation from science screen
+- Add warp layer effect on warp
+  - can be activated in options.ini with options server_config_use_warp_terrain
+  - add map layers into scripts to each warp frequency (max : 10)
+  - helms can change the warp  frequency of the ship
+  - relay can view the warp map layer for each frequency
+- Reorganisation of relay screen 
 
 ### EE LARP release 1.5-beta
 
