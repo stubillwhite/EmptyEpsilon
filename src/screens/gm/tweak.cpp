@@ -126,6 +126,12 @@ GuiTweakShip::GuiTweakShip(GuiContainer* owner)
     });
     impulse_speed_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 40);
 
+    (new GuiLabel(left_col, "", tr("WARP speed:"), 30))->setSize(GuiElement::GuiSizeMax, 50);
+    warp_speed_slider = new GuiSlider(left_col, "", 500.0, 2000.0, 0.0, [this](float value) {
+        target->warp_speed_per_warp_level = value;
+    });
+    warp_speed_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 40);
+
     (new GuiLabel(left_col, "", tr("Turn speed:"), 30))->setSize(GuiElement::GuiSizeMax, 50);
     turn_speed_slider = new GuiSlider(left_col, "", 0.0, 35, 0.0, [this](float value) {
         target->turn_speed = value;
@@ -201,6 +207,7 @@ void GuiTweakShip::onDraw(sf::RenderTarget& window)
     warp_toggle->setValue(target->has_warp_drive);
     jump_toggle->setValue(target->hasJumpDrive());
     impulse_speed_slider->setValue(target->impulse_max_speed);
+    warp_speed_slider->setValue(target->warp_speed_per_warp_level);
     turn_speed_slider->setValue(target->turn_speed);
     hull_max_slider->setValue(target->hull_max);
     can_be_destroyed_toggle->setValue(target->getCanBeDestroyed());
@@ -212,6 +219,7 @@ void GuiTweakShip::open(P<SpaceObject> target)
     this->target = ship;
 
     impulse_speed_slider->clearSnapValues()->addSnapValue(ship->ship_template->impulse_speed, 5.0f);
+    warp_speed_slider->clearSnapValues()->addSnapValue(ship->ship_template->warp_speed, 50.0f);
     turn_speed_slider->clearSnapValues()->addSnapValue(ship->ship_template->turn_speed, 1.0f);
     hull_max_slider->clearSnapValues()->addSnapValue(ship->ship_template->hull, 5.0f);
 }
@@ -582,6 +590,23 @@ GuiShipTweakSystems::GuiShipTweakSystems(GuiContainer* owner)
         
         system_box[n] = new GuiAutoLayout(right_col, "", GuiAutoLayout::LayoutVerticalTopToBottom);
         system_box[n]->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
+
+        // Difference between reactor and other systems
+        if (n == 0)
+        {
+            (new GuiLabel(system_box[n], "", tr("slider", "Production factor"), 20))->setSize(GuiElement::GuiSizeMax, 30);    
+            system_factor[n] = new GuiSlider(system_box[n], "", 10.0, 40.0, 0.0, [this, n](float value) {
+                target->systems[n].power_user_factor = value * -0.08f;
+            });
+        }
+        else
+        {
+            (new GuiLabel(system_box[n], "", tr("slider", "Consumption factor"), 20))->setSize(GuiElement::GuiSizeMax, 30);    
+            system_factor[n] = new GuiSlider(system_box[n], "", 0.0, 10.0, 0.0, [this, n](float value) {
+                target->systems[n].power_user_factor = value * 0.08f;
+            });
+        }
+        system_factor[n]->addOverlay()->setSize(GuiElement::GuiSizeMax, 30);
     
         (new GuiLabel(system_box[n], "", tr("slider", "Health level"), 20))->setSize(GuiElement::GuiSizeMax, 30);
         system_damage[n] = new GuiSlider(system_box[n], "", -1.0, 1.0, 0.0, [this, n](float value) {
@@ -609,21 +634,6 @@ GuiShipTweakSystems::GuiShipTweakSystems(GuiContainer* owner)
         system_heat[n]->setSize(GuiElement::GuiSizeMax, 30);
         system_heat[n]->addSnapValue( 0.0, 0.01);
         system_heat[n]->addSnapValue( 1.0, 0.01);
-        
-        (new GuiLabel(system_box[n], "", tr("slider", "Coolant request"), 20))->setSize(GuiElement::GuiSizeMax, 30);
-        system_coolant_bar[n] = new GuiProgressbar(system_box[n], "", 0.0, 10.0, 1.0);
-        system_coolant_bar[n]->setDrawBackground(false)->setSize(GuiElement::GuiSizeMax, 30);
-        system_coolant_bar[n]->setColor(sf::Color(0, 128, 255, 128));
-        system_coolant_slider[n] = new GuiSlider(system_coolant_bar[n], "", 0.0, 10.0, 0.0, [this, n](float value) {
-            target->systems[n].coolant_request = value;
-        });
-        system_coolant_slider[n]->setSize(GuiElement::GuiSizeMax, 30);
-        system_coolant_slider[n]->addSnapValue( 0.0, 0.01);
-        system_coolant_slider[n]->addSnapValue( 1.0, 0.01);
-        system_coolant_slider[n]->addSnapValue( 2.0, 0.01);
-        system_coolant_slider[n]->addSnapValue( 3.0, 0.01);
-        system_coolant_slider[n]->addSnapValue( 4.0, 0.01);
-        system_coolant_slider[n]->addSnapValue( 5.0, 0.01);
 
         (new GuiLabel(system_box[n], "", tr("slider", "Hack Level"), 20))->setSize(GuiElement::GuiSizeMax, 30);
         system_hacked[n] = new GuiSlider(system_box[n], "", 0.0, 1.0, 0.0, [this, n](float value) {
@@ -648,6 +658,21 @@ GuiShipTweakSystems::GuiShipTweakSystems(GuiContainer* owner)
         system_power_slider[n]->addSnapValue( 1.5, 0.01);
         system_power_slider[n]->addSnapValue( 2.0, 0.01);
         system_power_slider[n]->addSnapValue( 3.0, 0.01);
+
+        (new GuiLabel(system_box[n], "", tr("slider", "Coolant request"), 20))->setSize(GuiElement::GuiSizeMax, 30);
+        system_coolant_bar[n] = new GuiProgressbar(system_box[n], "", 0.0, 10.0, 1.0);
+        system_coolant_bar[n]->setDrawBackground(false)->setSize(GuiElement::GuiSizeMax, 30);
+        system_coolant_bar[n]->setColor(sf::Color(0, 128, 255, 128));
+        system_coolant_slider[n] = new GuiSlider(system_coolant_bar[n], "", 0.0, 10.0, 0.0, [this, n](float value) {
+            target->systems[n].coolant_request = value;
+        });
+        system_coolant_slider[n]->addOverlay()->setSize(GuiElement::GuiSizeMax, 30);
+        system_coolant_slider[n]->addSnapValue( 0.0, 0.01);
+        system_coolant_slider[n]->addSnapValue( 1.0, 0.01);
+        system_coolant_slider[n]->addSnapValue( 2.0, 0.01);
+        system_coolant_slider[n]->addSnapValue( 3.0, 0.01);
+        system_coolant_slider[n]->addSnapValue( 4.0, 0.01);
+        system_coolant_slider[n]->addSnapValue( 5.0, 0.01);
         
         if (gameGlobalInfo->use_nano_repair_crew)
         {
@@ -658,7 +683,7 @@ GuiShipTweakSystems::GuiShipTweakSystems(GuiContainer* owner)
             system_repair_slider[n] = new GuiSlider(system_repair_bar[n], "", 0.0, 3.0, 0.0, [this, n](float value) {
                 target->systems[n].repair_request = value;
             });
-            system_repair_slider[n]->setSize(GuiElement::GuiSizeMax, 30);
+            system_repair_slider[n]->addOverlay()->setSize(GuiElement::GuiSizeMax, 30);
             system_repair_slider[n]->addSnapValue( 0.0, 0.01);
             system_repair_slider[n]->addSnapValue( 1.0, 0.01);
             system_repair_slider[n]->addSnapValue( 2.0, 0.01);
@@ -683,7 +708,7 @@ GuiShipTweakSystems::GuiShipTweakSystems(GuiContainer* owner)
         system_instability_difficulty[n] = new GuiSlider(system_box[n], "", 0, 4, 0, [this, n](int value) {
             target->systems[n].instability_difficulty = value;
         });
-        system_instability_difficulty[n]->setSize(GuiElement::GuiSizeMax, 30); 
+        system_instability_difficulty[n]->addOverlay()->setSize(GuiElement::GuiSizeMax, 30); 
 
         (new GuiLabel(system_box[n], "", tr("slider", "Instability level"), 20))->setSize(GuiElement::GuiSizeMax, 30);
         system_instability_level[n] = new GuiProgressbar(system_box[n], "", 0.0, 1.0, 0.0);
@@ -700,6 +725,10 @@ void GuiShipTweakSystems::onDraw(sf::RenderTarget& window)
         
         system_box[n]->setVisible(n == system_index);
         
+        if (n == 0)
+            system_factor[n]->setValue(target->systems[n].power_user_factor / -0.08f);
+        else
+            system_factor[n]->setValue(target->systems[n].power_user_factor / 0.08f);
         system_damage[n]->setValue(target->systems[n].health);
         system_health_max[n]->setValue(target->systems[n].health_max);
         system_heat[n]->setValue(target->systems[n].heat_level);
@@ -720,6 +749,14 @@ void GuiShipTweakSystems::open(P<SpaceObject> target)
 {
     P<SpaceShip> ship = target;
     this->target = ship;
+
+    for(int n=0; n<SYS_COUNT; n++)
+    {
+        if (n == 0)
+            system_factor[n]->clearSnapValues()->addSnapValue(PlayerSpaceship::system_power_user_factor[n] / -0.08f, 0.5f);
+        else
+            system_factor[n]->clearSnapValues()->addSnapValue(PlayerSpaceship::system_power_user_factor[n] / 0.08f, 0.5f);
+    }
 }
 
 GuiShipTweakOxygen::GuiShipTweakOxygen(GuiContainer* owner)

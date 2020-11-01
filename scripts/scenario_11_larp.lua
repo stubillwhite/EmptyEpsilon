@@ -11,6 +11,10 @@ function init()
     -----------------------------------
     ----------- New Features ----------
     -----------------------------------
+
+    -- Adds some features in tweak
+        -- Warp speed
+        -- Consumption or production factor by system
     
     -- Presets are available for engineering screen. 
         -- Maximum Preset can be set with setActivePresetNumber and can be tweak
