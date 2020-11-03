@@ -418,7 +418,7 @@ public:
 
     // Waypoint functions
     int getWaypointCount(int route = 0);
-    sf::Vector2f getWaypoint(int index, int route = 0) { if (route > 0 && route <= max_routes && index > 0 && index <= max_waypoints_in_route) return waypoints[route][index - 1]; return sf::Vector2f(0, 0); }
+    sf::Vector2f getWaypoint(int index, int route = 0) { if (route > -1 && route <= max_routes && index > 0 && index <= max_waypoints_in_route) return waypoints[route][index - 1]; return sf::Vector2f(0, 0); }
 
     // Ship control code/password setter
     void setControlCode(string code) { control_code = code.upper(); }
