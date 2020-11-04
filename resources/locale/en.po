@@ -891,6 +891,7 @@ msgstr ""
 #: src/screens/crew6/helmsScreen.cpp:74
 #: src/screens/crew1/singlePilotScreen.cpp:74
 #: src/screens/crew6/helmsScreen.cpp:76 src/screens/crew6/helmsScreen.cpp:78
+#: src/shipCargo.cpp:142
 msgid "Speed"
 msgstr ""
 
@@ -1619,6 +1620,7 @@ msgid "Shield"
 msgstr ""
 
 #: src/scienceDatabase.cpp:141 src/scienceDatabase.cpp:367
+#: src/shipCargo.cpp:132
 msgid "Hull"
 msgstr ""
 
@@ -1984,7 +1986,7 @@ msgid "health"
 msgstr ""
 
 #: src/screens/crew6/engineeringScreen.cpp:137
-#: src/screens/crew6/engineeringScreen.cpp:150
+#: src/screens/crew6/engineeringScreen.cpp:150 src/cargo.cpp:19
 msgid "heat"
 msgstr ""
 
@@ -2102,6 +2104,8 @@ msgstr ""
 
 #: src/screens/gm/gameMasterScreen.cpp:99
 #: src/screens/gm/gameMasterScreen.cpp:113
+#: src/menus/shipSelectionScreen.cpp:260
+#: src/screens/gm/objectCreationView.cpp:119
 msgctxt "button"
 msgid "Cancel"
 msgstr ""
@@ -3280,6 +3284,7 @@ msgid "Natural"
 msgstr ""
 
 #: scripts/science_db.lua:6 src/screens/extra/targetAnalysisScreen.cpp:225
+#: src/screens/gm/objectCreationView.cpp:68
 msgid "Asteroid"
 msgstr ""
 
@@ -3289,7 +3294,7 @@ msgid ""
 "variants are sometimes refered to as planetoids."
 msgstr ""
 
-#: scripts/science_db.lua:9
+#: scripts/science_db.lua:9 src/screens/gm/objectCreationView.cpp:84
 msgid "Nebula"
 msgstr ""
 
@@ -3552,6 +3557,7 @@ msgid "Unknown"
 msgstr ""
 
 #: src/screens/extra/targetAnalysisScreen.cpp:237
+#: src/screens/gm/objectCreationView.cpp:76
 msgid "Planet"
 msgstr ""
 
@@ -3780,4 +3786,635 @@ msgid ""
 "longer and faster beams, faster turn speed and for that extra special touch, "
 "two nuclear missiles. As their ad says, 'You'll feel better in an Adder Mark "
 "9.'"
+msgstr ""
+
+#: src/menus/shipSelectionScreen.cpp:43
+msgctxt "menu"
+msgid "Select your station"
+msgstr ""
+
+#: src/menus/shipSelectionScreen.cpp:50
+msgctxt "menu"
+msgid "6/5 player crew"
+msgstr ""
+
+#: src/menus/shipSelectionScreen.cpp:50
+msgctxt "menu"
+msgid "4/3 player crew"
+msgstr ""
+
+#: src/menus/shipSelectionScreen.cpp:50
+msgctxt "menu"
+msgid "extra controls"
+msgstr ""
+
+#: src/menus/shipSelectionScreen.cpp:50
+msgctxt "menu"
+msgid "extra screens"
+msgstr ""
+
+#: src/menus/shipSelectionScreen.cpp:50
+msgctxt "menu"
+msgid "Alternative options"
+msgstr ""
+
+#: src/menus/shipSelectionScreen.cpp:53
+msgctxt "station"
+msgid "Main screen"
+msgstr ""
+
+#: src/menus/shipSelectionScreen.cpp:69
+msgctxt "station"
+msgid "Main screen controls"
+msgstr ""
+
+#: src/menus/shipSelectionScreen.cpp:75
+msgctxt "station"
+msgid "Game master"
+msgstr ""
+
+#: src/menus/shipSelectionScreen.cpp:83
+msgid "Player selected GM mode, which has a control code."
+msgstr ""
+
+#: src/menus/shipSelectionScreen.cpp:84
+msgctxt "menu"
+msgid "Enter the GM control code:"
+msgstr ""
+
+#: src/menus/shipSelectionScreen.cpp:96
+msgctxt "station"
+msgid "Ship window"
+msgstr ""
+
+#: src/menus/shipSelectionScreen.cpp:105
+msgid "{angle} degrees"
+msgstr ""
+
+#: src/menus/shipSelectionScreen.cpp:108
+msgctxt "station"
+msgid "0 degrees"
+msgstr ""
+
+#: src/menus/shipSelectionScreen.cpp:112
+msgctxt "station"
+msgid "Top-down 3D view"
+msgstr ""
+
+#: src/menus/shipSelectionScreen.cpp:121
+msgctxt "station"
+msgid "Cinematic view"
+msgstr ""
+
+#: src/menus/shipSelectionScreen.cpp:130
+msgctxt "station"
+msgid "Spectate (view all)"
+msgstr ""
+
+#: src/menus/shipSelectionScreen.cpp:138
+msgid "Player selected Spectate mode, which has a control code."
+msgstr ""
+
+#: src/menus/shipSelectionScreen.cpp:139
+msgid "Enter the GM control code:"
+msgstr ""
+
+#: src/menus/shipSelectionScreen.cpp:155
+msgctxt "station"
+msgid "Select ship"
+msgstr ""
+
+#: src/menus/shipSelectionScreen.cpp:156
+msgctxt "menu"
+msgid "Waiting for server to spawn a ship"
+msgstr ""
+
+#: src/menus/shipSelectionScreen.cpp:208
+msgctxt "button"
+msgid "Spawn player ship"
+msgstr ""
+
+#: src/menus/shipSelectionScreen.cpp:227
+msgctxt "button"
+msgid "Scenario selection"
+msgstr ""
+
+#: src/menus/shipSelectionScreen.cpp:234
+msgctxt "button"
+msgid "Disconnect"
+msgstr ""
+
+#: src/menus/shipSelectionScreen.cpp:242
+msgctxt "button"
+msgid "Ready"
+msgstr ""
+
+#: src/menus/shipSelectionScreen.cpp:256 src/menus/shipSelectionScreen.cpp:262
+#: src/menus/shipSelectionScreen.cpp:308 src/menus/shipSelectionScreen.cpp:344
+msgid "Enter this ship's control code:"
+msgstr ""
+
+#: src/menus/shipSelectionScreen.cpp:279
+msgctxt "button"
+msgid "Ok"
+msgstr ""
+
+#: src/menus/shipSelectionScreen.cpp:290
+msgid "Incorrect control code. Re-enter GM code:"
+msgstr ""
+
+#: src/menus/shipSelectionScreen.cpp:297
+msgid ""
+"Control code accepted.\n"
+"Granting access."
+msgstr ""
+
+#: src/menus/shipSelectionScreen.cpp:316
+msgid "Incorrect control code. Re-enter code for {ship_callsign}:"
+msgstr ""
+
+#: src/menus/shipSelectionScreen.cpp:325
+msgid ""
+"Control code accepted.\n"
+"Granting access to {ship_callsign}."
+msgstr ""
+
+#: src/menus/shipSelectionScreen.cpp:339
+msgctxt "button"
+msgid "OK"
+msgstr ""
+
+#: src/menus/shipSelectionScreen.cpp:436
+msgid "Select your station ({nb_positions})"
+msgstr ""
+
+#: src/screens/crew6/engineeringScreen.cpp:149
+msgctxt "title"
+msgid "health"
+msgstr ""
+
+#: src/screens/crew6/engineeringScreen.cpp:150
+msgctxt "title"
+msgid "heat"
+msgstr ""
+
+#: src/screens/crew6/engineeringScreen.cpp:151
+msgctxt "title"
+msgid "power"
+msgstr ""
+
+#: src/screens/crew6/engineeringScreen.cpp:152
+msgctxt "title"
+msgid "coolant"
+msgstr ""
+
+#: src/screens/crew6/engineeringScreen.cpp:153
+msgctxt "title"
+msgid "repair"
+msgstr ""
+
+#: src/screens/crew6/engineeringScreen.cpp:477
+msgid "Power: {power_level}%/{power_request}%"
+msgstr ""
+
+#: src/screens/crew6/engineeringScreen.cpp:479
+msgid "Coolant: {coolant_level}%/{coolant_request}%"
+msgstr ""
+
+#: src/screens/crew6/engineeringScreen.cpp:486
+msgid ""
+"Coolant: {coolant_level} / {coolant_max}\t\t (Target: {coolant_request})"
+msgstr ""
+
+#: src/screens/crew6/engineeringScreen.cpp:487
+msgid "Power: {power_level}% \t\t (Target: {power_request}%)"
+msgstr ""
+
+#: src/screens/crew6/engineeringScreen.cpp:490
+msgid "Repair: {repair_level} / {repair_max}\t\t (Target: {repair_request})"
+msgstr ""
+
+#: src/screens/gm/objectCreationView.cpp:51
+msgid "Artifact"
+msgstr ""
+
+#: src/screens/gm/objectCreationView.cpp:55
+msgid "Warp Jammer"
+msgstr ""
+
+#: src/screens/gm/objectCreationView.cpp:59
+msgid "Mine"
+msgstr ""
+
+#: src/screens/gm/objectCreationView.cpp:64
+msgid "Supply Drop"
+msgstr ""
+
+#: src/screens/gm/objectCreationView.cpp:72
+msgid "Visual Asteroid"
+msgstr ""
+
+#: src/screens/gm/objectCreationView.cpp:80
+msgid "BlackHole"
+msgstr ""
+
+#: src/screens/gm/objectCreationView.cpp:88
+msgid "Worm Hole"
+msgstr ""
+
+#: src/screens/gm/tweak.cpp:408
+msgid "Number of Shields"
+msgstr ""
+
+#: src/screens/gm/tweak.cpp:537
+msgctxt "beam"
+msgid "Damage Type:"
+msgstr ""
+
+#: src/screens/gm/tweak.cpp:1155
+msgctxt "message"
+msgid "Message:"
+msgstr ""
+
+#: src/screens/gm/tweak.cpp:1171
+msgctxt "message"
+msgid "Target:"
+msgstr ""
+
+#: src/screens/gm/tweak.cpp:1176
+msgctxt "message"
+msgid "this player"
+msgstr ""
+
+#: src/screens/gm/tweak.cpp:1177
+msgctxt "message"
+msgid "all players"
+msgstr ""
+
+#: src/screens/gm/tweak.cpp:1181
+msgctxt "message"
+msgid "Screen:"
+msgstr ""
+
+#: src/screens/gm/tweak.cpp:1198
+msgctxt "message"
+msgid "into log"
+msgstr ""
+
+#: src/screens/gm/tweak.cpp:1222
+msgctxt "message"
+msgid "white"
+msgstr ""
+
+#: src/screens/gm/tweak.cpp:1223
+msgctxt "message"
+msgid "black"
+msgstr ""
+
+#: src/screens/gm/tweak.cpp:1224
+msgctxt "message"
+msgid "red"
+msgstr ""
+
+#: src/screens/gm/tweak.cpp:1225
+msgctxt "message"
+msgid "green"
+msgstr ""
+
+#: src/screens/gm/tweak.cpp:1226
+msgctxt "message"
+msgid "blue"
+msgstr ""
+
+#: src/screens/gm/tweak.cpp:1227
+msgctxt "message"
+msgid "yellow"
+msgstr ""
+
+#: src/screens/gm/tweak.cpp:1228
+msgctxt "message"
+msgid "magenta"
+msgstr ""
+
+#: src/screens/gm/tweak.cpp:1229
+msgctxt "message"
+msgid "cyan"
+msgstr ""
+
+#: src/screens/gm/tweak.cpp:1233 src/screens/gm/tweak.cpp:1251
+msgctxt "message"
+msgid "Send message"
+msgstr ""
+
+#: src/screens/gm/tweak.cpp:1249
+msgctxt "message"
+msgid "On screen"
+msgstr ""
+
+#: src/screens/gm/tweak.cpp:1265
+msgctxt "message"
+msgid "Remove previous messages"
+msgstr ""
+
+#: src/screens/gm/tweak.cpp:1321
+msgid "Z Position:"
+msgstr ""
+
+#: src/screens/gm/tweak.cpp:1341
+msgid "Gravity signature (blue):"
+msgstr ""
+
+#: src/screens/gm/tweak.cpp:1347
+msgid "Energy signature (red):"
+msgstr ""
+
+#: src/screens/gm/tweak.cpp:1353
+msgid "Biology signature (green):"
+msgstr ""
+
+#: src/screens/gm/tweak.cpp:1409
+msgctxt "title"
+msgid "Description"
+msgstr ""
+
+#: src/screens/gm/tweak.cpp:1451
+msgctxt "title"
+msgid "Label"
+msgstr ""
+
+#: src/screens/gm/tweak.cpp:1452
+msgctxt "title"
+msgid "Value"
+msgstr ""
+
+#: src/screenComponents/indicatorOverlays.cpp:23
+msgid "Power cut"
+msgstr ""
+
+#: src/screenComponents/indicatorOverlays.cpp:26
+msgid "Unpause"
+msgstr ""
+
+#: src/screenComponents/indicatorOverlays.cpp:126
+msgid "Defeat!"
+msgstr ""
+
+#: src/screenComponents/indicatorOverlays.cpp:129
+msgid "Victory!"
+msgstr ""
+
+#: src/screens/extra/dockMasterScreen.cpp:45
+msgctxt "title"
+msgid "docks list"
+msgstr ""
+
+#: src/screens/extra/dockMasterScreen.cpp:83
+msgctxt "title"
+msgid "Dock management"
+msgstr ""
+
+#: src/screens/extra/dockMasterScreen.cpp:91
+msgid "Deliver to :"
+msgstr ""
+
+#: src/screens/extra/dockMasterScreen.cpp:97
+msgid "Deliver"
+msgstr ""
+
+#: src/screens/extra/dockMasterScreen.cpp:125
+msgid "Launch :"
+msgstr ""
+
+#: src/screens/extra/dockMasterScreen.cpp:126
+msgid "Launch"
+msgstr ""
+
+#: src/screens/extra/dockMasterScreen.cpp:142
+msgid "Energy control :"
+msgstr ""
+
+#: src/screens/extra/dockMasterScreen.cpp:157
+msgctxt "docks"
+msgid "Energy Main"
+msgstr ""
+
+#: src/screens/extra/dockMasterScreen.cpp:159
+msgctxt "docks"
+msgid "Energy Cargo"
+msgstr ""
+
+#: src/screens/extra/dockMasterScreen.cpp:170
+msgid "Missiles"
+msgstr ""
+
+#: src/screens/extra/dockMasterScreen.cpp:171
+msgctxt "docks"
+msgid "Main"
+msgstr ""
+
+#: src/screens/extra/dockMasterScreen.cpp:172
+msgctxt "docks"
+msgid "Cargo"
+msgstr ""
+
+#: src/screens/extra/dockMasterScreen.cpp:274
+msgid "Transporting cargo out"
+msgstr ""
+
+#: src/screens/extra/dockMasterScreen.cpp:280
+msgid "Cancel deliver"
+msgstr ""
+
+#: src/screens/extra/dockMasterScreen.cpp:357
+msgid "Incoming cargo"
+msgstr ""
+
+#: src/screens/extra/dockMasterScreen.cpp:378
+msgid "Outcoming cargo"
+msgstr ""
+
+#: src/screens/extra/dockMasterScreen.cpp:450
+msgid "Repair finished"
+msgstr ""
+
+#: src/screens/extra/dockMasterScreen.cpp:452
+msgid "Repairing..."
+msgstr ""
+
+#: src/screenComponents/systemEffectsList.cpp:35
+msgid "Health"
+msgstr ""
+
+#: src/screenComponents/systemEffectsList.cpp:36
+msgid "Power"
+msgstr ""
+
+#: src/screenComponents/systemEffectsList.cpp:37
+msgid "Heat"
+msgstr ""
+
+#: src/screenComponents/systemEffectsList.cpp:38
+msgid "Coolant"
+msgstr ""
+
+#: src/screenComponents/systemEffectsList.cpp:40
+msgid "Repair"
+msgstr ""
+
+#: src/screenComponents/systemEffectsList.cpp:42
+msgid "Instability"
+msgstr ""
+
+#: src/screenComponents/systemEffectsList.cpp:48
+msgid "Maximal health"
+msgstr ""
+
+#: src/cargo.cpp:18
+msgid "energy"
+msgstr ""
+
+#: src/shipCargo.cpp:130
+msgid "Ship"
+msgstr ""
+
+#: src/shipCargo.cpp:130
+msgid "Drone"
+msgstr ""
+
+#: src/shipCargo.cpp:131
+msgid "Type"
+msgstr ""
+
+#: src/shipCargo.cpp:134
+msgid "Model"
+msgstr ""
+
+#: src/shipCargo.cpp:137 src/shipCargo.cpp:139
+msgid "Reactor ?"
+msgstr ""
+
+#: src/shipCargo.cpp:137
+msgid "Yes"
+msgstr ""
+
+#: src/shipCargo.cpp:139
+msgid "No"
+msgstr ""
+
+#: src/shipCargo.cpp:145
+msgid "Missiles tubes"
+msgstr ""
+
+#: src/shipCargo.cpp:152
+msgid "Beams lasers"
+msgstr ""
+
+#: src/screens/extra/instabilityScreen.cpp:112
+#: src/screens/extra/instabilityScreen.cpp:194
+msgid "Instability Level : "
+msgstr ""
+
+#: src/screens/extra/targetAnalysisScreen.cpp:72
+msgid "Basic Informations"
+msgstr ""
+
+#: src/screens/extra/targetAnalysisScreen.cpp:95
+msgid "Description"
+msgstr ""
+
+#: src/screens/extra/targetAnalysisScreen.cpp:104
+msgid "Additionnal Informations"
+msgstr ""
+
+#: src/screens/extra/targetAnalysisScreen.cpp:117
+msgid "Template Informations"
+msgstr ""
+
+#: src/screens/extra/targetAnalysisScreen.cpp:130
+msgid "Systems"
+msgstr ""
+
+#: src/screens/extra/targetAnalysisScreen.cpp:144
+msgid "Frequencies"
+msgstr ""
+
+#: src/screens/extra/targetAnalysisScreen.cpp:162
+msgid "Signatures"
+msgstr ""
+
+#: src/screens/extra/targetAnalysisScreen.cpp:197
+msgid "No object targeted"
+msgstr ""
+
+#: src/screens/extra/targetAnalysisScreen.cpp:203
+#: src/screens/extra/targetAnalysisScreen.cpp:209
+msgid "Object not fully scanned"
+msgstr ""
+
+#: src/screens/extra/targetAnalysisScreen.cpp:335
+msgid "Electrical: "
+msgstr ""
+
+#: src/screens/extra/targetAnalysisScreen.cpp:340
+msgid "Gravitational: "
+msgstr ""
+
+#: src/screens/extra/targetAnalysisScreen.cpp:345
+msgid "Biological: "
+msgstr ""
+
+#: src/spaceObjects/spaceshipParts/dock.cpp:200
+msgctxt "docks"
+msgid "Empty"
+msgstr ""
+
+#: src/spaceObjects/spaceshipParts/dock.cpp:201
+msgctxt "docks"
+msgid "Docked"
+msgstr ""
+
+#: src/spaceObjects/spaceshipParts/dock.cpp:202
+msgctxt "docks"
+msgid "Moving in"
+msgstr ""
+
+#: src/spaceObjects/spaceshipParts/dock.cpp:203
+msgctxt "docks"
+msgid "Moving out"
+msgstr ""
+
+#: src/spaceObjects/spaceshipParts/dock.cpp:204
+#: src/spaceObjects/spaceshipParts/dock.cpp:218
+msgctxt "docks"
+msgid "Unknown"
+msgstr ""
+
+#: src/spaceObjects/spaceshipParts/dock.cpp:212
+msgctxt "docks"
+msgid "Launcher"
+msgstr ""
+
+#: src/spaceObjects/spaceshipParts/dock.cpp:213
+msgctxt "docks"
+msgid "Energy"
+msgstr ""
+
+#: src/spaceObjects/spaceshipParts/dock.cpp:214
+msgctxt "docks"
+msgid "Missiles"
+msgstr ""
+
+#: src/spaceObjects/spaceshipParts/dock.cpp:215
+msgctxt "docks"
+msgid "Thermic"
+msgstr ""
+
+#: src/spaceObjects/spaceshipParts/dock.cpp:216
+msgctxt "docks"
+msgid "Repair"
+msgstr ""
+
+#: src/spaceObjects/spaceshipParts/dock.cpp:217
+msgctxt "docks"
+msgid "Stock"
 msgstr ""

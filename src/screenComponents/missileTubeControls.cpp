@@ -21,7 +21,7 @@ GuiMissileTubeControls::GuiMissileTubeControls(GuiContainer* owner, string id, P
         TubeRow row;
         row.layout = new GuiAutoLayout(this, id + "_ROW_" + string(n), LayoutHorizontalLeftToRight);
         row.layout->setSize(GuiElement::GuiSizeMax, 50);
-        row.load_button = new GuiButton(row.layout, id + "_" + string(n) + "_LOAD_BUTTON", "Load", [this, n]() {
+        row.load_button = new GuiButton(row.layout, id + "_" + string(n) + "_LOAD_BUTTON", tr("missile","Load"), [this, n]() {
             if (!target_spaceship)
                 return;
             if (target_spaceship->weapon_tube[n].isEmpty())
@@ -37,7 +37,7 @@ GuiMissileTubeControls::GuiMissileTubeControls(GuiContainer* owner, string id, P
             }
         });
         row.load_button->setSize(130, 50);
-        row.fire_button = new GuiButton(row.layout, id + "_" + string(n) + "_FIRE_BUTTON", "Fire", [this, n]() {
+        row.fire_button = new GuiButton(row.layout, id + "_" + string(n) + "_FIRE_BUTTON", tr("missile","Fire"), [this, n]() {
             if (!target_spaceship)
                 return;
             if (target_spaceship->weapon_tube[n].isLoaded())
@@ -57,7 +57,7 @@ GuiMissileTubeControls::GuiMissileTubeControls(GuiContainer* owner, string id, P
         pdi->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
         row.loading_bar = new GuiProgressbar(row.layout, id + "_" + string(n) + "_PROGRESS", 0, 1.0, 0);
         row.loading_bar->setColor(sf::Color(128, 128, 128))->setSize(200, 50);
-        row.loading_label = new GuiLabel(row.loading_bar, id + "_" + string(n) + "_PROGRESS_LABEL", "Loading", 35);
+        row.loading_label = new GuiLabel(row.loading_bar, id + "_" + string(n) + "_PROGRESS_LABEL", tr("missile","Loading"), 35);
         row.loading_label->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
 
         rows[n] = row;

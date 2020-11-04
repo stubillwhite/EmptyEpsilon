@@ -146,11 +146,11 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
     if (gameGlobalInfo->use_system_damage){
         if (gameGlobalInfo->use_nano_repair_crew)
         {
-            (new GuiKeyValueDisplay(icon_layout, "SYSTEM_HEALTH", 0.9, tr("health"), ""))->setIcon("gui/icons/hull")->setTextSize(30)->setSize(150, GuiElement::GuiSizeMax);
-            (new GuiKeyValueDisplay(icon_layout, "SYSTEM_HEAT", 0.9, tr("heat"), ""))->setIcon("gui/icons/status_overheat")->setTextSize(30)->setSize(150, GuiElement::GuiSizeMax);
-            (new GuiKeyValueDisplay(icon_layout, "SYSTEM_POWER", 0.9, tr("power"), ""))->setIcon("gui/icons/energy")->setTextSize(30)->setSize(150, GuiElement::GuiSizeMax);
-            (new GuiKeyValueDisplay(icon_layout, "SYSTEM_COOLANT", 0.9, tr("coolant"), ""))->setIcon("gui/icons/coolant")->setTextSize(30)->setSize(150, GuiElement::GuiSizeMax);
-            (new GuiKeyValueDisplay(icon_layout, "SYSTEM_REPAIR", 0.9, tr("repair"), ""))->setIcon("gui/icons/system_health")->setTextSize(30)->setSize(150, GuiElement::GuiSizeMax);
+            (new GuiKeyValueDisplay(icon_layout, "SYSTEM_HEALTH", 0.9, tr("title", "health"), ""))->setIcon("gui/icons/hull")->setTextSize(30)->setSize(150, GuiElement::GuiSizeMax);
+            (new GuiKeyValueDisplay(icon_layout, "SYSTEM_HEAT", 0.9, tr("title", "heat"), ""))->setIcon("gui/icons/status_overheat")->setTextSize(30)->setSize(150, GuiElement::GuiSizeMax);
+            (new GuiKeyValueDisplay(icon_layout, "SYSTEM_POWER", 0.9, tr("title", "power"), ""))->setIcon("gui/icons/energy")->setTextSize(30)->setSize(150, GuiElement::GuiSizeMax);
+            (new GuiKeyValueDisplay(icon_layout, "SYSTEM_COOLANT", 0.9, tr("title", "coolant"), ""))->setIcon("gui/icons/coolant")->setTextSize(30)->setSize(150, GuiElement::GuiSizeMax);
+            (new GuiKeyValueDisplay(icon_layout, "SYSTEM_REPAIR", 0.9, tr("title", "repair"), ""))->setIcon("gui/icons/system_health")->setTextSize(30)->setSize(150, GuiElement::GuiSizeMax);
         } else {
             (new GuiImage(icon_layout, "SYSTEM_HEALTH_ICON", "gui/icons/hull"))->setSize(150, GuiElement::GuiSizeMax);
             (new GuiImage(icon_layout, "HEAT_ICON", "gui/icons/status_overheat"))->setSize(100, GuiElement::GuiSizeMax);
@@ -474,20 +474,20 @@ void EngineeringScreen::onDraw(sf::RenderTarget& window)
         if (selected_system != SYS_None)
         {
             ShipSystem& system = my_spaceship->systems[selected_system];
-            power_label->setText("Power: " + string(int(system.power_level * 100)) + "%/" + string(int(system.power_request * 100)) + "%");
+            power_label->setText(tr("Power: {power_level}%/{power_request}%").format({{"power_level", string(int(system.power_request * 100))},{"power_request", string(int(system.power_request * 100))}}));
             power_slider->setValue(system.power_request);
-            coolant_label->setText("Coolant: " + string(int(system.coolant_level / my_spaceship->max_coolant_per_system * 100)) + "%/" + string(int(std::min(system.coolant_request, my_spaceship->max_coolant) / my_spaceship->max_coolant_per_system * 100)) + "%");
+            coolant_label->setText(tr("Coolant: {coolant_level}%/{coolant_request}%").format({{"coolant_level", string(int(system.coolant_level / my_spaceship->max_coolant_per_system * 100))},{"coolant_request", string(int(std::min(system.coolant_request, my_spaceship->max_coolant) / my_spaceship->max_coolant_per_system * 100))}}));
             coolant_slider->setEnable(!my_spaceship->auto_coolant_enabled);
             coolant_slider->setRange(0.0, my_spaceship->max_coolant_per_system);
             coolant_slider->setValue(std::min(system.coolant_request, my_spaceship->max_coolant));
 
             if (gameGlobalInfo->use_nano_repair_crew)
             {
-                coolant_label->setText("Coolant: " + string(system.coolant_level, 1) + " / " + string(my_spaceship->max_coolant_per_system, 1) + "\t\t (Target: " + string(system.coolant_request, 1)+")");
-                power_label->setText("Power: " + string(int(system.power_level * 100)) + "% \t\t (Target: " + string(int(system.power_request * 100)) + "%)");
+                coolant_label->setText(tr("Coolant: {coolant_level} / {coolant_max}\t\t (Target: {coolant_request})").format({{"coolant_level", string(system.coolant_level, 1)},{"coolant_max", string(my_spaceship->max_coolant_per_system, 1)},{"coolant_request", string(system.coolant_request, 1)}}));
+                power_label->setText(tr("Power: {power_level}% \t\t (Target: {power_request}%)").format({{"power_level", string(int(system.power_level * 100))},{"power_request", string(int(system.power_request * 100))}}));
                 if (gameGlobalInfo->use_system_damage)
                 {
-                    repair_label->setText("Repair: " + string(system.repair_level, 1) + " / " + string(my_spaceship->max_repair_per_system, 1) + "\t\t (Target: " + string(system.repair_request, 1)+")");
+                    repair_label->setText(tr("Repair: {repair_level} / {repair_max}\t\t (Target: {repair_request})").format({{"repair_level", string(system.repair_level, 1)},{"repair_max", string(my_spaceship->max_repair_per_system, 1)},{"repair_request", string(system.repair_request, 1)}}));
                     repair_slider->setEnable(!my_spaceship->auto_repair_enabled);
                     repair_slider->setRange(0.0, my_spaceship->max_repair_per_system);
                     repair_slider->setValue(std::min(system.repair_request, my_spaceship->max_repair));

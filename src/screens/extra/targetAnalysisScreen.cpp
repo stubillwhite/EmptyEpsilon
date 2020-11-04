@@ -69,7 +69,7 @@ TargetAnalysisScreen::TargetAnalysisScreen(GuiContainer *owner)
     right_col->setPosition(-25, 50, ATopRight)->setSize(400, GuiElement::GuiSizeMax);
     right_col->setMargins(20, 20, 20, 20);
     
-    (new GuiLabel(left_col, "TITLE", "Basic Informations", 30))
+    (new GuiLabel(left_col, "TITLE", tr("Basic Informations"), 30))
         ->addBackground()
         ->setAlignment(ACenter)
         ->setPosition(0, 0, ABottomCenter)
@@ -92,7 +92,7 @@ TargetAnalysisScreen::TargetAnalysisScreen(GuiContainer *owner)
     info_hull = new GuiKeyValueDisplay(left_col, "SCIENCE_HULL", 0.4, tr("science", "Hull"), "");
     info_hull->setSize(GuiElement::GuiSizeMax, 30);
 
-    (new GuiLabel(left_col, "TITLE", "Description", 30))
+    (new GuiLabel(left_col, "TITLE", tr("Description"), 30))
         ->addBackground()
         ->setAlignment(ACenter)
         ->setPosition(0, 0, ABottomCenter)
@@ -101,7 +101,7 @@ TargetAnalysisScreen::TargetAnalysisScreen(GuiContainer *owner)
     info_description = new GuiScrollText(left_col, "SCIENCE_DESC", "");
     info_description->setTextSize(28)->setMargins(20, 20, 0, 0)->setSize(GuiElement::GuiSizeMax, 150);
 
-    (new GuiLabel(left_col, "TITLE", "Additionnal Informations", 30))
+    (new GuiLabel(left_col, "TITLE", tr("Additionnal Informations"), 30))
         ->addBackground()
         ->setAlignment(ACenter)
         ->setPosition(0, 0, ABottomCenter)
@@ -114,7 +114,7 @@ TargetAnalysisScreen::TargetAnalysisScreen(GuiContainer *owner)
         info_other[n]->hide();
     }
     
-    (new GuiLabel(center_col, "TITLE", "Template Informations", 30))
+    (new GuiLabel(center_col, "TITLE", tr("Template Informations"), 30))
         ->addBackground()
         ->setAlignment(ACenter)
         ->setPosition(0, 0, ABottomCenter)
@@ -127,7 +127,7 @@ TargetAnalysisScreen::TargetAnalysisScreen(GuiContainer *owner)
         info_template[n]->hide();
     }
 
-    (new GuiLabel(center_col, "TITLE", "Systems", 30))
+    (new GuiLabel(center_col, "TITLE", tr("Systems"), 30))
         ->addBackground()
         ->setAlignment(ACenter)
         ->setPosition(0, 0, ABottomCenter)
@@ -141,7 +141,7 @@ TargetAnalysisScreen::TargetAnalysisScreen(GuiContainer *owner)
     }
     
     // Advanced scan data.
-    (new GuiLabel(right_col, "TITLE", "Frequencies", 30))
+    (new GuiLabel(right_col, "TITLE", tr("Frequencies"), 30))
         ->addBackground()
         ->setAlignment(ACenter)
         ->setPosition(0, 0, ABottomCenter)
@@ -159,7 +159,7 @@ TargetAnalysisScreen::TargetAnalysisScreen(GuiContainer *owner)
         info_beam_frequency->hide();
     }
 
-    (new GuiLabel(right_col, "TITLE", "Signatures", 30))
+    (new GuiLabel(right_col, "TITLE", tr("Signatures"), 30))
         ->addBackground()
         ->setAlignment(ACenter)
         ->setPosition(0, 0, ABottomCenter)
@@ -194,19 +194,19 @@ void TargetAnalysisScreen::onDraw(sf::RenderTarget &window)
         
         if (!obj)
         {
-            indicator_label->setText("No object targeted");
+            indicator_label->setText(tr("No object targeted"));
             indicator_overlay->show();
             analysis_overlay->hide();
         }
         else if (obj->getScannedStateFor(my_spaceship) < SS_FullScan)
         {
-            indicator_label->setText("Object not fully scanned");
+            indicator_label->setText(tr("Object not fully scanned"));
             indicator_overlay->show();
             analysis_overlay->hide();
         }
         else
         {
-            indicator_label->setText("Object not fully scanned");
+            indicator_label->setText(tr("Object not fully scanned"));
             indicator_overlay->hide();
             analysis_overlay->show();
             
@@ -332,17 +332,17 @@ void TargetAnalysisScreen::onDraw(sf::RenderTarget &window)
             signal = std::max(0.0f, info.electrical - distance_variance);
             info_electrical_signal_band->setMaxAmp(signal);
             info_electrical_signal_band->setNoiseError(std::max(0.0f, (signal - 1.0f) / 10));
-            info_electrical_signal_label->setText("Electrical: " + string(signal) + " MJ");
+            info_electrical_signal_label->setText(tr("Electrical: ") + string(signal) + " MJ");
 
             signal = std::max(0.0f, info.gravity - distance_variance);
             info_gravity_signal_band->setMaxAmp(signal);
             info_gravity_signal_band->setPeriodError(std::max(0.0f, (signal - 1.0f) / 10));
-            info_gravity_signal_label->setText("Gravitational: " + string(signal) + " dN");
+            info_gravity_signal_label->setText(tr("Gravitational: ") + string(signal) + " dN");
 
             signal = std::max(0.0f, info.biological - distance_variance);
             info_biological_signal_band->setMaxAmp(signal);
             info_biological_signal_band->setPhaseError(std::max(0.0f, (signal - 1.0f) / 10));
-            info_biological_signal_label->setText("Biological: " + string(signal) + " um");
+            info_biological_signal_label->setText(tr("Biological: ") + string(signal) + " um");
         }
     }
 }

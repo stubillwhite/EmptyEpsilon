@@ -32,20 +32,20 @@ void GuiSystemEffectsList::onDraw(sf::RenderTarget& window)
         
         if (primary_info_visible)
         {
-            addSystemEffect("Health", string(int(health * 100)) + "%");
-            addSystemEffect("Power", string(int(power * 100)) + "%");
-            addSystemEffect("Heat", string(int(heat * 100)) + "%");
-            addSystemEffect("Coolant", string(coolant,1));
+            addSystemEffect(tr("Health"), string(int(health * 100)) + "%");
+            addSystemEffect(tr("Power"), string(int(power * 100)) + "%");
+            addSystemEffect(tr("Heat"), string(int(heat * 100)) + "%");
+            addSystemEffect(tr("Coolant"), string(coolant,1));
             if (gameGlobalInfo->use_nano_repair_crew)
-                addSystemEffect("Repair", string(repair,1));
+                addSystemEffect(tr("Repair"), string(repair,1));
             if (my_spaceship->getSystemInstabilityFactor(selected_system) > 0.0)
-                addSystemEffect("Instability", string(int(instability * 100)) + "%");
+                addSystemEffect(tr("Instability"), string(int(instability * 100)) + "%");
         } 
         
         addSystemEnergy(selected_system);
 
         if (health_max < 1.0)
-            addSystemEffect("Maximal health", string(int(health_max * 100)) + "%");
+            addSystemEffect(tr("Maximal health"), string(int(health_max * 100)) + "%");
         switch(selected_system)
         {
         case SYS_Reactor:

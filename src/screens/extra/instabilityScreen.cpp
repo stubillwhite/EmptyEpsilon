@@ -109,7 +109,7 @@ InstabilityControlScreen::InstabilityControlScreen(GuiContainer* owner, ECrewPos
     instability_info->setSize(350, 250);
     instability_info->setPosition(0, 0, ACenter);
     
-    instability_sum_label = new GuiLabel(instability_info, "INSTABILITY_SUM_LABEL", "Instability Level : ", 30);
+    instability_sum_label = new GuiLabel(instability_info, "INSTABILITY_SUM_LABEL", tr("Instability Level : "), 30);
    
     for(int n=0; n<4; n++)
     {
@@ -191,7 +191,7 @@ void InstabilityControlScreen::onDraw(sf::RenderTarget& window)
             effectiveness_label->setText(string(int(effectiveness * 100)) + "%");
             
             updateInstability(window, instability_container);
-            instability_sum_label->setText("Instability Level : "+ string(int(system.instability_level * 100)) + "%");
+            instability_sum_label->setText(tr("Instability Level : ")+ string(int(system.instability_level * 100)) + "%");
         }
     }
 }

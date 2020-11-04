@@ -48,44 +48,44 @@ GuiObjectCreationView::GuiObjectCreationView(GuiContainer* owner)
         y += 30;
     }
 
-    (new GuiButton(box, "CREATE_ARTIFACT", "Artifact", [this]() {
+    (new GuiButton(box, "CREATE_ARTIFACT", tr("Artifact"), [this]() {
         setCreateScript("Artifact()");
     }))->setTextSize(20)->setPosition(-350, y, ATopRight)->setSize(300, 30);
     y += 30;
-    (new GuiButton(box, "CREATE_WARP_JAMMER", "Warp Jammer", [this]() {
+    (new GuiButton(box, "CREATE_WARP_JAMMER", tr("Warp Jammer"), [this]() {
         setCreateScript("WarpJammer():setRotation(random(0, 360)):setFactionId(" + string(faction_selector->getSelectionIndex()) + ")");
     }))->setTextSize(20)->setPosition(-350, y, ATopRight)->setSize(300, 30);
     y += 30;
-    (new GuiButton(box, "CREATE_MINE", "Mine", [this]() {
+    (new GuiButton(box, "CREATE_MINE", tr("Mine"), [this]() {
         setCreateScript("Mine():setFactionId(" + string(faction_selector->getSelectionIndex()) + ")");
     }))->setTextSize(20)->setPosition(-350, y, ATopRight)->setSize(300, 30);
     y += 30;
     // Default supply drop values copied from scripts/supply_drop.lua
-    (new GuiButton(box, "CREATE_SUPPLY_DROP", "Supply Drop", [this]() {
+    (new GuiButton(box, "CREATE_SUPPLY_DROP", tr("Supply Drop"), [this]() {
         setCreateScript("SupplyDrop():setFactionId(" + string(faction_selector->getSelectionIndex()) + "):setEnergy(500):setWeaponStorage('Nuke', 1):setWeaponStorage('Homing', 4):setWeaponStorage('Mine', 2):setWeaponStorage('EMP', 1)");
     }))->setTextSize(20)->setPosition(-350, y, ATopRight)->setSize(300, 30);
     y += 30;
-    (new GuiButton(box, "CREATE_ASTEROID", "Asteroid", [this]() {
+    (new GuiButton(box, "CREATE_ASTEROID", tr("Asteroid"), [this]() {
         setCreateScript("Asteroid()");
     }))->setTextSize(20)->setPosition(-350, y, ATopRight)->setSize(300, 30);
     y += 30;
-    (new GuiButton(box, "CREATE_VISUAL_ASTEROID", "Visual Asteroid", [this]() {
+    (new GuiButton(box, "CREATE_VISUAL_ASTEROID", tr("Visual Asteroid"), [this]() {
         setCreateScript("VisualAsteroid()");
     }))->setTextSize(20)->setPosition(-350, y, ATopRight)->setSize(300, 30);
     y += 30;
-    (new GuiButton(box, "CREATE_PLANET", "Planet", [this]() {
+    (new GuiButton(box, "CREATE_PLANET", tr("Planet"), [this]() {
         setCreateScript("Planet()");
     }))->setTextSize(20)->setPosition(-350, y, ATopRight)->setSize(300, 30);
     y += 30;
-    (new GuiButton(box, "CREATE_BLACKHOLE", "BlackHole", [this]() {
+    (new GuiButton(box, "CREATE_BLACKHOLE", tr("BlackHole"), [this]() {
         setCreateScript("BlackHole()");
     }))->setTextSize(20)->setPosition(-350, y, ATopRight)->setSize(300, 30);
     y += 30;
-    (new GuiButton(box, "CREATE_NEBULA", "Nebula", [this]() {
+    (new GuiButton(box, "CREATE_NEBULA", tr("Nebula"), [this]() {
         setCreateScript("Nebula()");
     }))->setTextSize(20)->setPosition(-350, y, ATopRight)->setSize(300, 30);
     y += 30;
-    (new GuiButton(box, "CREATE_WORMHOLE", "Worm Hole", [this]() {
+    (new GuiButton(box, "CREATE_WORMHOLE", tr("Worm Hole"), [this]() {
         setCreateScript("WormHole()");
     }))->setTextSize(20)->setPosition(-350, y, ATopRight)->setSize(300, 30);
     y += 30;
@@ -116,7 +116,7 @@ GuiObjectCreationView::GuiObjectCreationView(GuiContainer* owner)
     }
     player_ship_listbox->hide();
 
-    (new GuiButton(box, "CLOSE_BUTTON", "Cancel", [this]() {
+    (new GuiButton(box, "CLOSE_BUTTON", tr("button", "Cancel"), [this]() {
         this->hide();
     }))->setPosition(20, -20, ABottomLeft)->setSize(300, 50);
 }

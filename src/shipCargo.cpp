@@ -127,29 +127,29 @@ ShipCargo::Entries ShipCargo::getEntries()
     P<ShipTemplate> ship_template = ShipTemplate::getTemplate(template_name);
     if (ship_template)
     {
-        string type = ship_template->getType() != ShipTemplate::TemplateType::Drone ? "Ship" : "Drone";
-        result.push_back(std::make_tuple("", "type", type));
-        result.push_back(std::make_tuple("gui/icons/hull", "hull", string(int(100 * hull_strength / ship_template->hull)) + "%"));
+        string type = ship_template->getType() != ShipTemplate::TemplateType::Drone ? tr("Ship") : tr("Drone");
+        result.push_back(std::make_tuple("", tr("Type"), type));
+        result.push_back(std::make_tuple("gui/icons/hull", tr("Hull"), string(int(100 * hull_strength / ship_template->hull)) + "%"));
     }
-    result.push_back(std::make_tuple("", "model", template_name));
+    result.push_back(std::make_tuple("", tr("Model"), template_name));
 
     if (has_reactor)
-        result.push_back(std::make_tuple("", "reactor ?", "Yes"));
+        result.push_back(std::make_tuple("", tr("Reactor ?"), tr("Yes")));
     else
-        result.push_back(std::make_tuple("", "reactor ?", "No"));
+        result.push_back(std::make_tuple("", tr("Reactor ?"), tr("No")));
 
     float velocity = ship_template->impulse_speed / 1000 * 60;
-    result.push_back(std::make_tuple("", "speed", string(velocity, 1) + DISTANCE_UNIT_1K + "/min"));
+    result.push_back(std::make_tuple("", tr("Speed"), string(velocity, 1) + DISTANCE_UNIT_1K + "/min"));
 
     if (ship_template->weapon_tube_count > 0)
-        result.push_back(std::make_tuple("", "missiles Tubes", ship_template->weapon_tube_count));
+        result.push_back(std::make_tuple("", tr("Missiles tubes"), ship_template->weapon_tube_count));
 
     int beam_weapons_count = 0;
     for(int n=0; n<max_beam_weapons; n++)
         if (ship_template->beams[n].getRange() > 0)
             beam_weapons_count += 1;
     if (beam_weapons_count > 0)
-        result.push_back(std::make_tuple("", "beams Lasers", beam_weapons_count));
+        result.push_back(std::make_tuple("", tr("Beams lasers"), beam_weapons_count));
 
     return result;
 }

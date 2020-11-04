@@ -405,7 +405,7 @@ GuiShipTweakShields::GuiShipTweakShields(GuiContainer* owner)
     GuiAutoLayout* right_col = new GuiAutoLayout(this, "RIGHT_LAYOUT", GuiAutoLayout::LayoutVerticalTopToBottom);
     right_col->setPosition(-25, 25, ATopRight)->setSize(300, GuiElement::GuiSizeMax);
 
-    (new GuiLabel(left_col, "", "Number of Shields", 20))->setSize(GuiElement::GuiSizeMax, 30);
+    (new GuiLabel(left_col, "", tr("Number of Shields"), 20))->setSize(GuiElement::GuiSizeMax, 40);
     shields_count = new GuiSlider(right_col, "", 0, 8, 0, [this](int value) {
         target->shield_count = value;
     });
@@ -534,7 +534,7 @@ GuiShipTweakBeamweapons::GuiShipTweakBeamweapons(GuiContainer* owner)
     });
     damage_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 30);
     
-    (new GuiLabel(right_col, "", "Damage Type:", 20))->setSize(GuiElement::GuiSizeMax, 30);
+    (new GuiLabel(right_col, "", tr("beam", "Damage Type:"), 20))->setSize(GuiElement::GuiSizeMax, 30);
     damage_type_slider = new GuiSelector(right_col, "", [this](int index, string value)
     {
         target->beam_weapons[beam_index].setDamageType(EDamageType(index));
@@ -1152,7 +1152,7 @@ GuiShipTweakMessages::GuiShipTweakMessages(GuiContainer* owner)
     color_message = sf::Color::White;
     message = "";
 
-    (new GuiLabel(this, "", "Message:", 30))->setPosition(100, 50, ATopLeft);
+    (new GuiLabel(this, "", tr("message", "Message:"), 30))->setPosition(100, 50, ATopLeft);
     message_entry = new GuiTextEntry(this, "", "");
     message_entry->setSize(550, 50);
     message_entry->setPosition(50, 70, ATopLeft);
@@ -1168,17 +1168,17 @@ GuiShipTweakMessages::GuiShipTweakMessages(GuiContainer* owner)
     message_delete->setIcon("gui/icons/self-destruct");
     
     // Choose the target
-    (new GuiLabel(this, "", "Target:", 30))->setSize(100, 40)->setPosition(50, 130, ATopLeft);
+    (new GuiLabel(this, "", tr("message", "Target:"), 30))->setSize(100, 40)->setPosition(50, 130, ATopLeft);
     GuiSelector* target_selector = new GuiSelector(this, "", [this](int index, string value)
     {
     });
     target_selector->setSize(300, 40)->setPosition(200, 130, ATopLeft);
-    target_selector->addEntry("this player", "this player");
-    target_selector->addEntry("all players", "all players");
+    target_selector->addEntry(tr("message", "this player"), "this player");
+    target_selector->addEntry(tr("message", "all players"), "all players");
     target_selector->setSelectionIndex(0);
     
     // Choose the screen
-    (new GuiLabel(this, "", "Screen:", 30))->setSize(100, 40)->setPosition(50, 170, ATopLeft);
+    (new GuiLabel(this, "", tr("message", "Screen:"), 30))->setSize(100, 40)->setPosition(50, 170, ATopLeft);
     GuiSelector* screen_selector = new GuiSelector(this, "", [this](int index, string value)
     {
     });
@@ -1195,7 +1195,7 @@ GuiShipTweakMessages::GuiShipTweakMessages(GuiContainer* owner)
     right_col->setPosition(-25, 200, ATopRight)->setSize(300, GuiElement::GuiSizeMax);
 
     // Left column
-    (new GuiLabel(left_col, "", "into log", 30))->setSize(GuiElement::GuiSizeMax, 100);
+    (new GuiLabel(left_col, "", tr("message", "into log"), 30))->setSize(GuiElement::GuiSizeMax, 100);
 
     // Choose the color
     GuiSelector* color_selector = new GuiSelector(left_col, "", [this](int index, string value)
@@ -1219,18 +1219,18 @@ GuiShipTweakMessages::GuiShipTweakMessages(GuiContainer* owner)
             color_message = sf::Color::Cyan;
     });
     color_selector->setSize(GuiElement::GuiSizeMax, 40);
-    color_selector->addEntry("white", "white");
-    color_selector->addEntry("black", "black");
-    color_selector->addEntry("red", "red");
-    color_selector->addEntry("green", "green");
-    color_selector->addEntry("blue", "blue");
-    color_selector->addEntry("yellow", "yellow");
-    color_selector->addEntry("magenta", "magenta");
-    color_selector->addEntry("cyan", "cyan");
+    color_selector->addEntry(tr("message", "white"), "white");
+    color_selector->addEntry(tr("message", "black"), "black");
+    color_selector->addEntry(tr("message", "red"), "red");
+    color_selector->addEntry(tr("message", "green"), "green");
+    color_selector->addEntry(tr("message", "blue"), "blue");
+    color_selector->addEntry(tr("message", "yellow"), "yellow");
+    color_selector->addEntry(tr("message", "magenta"), "magenta");
+    color_selector->addEntry(tr("message", "cyan"), "cyan");
     color_selector->setSelectionIndex(0);
 
     // Send the message
-    send_message_log = new GuiButton(left_col, "", "Send message", [this, target_selector, screen_selector]() {
+    send_message_log = new GuiButton(left_col, "", tr("message", "Send message"), [this, target_selector, screen_selector]() {
         if (target_selector->getSelectionValue() == "all players")
         {
             for(int n=0; n<GameGlobalInfo::max_player_ships; n++)
@@ -1246,9 +1246,9 @@ GuiShipTweakMessages::GuiShipTweakMessages(GuiContainer* owner)
     send_message_log->setSize(GuiElement::GuiSizeMax, 40);
 
     // Right column
-    (new GuiLabel(right_col, "", "On screen", 30))->setSize(GuiElement::GuiSizeMax, 100);
+    (new GuiLabel(right_col, "", tr("message", "On screen"), 30))->setSize(GuiElement::GuiSizeMax, 100);
 
-    (new GuiButton(right_col, "", "Send message", [this, target_selector, screen_selector]() {
+    (new GuiButton(right_col, "", tr("message", "Send message"), [this, target_selector, screen_selector]() {
         if (target_selector->getSelectionValue() == "all players")
         {
             for(int n=0; n<GameGlobalInfo::max_player_ships; n++)
@@ -1262,7 +1262,7 @@ GuiShipTweakMessages::GuiShipTweakMessages(GuiContainer* owner)
             target->addCustomMessage(ECrewPosition(screen_selector->getSelectionIndex()), getCrewPositionName(ECrewPosition(screen_selector->getSelectionIndex())) + "_message", message);
     }))->setSize(GuiElement::GuiSizeMax, 40);
 
-    (new GuiButton(right_col, "", "Remove previous messages", [this, target_selector, screen_selector]() {
+    (new GuiButton(right_col, "", tr("message", "Remove previous messages"), [this, target_selector, screen_selector]() {
         if (target_selector->getSelectionValue() == "all players")
         {
             for(int n=0; n<GameGlobalInfo::max_player_ships; n++)
@@ -1318,7 +1318,7 @@ GuiObjectTweakBase::GuiObjectTweakBase(GuiContainer* owner)
     heading_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 40);
     
     // Set object's z position.
-    (new GuiLabel(left_col, "", "Z Position:", 30))->setSize(GuiElement::GuiSizeMax, 50);
+    (new GuiLabel(left_col, "", tr("Z Position:"), 30))->setSize(GuiElement::GuiSizeMax, 50);
     position_z_slider = new GuiSlider(left_col, "", -300.0, 300.0, 0.0, [this](float value) {
         target->setPositionZ(value);
     });
@@ -1338,19 +1338,19 @@ GuiObjectTweakBase::GuiObjectTweakBase(GuiContainer* owner)
     
     // Right column
     // Radar signature
-	(new GuiLabel(right_col, "", "Gravity signature (blue):", 30))->setSize(GuiElement::GuiSizeMax, 50);
+	(new GuiLabel(right_col, "", tr("Gravity signature (blue):"), 30))->setSize(GuiElement::GuiSizeMax, 50);
 	gravity_slider = new GuiSlider(right_col, "", -100.0, 100.0, 0.0, [this](float value) {
         target->radar_signature.gravity = value / 100.0f;
     });
     gravity_slider->addSnapValue(0.0f, 5.0f);
     gravity_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 40);
- 	(new GuiLabel(right_col, "", "Energy signature (red):", 30))->setSize(GuiElement::GuiSizeMax, 50);
+ 	(new GuiLabel(right_col, "", tr("Energy signature (red):"), 30))->setSize(GuiElement::GuiSizeMax, 50);
 	electrical_slider = new GuiSlider(right_col, "", -100.0, 100.0, 0.0, [this](float value) {
         target->radar_signature.electrical = value / 100.0f;
     });
     electrical_slider->addSnapValue(0.0f, 5.0f);
     electrical_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 40);
- 	(new GuiLabel(right_col, "", "Biology signature (green):", 30))->setSize(GuiElement::GuiSizeMax, 50);
+ 	(new GuiLabel(right_col, "", tr("Biology signature (green):"), 30))->setSize(GuiElement::GuiSizeMax, 50);
 	biological_slider = new GuiSlider(right_col, "", -100.0, 100.0, 0.0, [this](float value) {
         target->radar_signature.biological = value / 100.0f;
     });
@@ -1406,7 +1406,7 @@ GuiShipTweakDescription::GuiShipTweakDescription(GuiContainer* owner)
     value_col->setPosition(-50, 25, ATopRight)->setSize(130, GuiElement::GuiSizeMax);
 
     // Left column
-    (new GuiLabel(left_col, "", "Description", 40))->setSize(GuiElement::GuiSizeMax, 50);
+    (new GuiLabel(left_col, "", tr("title", "Description"), 40))->setSize(GuiElement::GuiSizeMax, 50);
     // Edit object's callsign.
     (new GuiLabel(left_col, "", tr("Callsign:"), 30))->setSize(GuiElement::GuiSizeMax, 50);
 
@@ -1448,8 +1448,8 @@ GuiShipTweakDescription::GuiShipTweakDescription(GuiContainer* owner)
     });
     
     // Right column
-    (new GuiLabel(label_col, "", "Label", 40))->setSize(GuiElement::GuiSizeMax, 50);
-    (new GuiLabel(value_col, "", "Value", 40))->setSize(GuiElement::GuiSizeMax, 50);
+    (new GuiLabel(label_col, "", tr("title", "Label"), 40))->setSize(GuiElement::GuiSizeMax, 50);
+    (new GuiLabel(value_col, "", tr("title", "Value"), 40))->setSize(GuiElement::GuiSizeMax, 50);
 
     for(int n = 0; n < 10; n++)
     {

@@ -197,11 +197,11 @@ string getDockStateName(EDockState state)
 {
     switch (state)
     {
-    case Empty: return "Empty";
-    case Docked: return "Docked";
-    case MovingIn: return "Moving in";
-    case MovingOut: return "Moving out";
-    default: return "Unknown";
+    case Empty: return tr("docks","Empty");
+    case Docked: return tr("docks","Docked");
+    case MovingIn: return tr("docks","Moving in");
+    case MovingOut: return tr("docks","Moving out");
+    default: return tr("docks","Unknown");
     }
 }
 
@@ -209,13 +209,13 @@ string getDockTypeName(EDockType dockType)
 {
     switch (dockType)
     {
-    case Dock_Launcher: return "Launcher";
-    case Dock_Energy: return "Energy";
-    case Dock_Weapons: return "Missiles";
-    case Dock_Thermic: return "Thermic";
-    case Dock_Repair: return "Repair";
-    case Dock_Stock: return "Stock";
-    default: return "Unknown";
+    case Dock_Launcher: return tr("docks","Launcher");
+    case Dock_Energy: return tr("docks","Energy");
+    case Dock_Weapons: return tr("docks","Missiles");
+    case Dock_Thermic: return tr("docks","Thermic");
+    case Dock_Repair: return tr("docks","Repair");
+    case Dock_Stock: return tr("docks","Stock");
+    default: return tr("docks","Unknown");
     }
 }
 

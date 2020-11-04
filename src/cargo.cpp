@@ -1,3 +1,4 @@
+#include <i18n.h>
 #include "cargo.h"
 
 Cargo::Cargo(string multiplayerClassIdentifier) : MultiplayerObject(multiplayerClassIdentifier), energy_level(0), heat(0)
@@ -15,8 +16,8 @@ Cargo::Cargo(string multiplayerClassIdentifier) : MultiplayerObject(multiplayerC
 Cargo::Entries Cargo::getEntries()
 {
     Cargo::Entries result;
-    result.push_back(std::make_tuple("gui/icons/energy", "energy", int(energy_level)));
-    result.push_back(std::make_tuple("gui/icons/status_overheat", "heat", string(heat, 2)));
+    result.push_back(std::make_tuple("gui/icons/energy", tr("energy"), int(energy_level)));
+    result.push_back(std::make_tuple("gui/icons/status_overheat", tr("heat"), string(heat, 2)));
 
     for(int n = 0; n < MW_Count; n++)
         if (weapon_storage_max[n] > 0)

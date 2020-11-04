@@ -42,7 +42,7 @@ DockMasterScreen::DockMasterScreen(GuiContainer *owner)
     lateralPanel->setPosition(0, 0, ATopLeft);
     lateralPanel->setMargins(20, 20, 20, 20);
     
-    (new GuiLabel(lateralPanel, "TITLE", "docks list", 30))
+    (new GuiLabel(lateralPanel, "TITLE", tr("title","docks list"), 30))
         ->addBackground()
         ->setAlignment(ACenter)
         ->setPosition(0, 0, ABottomCenter)
@@ -80,7 +80,7 @@ DockMasterScreen::DockMasterScreen(GuiContainer *owner)
     bottomPanel->setPosition(0, 500, ATopRight);
 
     // Dock actions
-    (new GuiLabel(topPanel, "TITLE", "Dock management", 30))
+    (new GuiLabel(topPanel, "TITLE", tr("title","Dock management"), 30))
         ->addBackground()
         ->setAlignment(ACenter)
         ->setPosition(0, 0, ABottomCenter)
@@ -88,13 +88,13 @@ DockMasterScreen::DockMasterScreen(GuiContainer *owner)
 
     action_move = new GuiAutoLayout(topPanel, "ACTION_MOVE", GuiAutoLayout::LayoutVerticalColumns);
     action_move->setSize(GuiElement::GuiSizeMax, 50)->setPosition(0, 50, ATopCenter);
-    (new GuiLabel(action_move, "MOVE_DEST_LABEL", "Deliver to :", 30))->setAlignment(ACenterRight);
+    (new GuiLabel(action_move, "MOVE_DEST_LABEL", tr("Deliver to :"), 30))->setAlignment(ACenterRight);
     action_move_selector = new GuiSelector(action_move, "MOVE_DEST_SELECTOR", [this](int _idx, string value) {
         if (my_spaceship)
             my_spaceship->commandSetDockMoveTarget(index, value.toInt());
     });
 
-    action_move_button = new GuiButton(action_move, "MOVE_BUTTON", "Deliver", [this]() {
+    action_move_button = new GuiButton(action_move, "MOVE_BUTTON", tr("Deliver"), [this]() {
         if (my_spaceship)
             if (my_spaceship->getSystemEffectiveness(SYS_Docks) > 0)
             {
@@ -122,8 +122,8 @@ DockMasterScreen::DockMasterScreen(GuiContainer *owner)
     action_launch->setSize(GuiElement::GuiSizeMax, 50)->setPosition(0, 50, ATopCenter);
 
     (new GuiLabel(action_launch, "SPACE", " ", 30));
-    (new GuiLabel(action_launch, "ACTION_LAUNCH_LABEL", "Launch :", 30))->setAlignment(ACenterRight)->setMargins(20,20,20,20);
-    action_launch_button = new GuiButton(action_launch, "LAUNCH_DRONE_BUTTON", "Launch", [this]() {
+    (new GuiLabel(action_launch, "ACTION_LAUNCH_LABEL", tr("Launch :"), 30))->setAlignment(ACenterRight)->setMargins(20,20,20,20);
+    action_launch_button = new GuiButton(action_launch, "LAUNCH_DRONE_BUTTON", tr("Launch"), [this]() {
         if (my_spaceship)
             if (my_spaceship->getSystemEffectiveness(SYS_Docks) > 0)
             {
@@ -139,7 +139,7 @@ DockMasterScreen::DockMasterScreen(GuiContainer *owner)
     action_energy->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax)->setPosition(0, 50, ATopCenter);
 
     (new GuiLabel(action_energy, "SPACE", " ", 30));
-    (new GuiLabel(action_energy, "ACTION_ENERGY_LABEL", "Energy control :", 30))->setAlignment(ATopRight)->setMargins(10, 10, 10, 10);
+    (new GuiLabel(action_energy, "ACTION_ENERGY_LABEL", tr("Energy control :"), 30))->setAlignment(ATopRight)->setMargins(10, 10, 10, 10);
 
     GuiElement *energyControl = new GuiElement(action_energy, "ENERGY_CONTROL");
     energyControl->setSize(COLUMN_WIDTH, 50);
@@ -154,9 +154,9 @@ DockMasterScreen::DockMasterScreen(GuiContainer *owner)
     energy_bar = new GuiProgressbar(energy_slider, "ENERGY_BAR", 0.0, 10.0, 0.0);
     energy_bar->setColor(sf::Color(192, 192, 32, 128))->setText("Energy")->setDrawBackground(false)->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax)->setMargins(10, 0, 10, 0);
 
-    energy_main = new GuiKeyValueDisplay(energyControl, "ENERGY_MAIN", 0.45, "Energy Main", "");
+    energy_main = new GuiKeyValueDisplay(energyControl, "ENERGY_MAIN", 0.45, tr("docks","Energy Main"), "");
     energy_main->setSize(GuiElement::GuiSizeMax, 50)->setPosition(0, 50, ATopRight);
-    energy_cargo = new GuiKeyValueDisplay(energyControl, "ENERGY_CARGO", 0.45, "Energy Cargo", "");
+    energy_cargo = new GuiKeyValueDisplay(energyControl, "ENERGY_CARGO", 0.45, tr("docks","Energy Cargo"), "");
     energy_cargo->setSize(GuiElement::GuiSizeMax, 50)->setPosition(0, 100, ATopRight);
 
     action_weapons = new GuiAutoLayout(topPanel, "ACTION_WEAPONS", GuiAutoLayout::LayoutVerticalColumns);
@@ -167,9 +167,9 @@ DockMasterScreen::DockMasterScreen(GuiContainer *owner)
 
     weapons_layout_label = new GuiAutoLayout(table_weapons, "WEAPONS_LAYOUT_LABEL", GuiAutoLayout::LayoutVerticalColumns);
     weapons_layout_label -> setSize(GuiElement::GuiSizeMax, 40);
-    (new GuiLabel(weapons_layout_label, "", "Missiles", 20));
-    (new GuiLabel(weapons_layout_label, "", "Main", 20));
-    (new GuiLabel(weapons_layout_label, "", "Cargo", 20));
+    (new GuiLabel(weapons_layout_label, "", tr("Missiles"), 20));
+    (new GuiLabel(weapons_layout_label, "", tr("docks","Main"), 20));
+    (new GuiLabel(weapons_layout_label, "", tr("docks","Cargo"), 20));
     (new GuiLabel(weapons_layout_label, "", " ", 20));
     (new GuiLabel(weapons_layout_label, "", " ", 20));
 
@@ -178,7 +178,7 @@ DockMasterScreen::DockMasterScreen(GuiContainer *owner)
         weapons_layout[n] = new GuiAutoLayout(table_weapons, "WEAPONS_LAYOUT", GuiAutoLayout::LayoutVerticalColumns);
         weapons_layout[n]->setSize(GuiElement::GuiSizeMax, 40);
 
-        (new GuiLabel(weapons_layout[n], "", getMissileWeaponName(EMissileWeapons(n)), 20))->setSize(75, 30);
+        (new GuiLabel(weapons_layout[n], "", getLocaleMissileWeaponName(EMissileWeapons(n)), 20))->setSize(75, 30);
 
         weapons_stock_ship[n] = new GuiLabel(weapons_layout[n],"","0/20",20);
         weapons_stock_ship[n]->setPosition(75,0)->setSize(75, 30);
@@ -271,13 +271,13 @@ DockMasterScreen::DockMasterScreen(GuiContainer *owner)
 
     overlay = new GuiOverlay(this, "OVERLAY", sf::Color(0, 0, 0, 0));
     overlay->setBlocking(true)->setPosition(COLUMN_WIDTH, 100, ATopLeft)->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
-    overlay_label = new GuiLabel(overlay, "OVERLAY_LABEL", "Transporting cargo out", 30);
+    overlay_label = new GuiLabel(overlay, "OVERLAY_LABEL", tr("Transporting cargo out"), 30);
     overlay_label->setPosition(0, 0, ACenter)->setSize(COLUMN_WIDTH, 50);
     distance_bar = new GuiProgressbar(overlay, "DISTANCE_BAR", 0.0, 1.0, 0.0);
     distance_bar->setPosition(0, 50, ACenter)->setSize(COLUMN_WIDTH, 50);
     (new GuiPowerDamageIndicator(distance_bar, "DOCKS_DPI", SYS_Docks, ATopCenter, my_spaceship))->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
 
-    cancel_move_button = new GuiButton(overlay, "CANCEL_MOVE_BUTTON", "Cancel deliver", [this]() {
+    cancel_move_button = new GuiButton(overlay, "CANCEL_MOVE_BUTTON", tr("Cancel deliver"), [this]() {
         my_spaceship->commandCancelMoveCargo(index);
     });
     cancel_move_button->setPosition(0, 100, ACenter)->setSize(COLUMN_WIDTH, 50);
@@ -354,7 +354,7 @@ void DockMasterScreen::onDraw(sf::RenderTarget &window)
         case MovingIn:
             displayDroneDetails(dockData);
             overlay->setVisible(true);
-            overlay_label->setText("Incoming cargo");
+            overlay_label->setText(tr("Incoming cargo"));
             distance_bar->setVisible(true);
             distance_bar->setValue(dockData.current_distance);
             cancel_move_button->setVisible(true);
@@ -375,7 +375,7 @@ void DockMasterScreen::onDraw(sf::RenderTarget &window)
         case MovingOut:
             displayDroneDetails(dockData);
             overlay->setVisible(true);
-            overlay_label->setText("Outcoming cargo");
+            overlay_label->setText(tr("Outcoming cargo"));
             distance_bar->setVisible(true);
             distance_bar->setValue(dockData.current_distance);
             cancel_move_button->setVisible(true);
@@ -447,9 +447,9 @@ void DockMasterScreen::displayDroneDetails(Dock &dockData)
     float health = cargo->getHealth() / cargo->getMaxHealth();
     repair_bar->setValue(health);
     if (health == 1.0)
-        repair_label->setText("Repair finished");
+        repair_label->setText(tr("Repair finished"));
     else
-        repair_label->setText("Repairing...");
+        repair_label->setText(tr("Repairing..."));
         
     for(int n = 0; n < MW_Count; n++)
     {
