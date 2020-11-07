@@ -47,8 +47,8 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
     shield_bar = new GuiProgressbar(this, "SHIELDS_BAR", 0.0, 1.0, 0.0);
     shield_bar->setColor(sf::Color(96, 96, 96, 128));
     shield_bar->setPosition(20, i, ATopLeft)->setSize(240, 40);
-    shield_display = new GuiKeyValueDisplay(shield_bar, "SHIELD_DISPLAY", 0.45, tr("shields", "Front"), "");
-    shield_display->isBackground(false)->setIcon("gui/icons/shields-fore")->setTextSize(20)->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
+    shield_display = new GuiKeyValueDisplay(shield_bar, "SHIELD_DISPLAY", 0.45, tr("shields", "Shields"), "");
+    shield_display->isBackground(false)->setIcon("gui/icons/shields-all")->setTextSize(20)->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);    
     i += 40;
     oxygen_bar = new GuiProgressbar(this, "OXYGEN_BAR", 0.0, 1.0, 0.0);
     oxygen_bar->setColor(sf::Color(96, 96, 96, 128));
@@ -404,20 +404,18 @@ void EngineeringScreen::onDraw(sf::RenderTarget& window)
             if (gameGlobalInfo->use_system_damage)
                 repair_display->setValue(string(int(my_spaceship->max_repair)));
         }
-        string oxygen = string(my_spaceship->oxygen_zones[0].oxygen_level / my_spaceship->oxygen_zones[0].oxygen_max * 100,1) + "%";
-        float oxygen_level = my_spaceship->oxygen_zones[0].oxygen_level;
-        float oxygen_max = my_spaceship->oxygen_zones[0].oxygen_max;
-        for(int n=1; n<10; n++)
+        float oxygen_level = 0;
+        float oxygen_max = 0;
+        for(int n=0; n<10; n++)
         {
             if (my_spaceship->oxygen_zones[n].oxygen_max > 0)
             {
-                oxygen += "/" + string(my_spaceship->oxygen_zones[n].oxygen_level / my_spaceship->oxygen_zones[n].oxygen_max * 100,1) + "%";
                 oxygen_level += my_spaceship->oxygen_zones[n].oxygen_level;
                 oxygen_max += my_spaceship->oxygen_zones[n].oxygen_max;
             }
         }
-        oxygen_display->setValue(oxygen);
-        oxygen_bar->setVisible(my_spaceship->hasSystem(SYS_Oxygen));
+        oxygen_display->setValue(string(oxygen_level / oxygen_max * 100,1) + "%");
+        oxygen_bar->setVisible(oxygen_max > 0);
         oxygen_bar->setValue(oxygen_level / oxygen_max);
         
         for(int n=0; n<SYS_COUNT; n++)

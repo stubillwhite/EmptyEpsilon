@@ -12,6 +12,8 @@
 - Avoid automatic increase of coolant or repair request to reach total
 
 ### Fixed
+- Scanner affect probe view for science screen
+- Spaceobject can be destroyed by shot (only if hull > 0)
 
 ### EE LARP release 1.6-beta
 

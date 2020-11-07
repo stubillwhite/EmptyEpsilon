@@ -529,7 +529,11 @@ msgstr "Carligue"
 #: src/screens/crew6/engineeringScreen.cpp:50
 msgctxt "shields"
 msgid "Front"
-msgstr "Avants"
+msgstr "Avant"
+
+msgctxt "shields"
+msgid "Shields"
+msgstr "Boucliers"
 
 #: src/screens/crew6/engineeringScreen.cpp:36
 #: src/screens/crew6/weaponsScreen.cpp:77

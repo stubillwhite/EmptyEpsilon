@@ -293,9 +293,13 @@ void ScienceScreen::onDraw(sf::RenderTarget& window)
     else
         probe = game_client->getObjectById(my_spaceship->linked_science_probe_id);
 
+    float radar_range = 5000.0;
+    if (my_spaceship && my_spaceship->hasSystem(SYS_Scanner))
+        radar_range = radar_range * my_spaceship->getSystemEffectiveness(SYS_Scanner);
+
     if (probe_view_button->getValue() && probe)
     {
-        if (targets.get() && (probe->getPosition() - targets.get()->getPosition()) > 5000.0f)
+        if (targets.get() && (probe->getPosition() - targets.get()->getPosition()) > radar_range + targets.get()->getRadius())
             targets.clear();
     }else{
         if (targets.get() && Nebula::blockedByNebula(my_spaceship->getPosition(), targets.get()->getPosition()))
@@ -334,6 +338,7 @@ void ScienceScreen::onDraw(sf::RenderTarget& window)
     {
         probe_view_button->enable();
         probe_radar->setViewPosition(probe->getPosition());
+        probe_radar->setDistance(radar_range);
     }
     else
     {

@@ -2,6 +2,8 @@
 #include "factionInfo.h"
 #include "gameGlobalInfo.h"
 
+#include "spaceObjects/explosionEffect.h"
+
 #include "scriptInterface.h"
 /// SpaceObject is the base for every object which can be seen in space.
 /// General properties can read and set for each object.
@@ -387,6 +389,25 @@ void SpaceObject::destroy()
 {
     on_destroyed.call(P<SpaceObject>(this));
     MultiplayerObject::destroy();
+}
+
+void SpaceObject::takeDamage(float damage_amount, DamageInfo info)
+{
+    // If no hull, then it could no be destroyed
+    if(hull <= 0)
+        return;
+    if (info.type == DT_EMP)
+        return;
+
+    hull -= damage_amount;
+    if (hull <= 0)
+    {
+        P<ExplosionEffect> e = new ExplosionEffect();
+        e->setSize(getRadius());
+        e->setPosition(getPosition());
+        e->setPositionZ(getPositionZ());
+        destroy();
+    }
 }
 
 bool SpaceObject::canBeTargetedBy(P<SpaceObject> other)
