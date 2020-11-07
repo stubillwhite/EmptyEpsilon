@@ -10,6 +10,7 @@
 
 - Add a lot of translations marker
 - Avoid automatic increase of coolant or repair request to reach total
+- Beams are now active in warp, but cost more energy (energy_per_beam * (warp_level + 1))
 
 ### Fixed
 - Scanner affect probe view for science screen
