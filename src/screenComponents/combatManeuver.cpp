@@ -58,14 +58,30 @@ void GuiCombatManeuver::onDraw(sf::RenderTarget& window)
 
 void GuiCombatManeuver::onHotkey(const HotkeyResult& key)
 {
-    if (key.category == "HELMS" && target_spaceship && isVisible())
+    if (key.category == "HELMS" && target_spaceship)
     {
         if (key.hotkey == "COMBAT_LEFT")
-        {}//TODO
-        else if (key.hotkey == "COMBAT_RIGHT")
-        {}//TODO
-        else if (key.hotkey == "COMBAT_BOOST")
-        {}//TODO
+        {
+            setStrafeValue(-1.0f);
+            target_spaceship->commandCombatManeuverStrafe(-1.0f);
+        }
+        if (key.hotkey == "COMBAT_RIGHT")
+        {
+            setStrafeValue(1.0f);
+			target_spaceship->commandCombatManeuverStrafe(1.0f);
+        }
+        if (key.hotkey == "COMBAT_BOOST")
+        {
+            setBoostValue(1.0f);
+			target_spaceship->commandCombatManeuverBoost(1.0f);
+        }
+        if (key.hotkey == "COMBAT_STOP")
+		{
+			setBoostValue(0.0f);
+			setStrafeValue(0.0f);
+			target_spaceship->commandCombatManeuverBoost(0.0f);
+			target_spaceship->commandCombatManeuverStrafe(0.0f);
+		}
     }
 }
 

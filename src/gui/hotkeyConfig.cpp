@@ -50,9 +50,10 @@ HotkeyConfig::HotkeyConfig()
     newKey("INC_JUMP", std::make_tuple("Increase jump distance", ""));
     newKey("DEC_JUMP", std::make_tuple("Decrease jump distance", ""));
     newKey("JUMP", std::make_tuple("Initiate jump", ""));
-    //newKey("COMBAT_LEFT", "Combat maneuver left");
-    //newKey("COMBAT_RIGHT", "Combat maneuver right");
-    //newKey("COMBAT_BOOST", "Combat maneuver boost");
+    newKey("COMBAT_LEFT", std::make_tuple("Combat maneuver left", ""));
+    newKey("COMBAT_RIGHT", std::make_tuple("Combat maneuver right", ""));
+    newKey("COMBAT_BOOST", std::make_tuple("Combat maneuver boost", ""));
+    newKey("COMBAT_STOP", std::make_tuple("Combat maneuver stop", ""));
 
     newCategory("WEAPONS", "Weapons");
     newKey("SELECT_MISSILE_TYPE_HOMING", std::make_tuple("Select homing", "Num1"));

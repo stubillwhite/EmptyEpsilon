@@ -6,13 +6,17 @@
 
 ### Added
 
+- Hotkey for combat maneuver
+
 ### Changed
 
 - Add a lot of translations marker
 - Avoid automatic increase of coolant or repair request to reach total
 - Beams are now active in warp, but cost more energy (energy_per_beam * (warp_level + 1))
+- CpuShip focus on ship and station instead of missiles, warpjammer or asteroid
 
 ### Fixed
+
 - Scanner affect probe view for science screen
 - Spaceobject can be destroyed by shot (only if hull > 0)
 - Fix lock fire button

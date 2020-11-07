@@ -1,6 +1,10 @@
 #include "spaceObjects/nebula.h"
 #include "spaceObjects/cpuShip.h"
 #include "spaceObjects/scanProbe.h"
+#include "spaceObjects/asteroid.h"
+#include "spaceObjects/warpJammer.h"
+#include "spaceObjects/mine.h"
+#include "spaceObjects/missiles/missileWeapon.h"
 #include "ai/ai.h"
 #include "ai/aiFactory.h"
 
@@ -599,7 +603,9 @@ P<SpaceObject> ShipAI::findBestTarget(sf::Vector2f position, float radius)
     foreach(Collisionable, obj, objectList)
     {
         P<SpaceObject> space_object = obj;
-        if (!space_object || !space_object->canBeTargetedBy(owner) || !owner->isEnemy(space_object) || space_object == target)
+        if (!space_object || !space_object->canBeTargetedBy(owner) || !owner->isEnemy(space_object) || space_object == target || space_object->hull < 0)
+            continue;
+        if (P<Asteroid>(space_object) || P<VisualAsteroid>(space_object))
             continue;
         if (space_object->canHideInNebula() && Nebula::blockedByNebula(owner_position, space_object->getPosition()))
             continue;
@@ -627,9 +633,15 @@ float ShipAI::targetScore(P<SpaceObject> target)
     {
         score -= 5000;
     }
-    if (P<ScanProbe>(target))
+    if (P<ScanProbe>(target) || P<WarpJammer>(target) || P<Mine>(target))
     {
         score -= 10000;
+        if (distance > 5000)
+            return std::numeric_limits<float>::min();
+    }
+    if (P<MissileWeapon>(target))
+    {
+        score -= 3000;
         if (distance > 5000)
             return std::numeric_limits<float>::min();
     }
