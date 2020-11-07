@@ -2,6 +2,17 @@
 
 ### Daid Empty Epsilon Update on 01/11/2020
 
+### EE LARP release in progress
+
+### Added
+
+### Changed
+
+- Add a lot of translations marker
+- Avoid automatic increase of coolant or repair request to reach total
+
+### Fixed
+
 ### EE LARP release 1.6-beta
 
 ### Added

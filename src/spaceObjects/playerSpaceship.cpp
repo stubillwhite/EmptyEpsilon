@@ -1024,6 +1024,9 @@ void PlayerSpaceship::setSystemCoolantRequest(ESystem system, float request)
         {
             if (!hasSystem(ESystem(n))) continue;
             if (n == system) continue;
+            // Hack LARP : continue
+            if (gameGlobalInfo->use_nano_repair_crew)
+                continue;
 
             if (systems[n].coolant_request > 0)
             {
@@ -1066,6 +1069,9 @@ void PlayerSpaceship::setSystemRepairRequest(ESystem system, float request)
         {
             if (!hasSystem(ESystem(n))) continue;
             if (n == system) continue;
+            // Hack LARP : continue
+            if (gameGlobalInfo->use_nano_repair_crew)
+                continue;
 
             if (systems[n].repair_request > 0)
             {
