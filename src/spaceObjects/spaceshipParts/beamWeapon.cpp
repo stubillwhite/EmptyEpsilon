@@ -1,5 +1,6 @@
 #include "beamWeapon.h"
 #include "spaceObjects/spaceship.h"
+#include "spaceObjects/playerSpaceship.h"
 #include "spaceObjects/beamEffect.h"
 #include "spaceObjects/spaceObject.h"
 #include "preferenceManager.h"
@@ -238,7 +239,9 @@ void BeamWeapon::update(float delta)
             }
             
             // Fire if Fire Lock is enabled
-            if (!parent->lock_fire)
+            P<SpaceObject> obj = parent;
+            P<PlayerSpaceship> player = obj;
+            if (player && !player->lock_fire)
                 return;
 
             // Fire only if the target is in the beam's arc and range, the beam

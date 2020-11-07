@@ -119,6 +119,8 @@ public:
     bool auto_coolant_enabled;
     // Whether shields are up (true) or down
     bool shields_active;
+    // Whether fire are active (true) or not
+    bool lock_fire;
     // Password to join a ship. Default is empty.
     string control_code;
 
@@ -300,6 +302,7 @@ public:
     void commandFireTube(int8_t tubeNumber, float missile_target_angle);
     void commandFireTubeAtTarget(int8_t tubeNumber, P<SpaceObject> target);
     void commandSetShields(bool enabled);
+    void commandLockFire(bool enabled);
     void commandMainScreenSetting(EMainScreenSetting mainScreen);
     void commandMainScreenOverlay(EMainScreenOverlay mainScreen);
     void commandScan(P<SpaceObject> object);

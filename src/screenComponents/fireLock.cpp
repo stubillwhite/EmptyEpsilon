@@ -11,6 +11,15 @@ FireLockButton::FireLockButton(GuiContainer* owner, string id, P<PlayerSpaceship
     setIcon("gui/icons/lock");
 }
 
+void FireLockButton::onDraw(sf::RenderTarget& window)
+{
+    if (target_spaceship)
+    {
+        setValue(target_spaceship->lock_fire);
+    }
+    GuiButton::onDraw(window);
+}
+
 void FireLockButton::onHotkey(const HotkeyResult& key)
 {
     if (key.category == "WEAPONS" && target_spaceship)
@@ -36,5 +45,5 @@ void FireLockButton::onHotkey(const HotkeyResult& key)
 void FireLockButton::setFireLock(bool value)
 {
     if (target_spaceship)
-        target_spaceship->lock_fire = value;
+	target_spaceship->commandLockFire(value);
 }

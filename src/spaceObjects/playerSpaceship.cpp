@@ -97,6 +97,7 @@ REGISTER_SCRIPT_SUBCLASS(PlayerSpaceship, SpaceShip)
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandFireTube);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandFireTubeAtTarget);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandSetShields);
+    REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandLockFire);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandMainScreenSetting);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandMainScreenOverlay);
     REGISTER_SCRIPT_CLASS_FUNCTION(PlayerSpaceship, commandScan);
@@ -310,6 +311,7 @@ static const int16_t CMD_SET_WARP_FREQUENCY = 0x0039;
 static const int16_t CMD_SET_ANALYSIS_LINK = 0x003A;
 static const int16_t CMD_SET_SYSTEM_POWER_PRESET = 0x003B;
 static const int16_t CMD_SET_SYSTEM_COOLANT_PRESET = 0x003C;
+static const int16_t CMD_LOCK_FIRE = 0x003D;
 
 string alertLevelToString(EAlertLevel level)
 {
@@ -371,6 +373,7 @@ PlayerSpaceship::PlayerSpaceship()
     scan_probe_stock = max_scan_probes;
     alert_level = AL_Normal;
     shields_active = false;
+    lock_fire = true;
     control_code = "";
     scanning_noise = 0.0;
     scan_labels.assign({
@@ -411,6 +414,7 @@ PlayerSpaceship::PlayerSpaceship()
     registerMemberReplication(&scanning_complexity);
     registerMemberReplication(&scanning_depth);
     registerMemberReplication(&scanning_noise);
+    registerMemberReplication(&lock_fire);
     registerMemberReplication(&shields_active);
     registerMemberReplication(&shield_calibration_delay, 0.5);
     registerMemberReplication(&auto_repair_enabled);
@@ -1618,6 +1622,21 @@ void PlayerSpaceship::onReceiveClientCommand(int32_t client_id, sf::Packet& pack
             }
         }
         break;
+    case CMD_LOCK_FIRE:
+        {
+            bool active;
+            packet >> active;
+
+            if (active != lock_fire)
+            {
+                lock_fire = active;
+                if (active)
+                    addToShipLog("Fire up",sf::Color::Green,engineering);
+                else
+                    addToShipLog("Fire down",sf::Color::Green,engineering);
+            }
+        }
+        break;     
     case CMD_SET_MAIN_SCREEN_SETTING:
         packet >> main_screen_setting;
         break;
@@ -2237,6 +2256,13 @@ void PlayerSpaceship::commandSetShields(bool enabled)
 {
     sf::Packet packet;
     packet << CMD_SET_SHIELDS << enabled;
+    sendClientCommand(packet);
+}
+
+void PlayerSpaceship::commandLockFire(bool enabled)
+{
+    sf::Packet packet;
+    packet << CMD_LOCK_FIRE << enabled;
     sendClientCommand(packet);
 }
 

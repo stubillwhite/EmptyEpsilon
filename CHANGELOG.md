@@ -14,6 +14,7 @@
 ### Fixed
 - Scanner affect probe view for science screen
 - Spaceobject can be destroyed by shot (only if hull > 0)
+- Fix lock fire button
 
 ### EE LARP release 1.6-beta
 
