@@ -76,12 +76,12 @@ void GuiCombatManeuver::onHotkey(const HotkeyResult& key)
 			target_spaceship->commandCombatManeuverBoost(1.0f);
         }
         if (key.hotkey == "COMBAT_STOP")
-		{
-			setBoostValue(0.0f);
-			setStrafeValue(0.0f);
-			target_spaceship->commandCombatManeuverBoost(0.0f);
-			target_spaceship->commandCombatManeuverStrafe(0.0f);
-		}
+        {
+	        setBoostValue(0.0f);
+	        setStrafeValue(0.0f);
+	        target_spaceship->commandCombatManeuverBoost(0.0f);
+	        target_spaceship->commandCombatManeuverStrafe(0.0f);
+        }
     }
 }
 

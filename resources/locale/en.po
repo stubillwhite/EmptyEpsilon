@@ -794,6 +794,8 @@ msgstr ""
 #: src/screens/crew6/scienceScreen.cpp:727
 #: src/screens/crew6/relayScreen.cpp:105 src/screens/crew6/relayScreen.cpp:260
 #: src/screens/crew6/relayScreen.cpp:411 src/screens/crew6/relayScreen.cpp:423
+#: src/screens/crew6/scienceScreen.cpp:720
+#: src/screens/crew6/scienceScreen.cpp:732
 msgid "Zoom: {zoom}x"
 msgstr ""
 
@@ -921,6 +923,7 @@ msgstr ""
 #: src/screenComponents/missileTubeControls.cpp:123
 #: src/screenComponents/missileTubeControls.cpp:137
 #: src/screenComponents/missileTubeControls.cpp:155
+#: src/screenComponents/missileTubeControls.cpp:24
 msgctxt "missile"
 msgid "Load"
 msgstr ""
@@ -940,6 +943,7 @@ msgstr ""
 
 #: src/screenComponents/missileTubeControls.cpp:126
 #: src/screenComponents/missileTubeControls.cpp:142
+#: src/screenComponents/missileTubeControls.cpp:60
 msgctxt "missile"
 msgid "Loading"
 msgstr ""
@@ -1620,7 +1624,7 @@ msgid "Shield"
 msgstr ""
 
 #: src/scienceDatabase.cpp:141 src/scienceDatabase.cpp:367
-#: src/shipCargo.cpp:132
+#: src/shipCargo.cpp:132 src/spaceObjects/shipTemplateBasedObject.cpp:246
 msgid "Hull"
 msgstr ""
 
@@ -1761,6 +1765,7 @@ msgstr ""
 #: src/spaceObjects/playerSpaceship.cpp:279
 #: src/spaceObjects/playerSpaceship.cpp:316
 #: src/spaceObjects/playerSpaceship.cpp:332
+#: src/spaceObjects/playerSpaceship.cpp:334
 msgctxt "alert"
 msgid "RED ALERT"
 msgstr ""
@@ -1768,6 +1773,7 @@ msgstr ""
 #: src/spaceObjects/playerSpaceship.cpp:280
 #: src/spaceObjects/playerSpaceship.cpp:317
 #: src/spaceObjects/playerSpaceship.cpp:333
+#: src/spaceObjects/playerSpaceship.cpp:335
 msgctxt "alert"
 msgid "YELLOW ALERT"
 msgstr ""
@@ -1775,6 +1781,7 @@ msgstr ""
 #: src/spaceObjects/playerSpaceship.cpp:281
 #: src/spaceObjects/playerSpaceship.cpp:318
 #: src/spaceObjects/playerSpaceship.cpp:334
+#: src/spaceObjects/playerSpaceship.cpp:336
 msgctxt "alert"
 msgid "Normal"
 msgstr ""
@@ -1987,6 +1994,7 @@ msgstr ""
 
 #: src/screens/crew6/engineeringScreen.cpp:137
 #: src/screens/crew6/engineeringScreen.cpp:150 src/cargo.cpp:19
+#: src/cargo.cpp:20
 msgid "heat"
 msgstr ""
 
@@ -2582,6 +2590,7 @@ msgid "Scanning Depth:"
 msgstr ""
 
 #: src/screenComponents/fireLock.cpp:8
+#: src/screenComponents/missileTubeControls.cpp:40
 msgctxt "missile"
 msgid "Fire"
 msgstr ""
@@ -2592,21 +2601,25 @@ msgid "Energy consumption"
 msgstr ""
 
 #: src/spaceObjects/spaceObject.cpp:370 src/spaceObjects/spaceObject.cpp:425
+#: src/spaceObjects/spaceObject.cpp:446
 msgctxt "scan"
 msgid "Not scanned"
 msgstr ""
 
 #: src/spaceObjects/spaceObject.cpp:371 src/spaceObjects/spaceObject.cpp:426
+#: src/spaceObjects/spaceObject.cpp:447
 msgctxt "scan"
 msgid "Friend of Foe identified"
 msgstr ""
 
 #: src/spaceObjects/spaceObject.cpp:372 src/spaceObjects/spaceObject.cpp:427
+#: src/spaceObjects/spaceObject.cpp:448
 msgctxt "scan"
 msgid "simple scanned"
 msgstr ""
 
 #: src/spaceObjects/spaceObject.cpp:373 src/spaceObjects/spaceObject.cpp:428
+#: src/spaceObjects/spaceObject.cpp:449
 msgctxt "scan"
 msgid "full scanned"
 msgstr ""
@@ -3586,54 +3599,69 @@ msgid "Scanning help"
 msgstr ""
 
 #: src/spaceObjects/playerSpaceship.cpp:377
+#: src/screenComponents/scanningDialog.cpp:21
+#: src/spaceObjects/playerSpaceship.cpp:380
 msgid "Electric signature"
 msgstr ""
 
 #: src/spaceObjects/playerSpaceship.cpp:378
+#: src/spaceObjects/playerSpaceship.cpp:381
 msgid "Biomass frequency"
 msgstr ""
 
 #: src/spaceObjects/playerSpaceship.cpp:379
+#: src/spaceObjects/playerSpaceship.cpp:382
 msgid "Gravity well signature"
 msgstr ""
 
 #: src/spaceObjects/playerSpaceship.cpp:380
+#: src/spaceObjects/playerSpaceship.cpp:383
 msgid "Radiation halftime"
 msgstr ""
 
 #: src/spaceObjects/playerSpaceship.cpp:381
+#: src/spaceObjects/playerSpaceship.cpp:384
 msgid "Radio profile"
 msgstr ""
 
 #: src/spaceObjects/playerSpaceship.cpp:382
+#: src/spaceObjects/playerSpaceship.cpp:385
 msgid "Ionic phase shift"
 msgstr ""
 
 #: src/spaceObjects/playerSpaceship.cpp:383
+#: src/spaceObjects/playerSpaceship.cpp:386
 msgid "Infra-red color shift"
 msgstr ""
 
 #: src/spaceObjects/playerSpaceship.cpp:384
+#: src/spaceObjects/playerSpaceship.cpp:387
 msgid "Doppler stability"
 msgstr ""
 
 #: src/spaceObjects/playerSpaceship.cpp:385
+#: src/spaceObjects/playerSpaceship.cpp:388
 msgid "Raspberry jam prevention"
 msgstr ""
 
 #: src/spaceObjects/playerSpaceship.cpp:386
+#: src/spaceObjects/playerSpaceship.cpp:389
 msgid "Infinity improbability"
 msgstr ""
 
 #: src/spaceObjects/playerSpaceship.cpp:387
+#: src/spaceObjects/playerSpaceship.cpp:390
 msgid "Zerospace audio frequency"
 msgstr ""
 
 #: src/spaceObjects/playerSpaceship.cpp:388
+#: src/spaceObjects/playerSpaceship.cpp:391
 msgid "Polarity inversion"
 msgstr ""
 
 #: src/spaceObjects/playerSpaceship.cpp:1678
+#: src/spaceObjects/playerSpaceship.cpp:1703
+#: src/spaceObjects/playerSpaceship.cpp:1705
 msgctxt "preset"
 msgid "Preset {id_preset} updated"
 msgstr ""
@@ -3974,23 +4002,28 @@ msgid "repair"
 msgstr ""
 
 #: src/screens/crew6/engineeringScreen.cpp:477
+#: src/screens/crew6/engineeringScreen.cpp:475
 msgid "Power: {power_level}%/{power_request}%"
 msgstr ""
 
 #: src/screens/crew6/engineeringScreen.cpp:479
+#: src/screens/crew6/engineeringScreen.cpp:477
 msgid "Coolant: {coolant_level}%/{coolant_request}%"
 msgstr ""
 
 #: src/screens/crew6/engineeringScreen.cpp:486
+#: src/screens/crew6/engineeringScreen.cpp:484
 msgid ""
 "Coolant: {coolant_level} / {coolant_max}\t\t (Target: {coolant_request})"
 msgstr ""
 
 #: src/screens/crew6/engineeringScreen.cpp:487
+#: src/screens/crew6/engineeringScreen.cpp:485
 msgid "Power: {power_level}% \t\t (Target: {power_request}%)"
 msgstr ""
 
 #: src/screens/crew6/engineeringScreen.cpp:490
+#: src/screens/crew6/engineeringScreen.cpp:488
 msgid "Repair: {repair_level} / {repair_max}\t\t (Target: {repair_request})"
 msgstr ""
 
@@ -4269,7 +4302,7 @@ msgstr ""
 msgid "Maximal health"
 msgstr ""
 
-#: src/cargo.cpp:18
+#: src/cargo.cpp:18 src/cargo.cpp:19
 msgid "energy"
 msgstr ""
 
@@ -4281,7 +4314,7 @@ msgstr ""
 msgid "Drone"
 msgstr ""
 
-#: src/shipCargo.cpp:131
+#: src/shipCargo.cpp:131 src/spaceObjects/shipTemplateBasedObject.cpp:245
 msgid "Type"
 msgstr ""
 
@@ -4417,4 +4450,493 @@ msgstr ""
 #: src/spaceObjects/spaceshipParts/dock.cpp:217
 msgctxt "docks"
 msgid "Stock"
+msgstr ""
+
+#: src/screens/crew6/engineeringScreen.cpp:50
+msgctxt "shields"
+msgid "Shields"
+msgstr ""
+
+#: src/screenComponents/helpOverlay.cpp:23
+msgctxt "help"
+msgid "Close"
+msgstr ""
+
+#: src/screenComponents/selfDestructIndicator.cpp:15
+msgid "SELF DESTRUCT ACTIVATED"
+msgstr ""
+
+#: src/screenComponents/selfDestructIndicator.cpp:32
+msgid "Waiting for autorization input: {todo} left"
+msgstr ""
+
+#: src/screenComponents/selfDestructIndicator.cpp:36
+msgid "Have a nice day."
+msgstr ""
+
+#: src/screenComponents/frequencyCurve.cpp:59
+msgid "Damage with your beams"
+msgstr ""
+
+#: src/screenComponents/frequencyCurve.cpp:61
+msgid "Damage on your shields"
+msgstr ""
+
+#: src/screenComponents/frequencyCurve.cpp:65
+msgctxt "frequencies"
+msgid "No data"
+msgstr ""
+
+#: src/screenComponents/powerDamageIndicator.cpp:33
+msgctxt "PowerDamageIndicator"
+msgid "DAMAGED"
+msgstr ""
+
+#: src/screenComponents/powerDamageIndicator.cpp:37
+msgctxt "PowerDamageIndicator"
+msgid "JAMMED"
+msgstr ""
+
+#: src/screenComponents/powerDamageIndicator.cpp:41
+msgctxt "PowerDamageIndicator"
+msgid "NO POWER"
+msgstr ""
+
+#: src/screenComponents/powerDamageIndicator.cpp:45
+msgctxt "PowerDamageIndicator"
+msgid "LOW ENERGY"
+msgstr ""
+
+#: src/screenComponents/powerDamageIndicator.cpp:49
+msgctxt "PowerDamageIndicator"
+msgid "LOW POWER"
+msgstr ""
+
+#: src/screenComponents/powerDamageIndicator.cpp:53
+msgctxt "PowerDamageIndicator"
+msgid "OVERHEATING"
+msgstr ""
+
+#: src/screenComponents/powerDamageIndicator.cpp:57
+msgctxt "PowerDamageIndicator"
+msgid "HACKED"
+msgstr ""
+
+#: src/screenComponents/scanTargetButton.cpp:12
+msgid "Scan"
+msgstr ""
+
+#: src/screenComponents/shipDestroyedPopup.cpp:18
+msgid "SHIP DESTROYED!"
+msgstr ""
+
+#: src/screenComponents/shipDestroyedPopup.cpp:19
+msgctxt "DestroyedPopup"
+msgid "Return"
+msgstr ""
+
+#: src/screenComponents/commsOverlay.cpp:20
+msgctxt "comms"
+msgid "Opening communications..."
+msgstr ""
+
+#: src/screenComponents/commsOverlay.cpp:25
+msgctxt "comms"
+msgid "Cancel"
+msgstr ""
+
+#: src/screenComponents/commsOverlay.cpp:39
+msgctxt "comms"
+msgid "Answer"
+msgstr ""
+
+#: src/screenComponents/commsOverlay.cpp:45
+msgctxt "comms"
+msgid "Ignore"
+msgstr ""
+
+#: src/screenComponents/commsOverlay.cpp:54
+msgctxt "comms"
+msgid "No reply..."
+msgstr ""
+
+#: src/screenComponents/commsOverlay.cpp:57
+#: src/screenComponents/commsOverlay.cpp:68
+#: src/screenComponents/commsOverlay.cpp:79
+msgctxt "comms"
+msgid "Ok"
+msgstr ""
+
+#: src/screenComponents/commsOverlay.cpp:65
+msgctxt "comms"
+msgid "Communications were suddenly cut"
+msgstr ""
+
+#: src/screenComponents/commsOverlay.cpp:76
+msgctxt "comms"
+msgid "Communications channel closed"
+msgstr ""
+
+#: src/screenComponents/commsOverlay.cpp:102
+msgctxt "comms"
+msgid "Send"
+msgstr ""
+
+#: src/screenComponents/commsOverlay.cpp:110
+#: src/screenComponents/commsOverlay.cpp:140
+msgctxt "comms"
+msgid "Close"
+msgstr ""
+
+#: src/screenComponents/commsOverlay.cpp:157
+msgctxt "comms"
+msgid "Hailed by "
+msgstr ""
+
+#: src/screenComponents/jumpIndicator.cpp:15
+#: src/screenComponents/jumpIndicator.cpp:24
+msgid "Jump in: "
+msgstr ""
+
+#: src/screenComponents/scanningDialog.cpp:27
+msgctxt "ScanningDialog"
+msgid "LOCKED"
+msgstr ""
+
+#: src/screenComponents/scanningDialog.cpp:37
+msgctxt "ScanningDialog"
+msgid "Cancel"
+msgstr ""
+
+#: src/screenComponents/mainScreenControls.cpp:14
+msgctxt "MainScreenControls"
+msgid "Main screen"
+msgstr ""
+
+#: src/screenComponents/mainScreenControls.cpp:35
+msgctxt "MainScreenControls"
+msgid "Front"
+msgstr ""
+
+#: src/screenComponents/mainScreenControls.cpp:43
+msgctxt "MainScreenControls"
+msgid "Back"
+msgstr ""
+
+#: src/screenComponents/mainScreenControls.cpp:51
+msgctxt "MainScreenControls"
+msgid "Left"
+msgstr ""
+
+#: src/screenComponents/mainScreenControls.cpp:59
+msgctxt "MainScreenControls"
+msgid "Right"
+msgstr ""
+
+#: src/screenComponents/mainScreenControls.cpp:72
+msgctxt "MainScreenControls"
+msgid "Target lock"
+msgstr ""
+
+#: src/screenComponents/mainScreenControls.cpp:84
+msgctxt "MainScreenControls"
+msgid "Tactical"
+msgstr ""
+
+#: src/screenComponents/mainScreenControls.cpp:95
+msgctxt "MainScreenControls"
+msgid "Long Range"
+msgstr ""
+
+#: src/screenComponents/mainScreenControls.cpp:106
+msgctxt "MainScreenControls"
+msgid "Far Range"
+msgstr ""
+
+#: src/screenComponents/mainScreenControls.cpp:117
+msgctxt "MainScreenControls"
+msgid "Target analysis"
+msgstr ""
+
+#: src/screenComponents/mainScreenControls.cpp:131
+msgctxt "MainScreenControls"
+msgid "Show comms"
+msgstr ""
+
+#: src/screenComponents/mainScreenControls.cpp:142
+msgctxt "MainScreenControls"
+msgid "Hide comms"
+msgstr ""
+
+#: src/screenComponents/databaseView.cpp:105
+#: src/screenComponents/databaseView.cpp:109
+msgctxt "database"
+msgid "Back"
+msgstr ""
+
+#: src/screenComponents/hackingDialog.cpp:35
+msgctxt "hack"
+msgid "Reset"
+msgstr ""
+
+#: src/screenComponents/hackingDialog.cpp:41
+msgctxt "hack"
+msgid "Close"
+msgstr ""
+
+#: src/screenComponents/hackingDialog.cpp:47
+msgctxt "hack"
+msgid "Apply"
+msgstr ""
+
+#: src/screenComponents/hackingDialog.cpp:122
+msgid "Hacking in Progress: "
+msgstr ""
+
+#: src/screenComponents/hackingDialog.cpp:138
+msgid "Hacked {target_system}: {level}%"
+msgstr ""
+
+#: src/screenComponents/hackingDialog.cpp:158
+msgid "Hacking SUCCESS!"
+msgstr ""
+
+#: src/screenComponents/hackingDialog.cpp:158
+msgid "Hacking FAILURE!"
+msgstr ""
+
+#: src/screenComponents/systemEffectsList.cpp:63
+#: src/screenComponents/systemEffectsList.cpp:65
+msgid "Oxygen: "
+msgstr ""
+
+#: src/screenComponents/systemEffectsList.cpp:63
+#: src/screenComponents/systemEffectsList.cpp:65
+msgctxt "oxygen_rate"
+msgid "/min"
+msgstr ""
+
+#: src/screenComponents/systemEffectsList.cpp:77
+msgctxt "beams"
+msgid "Turret rotation rate"
+msgstr ""
+
+#: src/screenComponents/tractorBeamControl.cpp:33
+msgid "Tractor beam control"
+msgstr ""
+
+#: src/screenComponents/tractorBeamControl.cpp:43
+msgctxt "tractor_beam"
+msgid "Off"
+msgstr ""
+
+#: src/screenComponents/tractorBeamControl.cpp:43
+msgctxt "tractor_beam"
+msgid "Pull"
+msgstr ""
+
+#: src/screenComponents/tractorBeamControl.cpp:43
+msgctxt "tractor_beam"
+msgid "Push"
+msgstr ""
+
+#: src/screenComponents/tractorBeamControl.cpp:43
+msgctxt "tractor_beam"
+msgid "Hold"
+msgstr ""
+
+#: src/screenComponents/tractorBeamControl.cpp:47
+msgctxt "tractor_beam"
+msgid "Range:"
+msgstr ""
+
+#: src/screenComponents/tractorBeamControl.cpp:54
+msgctxt "tractor_beam"
+msgid "Direction:"
+msgstr ""
+
+#: src/screenComponents/tractorBeamControl.cpp:61
+msgctxt "tractor_beam"
+msgid "Arc:"
+msgstr ""
+
+#: src/spaceObjects/cpuShip.cpp:153
+msgid "Searching for targets."
+msgstr ""
+
+#: src/spaceObjects/cpuShip.cpp:162
+msgid "Searching for hostiles around  {position_x},{position_y}."
+msgstr ""
+
+#: src/spaceObjects/cpuShip.cpp:172
+msgid "Searching for supplies."
+msgstr ""
+
+#: src/spaceObjects/cpuShip.cpp:175 src/spaceObjects/cpuShip.cpp:250
+msgid "Docking to {id}."
+msgstr ""
+
+#: src/spaceObjects/cpuShip.cpp:186
+msgid "Standing ground for now."
+msgstr ""
+
+#: src/spaceObjects/cpuShip.cpp:194
+msgid "Defending {position_x},{position_y}."
+msgstr ""
+
+#: src/spaceObjects/cpuShip.cpp:204
+msgid "Defending {id}."
+msgstr ""
+
+#: src/spaceObjects/cpuShip.cpp:214
+msgid "Following {id}."
+msgstr ""
+
+#: src/spaceObjects/cpuShip.cpp:222 src/spaceObjects/cpuShip.cpp:230
+msgid "Moving to {target_x},{target_y}."
+msgstr ""
+
+#: src/spaceObjects/cpuShip.cpp:240
+msgid "Moving to attack {id}!"
+msgstr ""
+
+#: src/spaceObjects/playerSpaceship.cpp:533
+msgid "Start of log"
+msgstr ""
+
+#: src/spaceObjects/playerSpaceship.cpp:961
+msgid "{damage} hull damages. Affected systems: "
+msgstr ""
+
+#: src/spaceObjects/playerSpaceship.cpp:1487
+msgid "Communication channel closed by other side"
+msgstr ""
+
+#: src/spaceObjects/playerSpaceship.cpp:1497
+msgid "Hailing from {id} stopped"
+msgstr ""
+
+#: src/spaceObjects/playerSpaceship.cpp:1501
+msgid "Communication channel closed"
+msgstr ""
+
+#: src/spaceObjects/playerSpaceship.cpp:1550
+msgid "New warp frequency: {frequency}"
+msgstr ""
+
+#: src/spaceObjects/playerSpaceship.cpp:1560
+msgid "Jump initialization"
+msgstr ""
+
+#: src/spaceObjects/playerSpaceship.cpp:1602
+msgid "Missile fire"
+msgstr ""
+
+#: src/spaceObjects/playerSpaceship.cpp:1617
+msgid "Shield up"
+msgstr ""
+
+#: src/spaceObjects/playerSpaceship.cpp:1622
+msgid "Shield down"
+msgstr ""
+
+#: src/spaceObjects/playerSpaceship.cpp:1636
+msgid "Fire up"
+msgstr ""
+
+#: src/spaceObjects/playerSpaceship.cpp:1638
+msgid "Fire down"
+msgstr ""
+
+#: src/spaceObjects/playerSpaceship.cpp:1743
+msgid "Docking requested"
+msgstr ""
+
+#: src/spaceObjects/playerSpaceship.cpp:1749
+msgid "Undocking requested"
+msgstr ""
+
+#: src/spaceObjects/playerSpaceship.cpp:1755
+msgid "Docking aborded"
+msgstr ""
+
+#: src/spaceObjects/playerSpaceship.cpp:1770
+#: src/spaceObjects/playerSpaceship.cpp:1847
+msgid "Opened comms with {id}"
+msgstr ""
+
+#: src/spaceObjects/playerSpaceship.cpp:1771
+msgid "Hailing: {id}"
+msgstr ""
+
+#: src/spaceObjects/playerSpaceship.cpp:1794
+#: src/spaceObjects/playerSpaceship.cpp:1795
+msgid "Opened comms to {id}"
+msgstr ""
+
+#: src/spaceObjects/playerSpaceship.cpp:1796
+#: src/spaceObjects/playerSpaceship.cpp:1797
+#: src/spaceObjects/playerSpaceship.cpp:1846
+msgid "Opened communication channel to {id}"
+msgstr ""
+
+#: src/spaceObjects/playerSpaceship.cpp:1799
+msgid "Refused communications from {id}"
+msgstr ""
+
+#: src/spaceObjects/playerSpaceship.cpp:1800
+msgid "Refused communications to {id}"
+msgstr ""
+
+#: src/spaceObjects/playerSpaceship.cpp:1809
+msgid "Hail suddenly went dead."
+msgstr ""
+
+#: src/spaceObjects/playerSpaceship.cpp:1812
+msgid "Accepted hail from {id}"
+msgstr ""
+
+#: src/spaceObjects/playerSpaceship.cpp:1832
+#: src/spaceObjects/playerSpaceship.cpp:1849
+msgid "Refused hail from {id}"
+msgstr ""
+
+#: src/spaceObjects/playerSpaceship.cpp:1886
+msgid "Autorepair enabled"
+msgstr ""
+
+#: src/spaceObjects/playerSpaceship.cpp:1897
+msgid "New beam frequency: "
+msgstr ""
+
+#: src/spaceObjects/playerSpaceship.cpp:1909
+msgid "New targeted system: "
+msgstr ""
+
+#: src/spaceObjects/playerSpaceship.cpp:1926
+msgid "New shield frequency: "
+msgstr ""
+
+#: src/spaceObjects/playerSpaceship.cpp:1964
+msgid "Self Destruction procedure activate"
+msgstr ""
+
+#: src/spaceObjects/playerSpaceship.cpp:1993
+msgid "Self Destruction procedure canceled"
+msgstr ""
+
+#: src/spaceObjects/playerSpaceship.cpp:2085
+msgid "Red Alert"
+msgstr ""
+
+#: src/spaceObjects/playerSpaceship.cpp:2087
+msgid "Yellow Alert"
+msgstr ""
+
+#: src/spaceObjects/shipTemplateBasedObject.cpp:244
+msgid "CallSign"
+msgstr ""
+
+#: src/spaceObjects/shipTemplateBasedObject.cpp:249
+msgid "Shield"
 msgstr ""

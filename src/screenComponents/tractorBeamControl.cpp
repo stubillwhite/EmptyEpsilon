@@ -30,7 +30,7 @@ GuiTractorBeamControl::GuiTractorBeamControl(GuiContainer* owner, string id): Gu
     lateralPanel->setPosition(0, 0, ACenterLeft);
     lateralPanel->setMargins(10, 10, 10, 10);
     
-    (new GuiLabel(lateralPanel, "TITLE", "Tractor beam control", 30))
+    (new GuiLabel(lateralPanel, "TITLE", tr("Tractor beam control"), 30))
         ->addBackground()
         ->setAlignment(ACenter)
         ->setPosition(0, 0, ABottomCenter)
@@ -40,25 +40,25 @@ GuiTractorBeamControl::GuiTractorBeamControl(GuiContainer* owner, string id): Gu
         if (my_spaceship)
             my_spaceship->commandSetTractorBeamMode(ETractorBeamMode(index));
     });
-    mode_selector->setOptions({"Off", "Pull", "Push", "Hold"});
+    mode_selector->setOptions({tr("tractor_beam","Off"), tr("tractor_beam","Pull"), tr("tractor_beam","Push"), tr("tractor_beam","Hold")});
     mode_selector->setSelectionIndex(0);
     mode_selector->setSize(GuiElement::GuiSizeMax, 30);
 
-    (new GuiLabel(lateralPanel, "", "Range:", 20))->setSize(GuiElement::GuiSizeMax, 30);
+    (new GuiLabel(lateralPanel, "", tr("tractor_beam","Range:"), 20))->setSize(GuiElement::GuiSizeMax, 30);
     range_slider = new GuiSlider(lateralPanel, "", 0.0, 2000.0, 0.0, [this](float value) {
         if (my_spaceship) my_spaceship->commandSetTractorBeamRange(value);
     });
     range_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 30);
     (new GuiPowerDamageIndicator(range_slider, "", SYS_Docks, ATopCenter, my_spaceship))->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
 
-    (new GuiLabel(lateralPanel, "", "Direction:", 20))->setSize(GuiElement::GuiSizeMax, 30);
+    (new GuiLabel(lateralPanel, "", tr("tractor_beam","Direction:"), 20))->setSize(GuiElement::GuiSizeMax, 30);
     direction_slider = new GuiSlider(lateralPanel, "", -179.9, 180.0, 0.0, [this](float value) {
         if (my_spaceship) my_spaceship->commandSetTractorBeamDirection(value);
     });
     direction_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 30);
     (new GuiPowerDamageIndicator(direction_slider, "", SYS_Docks, ATopCenter, my_spaceship))->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
 
-    (new GuiLabel(lateralPanel, "", "Arc:", 20))->setSize(GuiElement::GuiSizeMax, 30);
+    (new GuiLabel(lateralPanel, "", tr("tractor_beam","Arc:"), 20))->setSize(GuiElement::GuiSizeMax, 30);
     arc_slider = new GuiSlider(lateralPanel, "", 0.0, 90.0, 0.0, [this](float value) {
         if (my_spaceship) my_spaceship->commandSetTractorBeamArc(value);
     });

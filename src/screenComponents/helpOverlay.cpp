@@ -1,4 +1,5 @@
 #include "helpOverlay.h"
+#include <i18n.h>
 
 #include "gui/gui2_button.h"
 #include "gui/gui2_canvas.h"
@@ -19,7 +20,7 @@ GuiHelpOverlay::GuiHelpOverlay(GuiContainer* owner, string title, string content
     text = new GuiScrollText(frame, "HELP_TEXT", contents);
     text->setTextSize(30)->setPosition(0, 110, ATopCenter)->setSize(450, 520);
 
-    (new GuiButton(frame, "HELP_BUTTON", "Close", [this]() {
+    (new GuiButton(frame, "HELP_BUTTON", tr("help","Close"), [this]() {
         frame->hide();
     }))->setPosition(0, -25, ABottomCenter)->setSize(300, 50);
 }

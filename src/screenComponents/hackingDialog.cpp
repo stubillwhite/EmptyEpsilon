@@ -119,7 +119,7 @@ void GuiHackingDialog::onDraw(sf::RenderTarget& window)
     } else {
         float progress = exp(pow(game->getProgress(),2.0))/exp(1);
         progress_bar->setValue(progress);
-        status_label->setText("Hacking in Progress: " + string(int(100 * progress)) + "%");
+        status_label->setText(tr("Hacking in Progress: ") + string(int(100 * progress)) + "%");
         
         int difficulty = 2;
         if (gameGlobalInfo) {
@@ -135,7 +135,7 @@ void GuiHackingDialog::onDraw(sf::RenderTarget& window)
         {
             if (target.first == target_system)
             {
-                hacking_status_label->setText("Hacked " + target_system + ": " + string(int(target.second * 100.0f + 0.5f)) + "%");
+                hacking_status_label->setText(tr("Hacked {target_system}: {level}%").format({{"target_system", target_system},{"level", string(int(target.second * 100.0f + 0.5f))}}));
                 break;
             }
         }
@@ -155,7 +155,7 @@ void GuiHackingDialog::onMiniGameComplete(bool success, float value)
     game->disable();
     last_game_success = success;
     last_game_value = value;
-    status_label->setText(success ? "Hacking SUCCESS!" : "Hacking FAILURE!");
+    status_label->setText(success ? tr("Hacking SUCCESS!") : tr("Hacking FAILURE!"));
 }
 
 void GuiHackingDialog::getNewGame() {

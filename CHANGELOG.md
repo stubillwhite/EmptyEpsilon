@@ -7,6 +7,7 @@
 ### Added
 
 - Hotkey for combat maneuver
+- Automatic rotation of tube direction for weapons station
 
 ### Changed
 
@@ -15,6 +16,7 @@
 - Beams are now active in warp, but cost more energy (energy_per_beam * (warp_level + 1))
 - CpuShip focus on ship and station instead of missiles, warpjammer or asteroid
 - Hacking system easier (capability to apply hack before perfect completed)
+- Automatic return to main menu after destroyed ship
 
 ### Fixed
 

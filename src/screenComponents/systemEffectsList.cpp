@@ -60,9 +60,9 @@ void GuiSystemEffectsList::onDraw(sf::RenderTarget& window)
                 {
                     float oxygen_rate = my_spaceship->getZoneRechargeRate(n) * 60;
                     if (oxygen_rate >= 0.0)
-                        addSystemEffect("Oxygen: " + zone.label, "+" + string(oxygen_rate, 1) + "/min");
+                        addSystemEffect(tr("Oxygen: ") + zone.label, "+" + string(oxygen_rate, 1) + tr("oxygen_rate","/min"));
                     else
-                        addSystemEffect("Oxygen: " + zone.label, string(oxygen_rate, 1) + "/min");
+                        addSystemEffect(tr("Oxygen: ") + zone.label, string(oxygen_rate, 1) + tr("oxygen_rate","/min"));
                 }
             }
             break;
@@ -74,7 +74,7 @@ void GuiSystemEffectsList::onDraw(sf::RenderTarget& window)
             {
                 if (my_spaceship->beam_weapons[n].getTurretArc() > 0)
                 {
-                    addSystemEffect("Turret rotation rate", string(int(effectiveness * 100)) + "%");
+                    addSystemEffect(tr("beams","Turret rotation rate"), string(int(effectiveness * 100)) + "%");
                     break;
                 }
             }
