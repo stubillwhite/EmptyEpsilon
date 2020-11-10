@@ -14,6 +14,7 @@
 - Avoid automatic increase of coolant or repair request to reach total
 - Beams are now active in warp, but cost more energy (energy_per_beam * (warp_level + 1))
 - CpuShip focus on ship and station instead of missiles, warpjammer or asteroid
+- Hacking system easier (capability to apply hack before perfect completed)
 
 ### Fixed
 

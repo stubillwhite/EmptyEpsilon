@@ -49,7 +49,7 @@ void LightsOut::reset()
     while (lights_on == grid_size*grid_size)
     {
         //Mess the solved board up with n moves
-        int number_moves = irandom(3, 3*grid_size);
+        int number_moves = irandom(4, 4*grid_size);
         for (int i=0; i<number_moves; i++)
         {
             int x=irandom(0, grid_size-1);

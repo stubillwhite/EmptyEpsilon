@@ -28,13 +28,13 @@ class MiniGame : public sf::NonCopyable
 
     virtual void reset();
     virtual void disable();
+    virtual void gameComplete();
 
   protected:
     int difficulty;
     GuiHackingDialog* parent;
     bool game_complete;
     std::vector<GuiElement*> board;
-    virtual void gameComplete();
 };
 
 #endif//MINIGAME_H

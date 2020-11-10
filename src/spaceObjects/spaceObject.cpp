@@ -462,7 +462,7 @@ std::vector<std::pair<string, float> > SpaceObject::getHackingTargets()
     return std::vector<std::pair<string, float> >();
 }
 
-void SpaceObject::hackFinished(P<SpaceObject> source, string target)
+void SpaceObject::hackFinished(P<SpaceObject> source, string target, float value)
 {
 }
 

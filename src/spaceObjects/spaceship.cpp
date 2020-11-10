@@ -1040,7 +1040,7 @@ void SpaceShip::executeJump(float distance)
 
 bool SpaceShip::canBeDockedBy(P<SpaceObject> obj)
 {
-    // Hacking Thomas
+    // Hacking LARP
     return true;
     if (isEnemy(obj) || !ship_template)
         return false;
@@ -1229,7 +1229,9 @@ bool SpaceShip::isFullyScannedByFaction(int faction_id)
 
 bool SpaceShip::canBeHackedBy(P<SpaceObject> other)
 {
-    return (!(this->isFriendly(other)) && this->isFriendOrFoeIdentifiedBy(other)) ;
+    // Hacking LARP
+    return getScannedStateFor(other) > SS_NotScanned;
+    //return (!(this->isFriendly(other)) && this->isFriendOrFoeIdentifiedBy(other)) ;
 }
 
 std::vector<std::pair<string, float>> SpaceShip::getHackingTargets()
@@ -1245,7 +1247,7 @@ std::vector<std::pair<string, float>> SpaceShip::getHackingTargets()
     return results;
 }
 
-void SpaceShip::hackFinished(P<SpaceObject> source, string target)
+void SpaceShip::hackFinished(P<SpaceObject> source, string target, float value)
 {
     for(unsigned int n=0; n<SYS_COUNT; n++)
     {
@@ -1253,7 +1255,7 @@ void SpaceShip::hackFinished(P<SpaceObject> source, string target)
         {
             if (target == getSystemName(ESystem(n)))
             {
-                systems[n].hacked_level = std::min(1.0f, systems[n].hacked_level + 0.5f);
+                systems[n].hacked_level = std::min(1.0f, systems[n].hacked_level + value);
                 return;
             }
         }

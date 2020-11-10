@@ -341,7 +341,7 @@ public:
     void commandScanDone();
     void commandScanCancel();
     void commandSetAlertLevel(EAlertLevel level);
-    void commandHackingFinished(P<SpaceObject> target, string target_system);
+    void commandHackingFinished(P<SpaceObject> target, string target_system, float value);
     void commandCustomFunction(string name);
     void commandSetTractorBeamDirection(float direction);
     void commandSetTractorBeamArc(float arc);

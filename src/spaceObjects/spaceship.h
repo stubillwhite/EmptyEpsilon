@@ -346,7 +346,7 @@ public:
 
     virtual bool canBeHackedBy(P<SpaceObject> other) override;
     virtual std::vector<std::pair<string, float> > getHackingTargets() override;
-    virtual void hackFinished(P<SpaceObject> source, string target) override;
+    virtual void hackFinished(P<SpaceObject> source, string target, float value) override;
 
     /*!
      * Check if ship has certain system

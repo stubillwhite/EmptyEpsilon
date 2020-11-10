@@ -17,7 +17,7 @@ class MineSweeper : public MiniGame {
     virtual float getProgress() override;
     virtual sf::Vector2f getBoardSize() override;
   protected:
-    virtual void gameComplete() override;
+    //virtual void gameComplete() override;
   private:
     void onFieldClick(int x, int y);
     int error_count;

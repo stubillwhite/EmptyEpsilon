@@ -32,23 +32,28 @@ GuiHackingDialog::GuiHackingDialog(GuiContainer* owner, string id)
 
     hacking_status_label = new GuiLabel(minigame_box, "", "", 25);
     hacking_status_label->setSize(GuiElement::GuiSizeMax, 50)->setPosition(0, 0);
-    reset_button = new GuiButton(minigame_box, "", "Reset", [this]()
+    reset_button = new GuiButton(minigame_box, "", tr("hack","Reset"), [this]()
     {
         game->reset();
     });
-    reset_button->setSize(200, 50);
+    reset_button->setSize(150, 50);
     reset_button->setPosition(25, -25, ABottomLeft);
-    close_button = new GuiButton(minigame_box, "", "Close", [this]()
+    close_button = new GuiButton(minigame_box, "", tr("hack","Close"), [this]()
     {
         hide();
     });
-    close_button->setSize(200, 50);
+    close_button->setSize(150, 50);
     close_button->setPosition(-25, -25, ABottomRight);
+    apply_button = new GuiButton(minigame_box, "", tr("hack","Apply"), [this]()
+    {
+        game->gameComplete();
+    });
+    apply_button->setSize(150, 50);
+    apply_button->setPosition(0, -25, ABottomCenter);
 
     progress_bar = new GuiProgressbar(minigame_box, "", 0, 1, 0.0);
     progress_bar->setPosition(-25, 75, ATopRight);
     progress_bar->setSize(50, game->getBoardSize().y);
-
 
     target_selection_box = new GuiPanel(this, id + "_BOX");
     target_selection_box->setSize(300, 545)->setPosition(board_size.x / 2 + 200, 0, ACenter);
@@ -65,6 +70,7 @@ GuiHackingDialog::GuiHackingDialog(GuiContainer* owner, string id)
     target_list->setSize(250, 445);
 
     last_game_success = false;
+    last_game_value = 0.0;
 }
 
 void GuiHackingDialog::open(P<SpaceObject> target)
@@ -104,15 +110,23 @@ void GuiHackingDialog::onDraw(sf::RenderTarget& window)
         {
             if (my_spaceship && last_game_success)
             {
-                my_spaceship->commandHackingFinished(target, target_system);
+                my_spaceship->commandHackingFinished(target, target_system, last_game_value / 2.0);
             }
             getNewGame();
         }else{
             progress_bar->setValue((reset_time - engine->getElapsedTime()) / auto_reset_time);
         }
     } else {
-        progress_bar->setValue(game->getProgress());
-        status_label->setText("Hacking in Progress: " + string(int(100 * game->getProgress())) + "%");
+        float progress = exp(pow(game->getProgress(),2.0))/exp(1);
+        progress_bar->setValue(progress);
+        status_label->setText("Hacking in Progress: " + string(int(100 * progress)) + "%");
+        
+        int difficulty = 2;
+        if (gameGlobalInfo) {
+          difficulty = gameGlobalInfo->hacking_difficulty;
+        }
+    
+        apply_button->setEnable(game->getProgress() > 0.7 + difficulty / 10);
     }
     if (target_system != "")
     {
@@ -126,6 +140,8 @@ void GuiHackingDialog::onDraw(sf::RenderTarget& window)
             }
         }
     }
+    progress_bar->setVisible(target_system != "");
+    status_label->setVisible(target_system != "");
 }
 
 bool GuiHackingDialog::onMouseDown(sf::Vector2f position)
@@ -133,11 +149,12 @@ bool GuiHackingDialog::onMouseDown(sf::Vector2f position)
     return true;
 }
 
-void GuiHackingDialog::onMiniGameComplete(bool success)
+void GuiHackingDialog::onMiniGameComplete(bool success, float value)
 {
     reset_time = engine->getElapsedTime() + auto_reset_time;
     game->disable();
     last_game_success = success;
+    last_game_value = value;
     status_label->setText(success ? "Hacking SUCCESS!" : "Hacking FAILURE!");
 }
 
