@@ -25,3 +25,21 @@ template:setDescription(_([[The size of a sprawling town, stations at this scale
 template:setHull(800)
 template:setShields(1200, 1200, 1200, 1200)
 template:setRadarTrace("radartrace_hugestation.png")
+
+template = ShipTemplate():setName("Babylon Station"):setLocaleName(_("Babylon Station")):setModel("station_babylon"):setType("station"):setClass("Station", "Station")
+template:setDescription([[ ]])
+template:setHull(1200)
+template:setShields(1200, 1200, 1200, 1200)
+template:setRadarTrace("radartrace_hugestation.png")
+
+template = ShipTemplate():setName("Tore Station"):setLocaleName(_("Tore Station")):setModel("station_tore"):setType("station"):setClass("Station", "Station"):setRecorded(false)
+template:setDescription([[ ]])
+template:setHull(500)
+template:setShields(200, 200)
+template:setRadarTrace("radartrace_hugestation.png")
+
+template = ShipTemplate():setName("Commerce Station"):setLocaleName(_("Commerce Station")):setModel("station_commerce"):setType("station"):setClass("Station", "Station")
+template:setDescription([[ .]])
+template:setHull(600)
+template:setShields(1200)
+template:setRadarTrace("radartrace_mediumstation.png")
