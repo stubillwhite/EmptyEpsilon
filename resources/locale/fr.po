@@ -519,7 +519,7 @@ msgstr "Energie"
 #: src/screens/crew6/engineeringScreen.cpp:44
 msgctxt "health"
 msgid "Hull"
-msgstr "Carligue"
+msgstr "Carlingue"
 
 #: src/screens/crew6/engineeringScreen.cpp:34
 #: src/screens/crew6/weaponsScreen.cpp:75
@@ -600,7 +600,7 @@ msgstr "Taux de rechargement"
 #: src/screens/crew6/engineeringScreen.cpp:251
 #: src/screenComponents/systemEffectsList.cpp:86
 msgid "Turning speed"
-msgstr "Vitesse de rotation"
+msgstr "Rotation"
 
 #: src/screens/crew6/engineeringScreen.cpp:252
 #: src/screens/crew6/engineeringScreen.cpp:257
@@ -744,7 +744,7 @@ msgstr "Boucliers"
 #: src/screens/extra/targetAnalysisScreen.cpp:92
 msgctxt "science"
 msgid "Hull"
-msgstr "Carligue"
+msgstr "Carlingue"
 
 #: src/screens/crew6/scienceScreen.cpp:200
 #: src/screens/crew6/scienceScreen.cpp:236
@@ -1036,7 +1036,7 @@ msgstr "Impulsion"
 #: src/screenComponents/beamTargetSelector.cpp:9
 msgctxt "target"
 msgid "Hull"
-msgstr "Carligue"
+msgstr "Carlingue"
 
 #: src/screenComponents/indicatorOverlays.cpp:129
 #: src/screenComponents/indicatorOverlays.cpp:132
@@ -1527,17 +1527,17 @@ msgstr "Bouclier"
 #: src/scienceDatabase.cpp:141 src/scienceDatabase.cpp:367
 #: src/shipCargo.cpp:132 src/spaceObjects/shipTemplateBasedObject.cpp:246
 msgid "Hull"
-msgstr "Carligue"
+msgstr "Carlingue"
 
 #: src/scienceDatabase.cpp:145 src/scienceDatabase.cpp:371
 msgctxt "database"
 msgid "Move speed"
-msgstr "Vitesse de mouvement"
+msgstr "Vitesse"
 
 #: src/scienceDatabase.cpp:148 src/scienceDatabase.cpp:374
 msgctxt "database"
 msgid "Turn speed"
-msgstr "Vitesse de rotation"
+msgstr "Rotation"
 
 #: src/scienceDatabase.cpp:152 src/scienceDatabase.cpp:378
 msgctxt "database"
@@ -1709,7 +1709,7 @@ msgstr "Grande Station"
 
 #: scripts/shipTemplates_Stations.lua:18
 msgid "These spaceborne communities often represent permanent bases in a sector. Stations of this size can be military installations, commercial hubs, deep-space settlements, and small shipyards. Only a concentrated attack can penetrate a large station's shields, and its hull can withstand all but the most powerful weaponry."
-msgstr "Ces communautes spatiales representent souvent des bases permanentes dans un secteur. Des stations de cette taille peuvent etre des installations militaires, des hubs commerciaux, des colonies dans l'espace lointain, ou de petits chantiers spatiaux. Seule une attaque concentree peut penetrer les boucliers d'une grande station, et seuls les armements les plus puissants pourront venir a bout de sa carligue."
+msgstr "Ces communautes spatiales representent souvent des bases permanentes dans un secteur. Des stations de cette taille peuvent etre des installations militaires, des hubs commerciaux, des colonies dans l'espace lointain, ou de petits chantiers spatiaux. Seule une attaque concentree peut penetrer les boucliers d'une grande station, et seuls les armements les plus puissants pourront venir a bout de sa carlingue."
 
 #: scripts/shipTemplates_Stations.lua:23
 msgid "Huge Station"
@@ -1717,7 +1717,7 @@ msgstr "Immense Station"
 
 #: scripts/shipTemplates_Stations.lua:24
 msgid "The size of a sprawling town, stations at this scale represent a faction's center of spaceborne power in a region. They serve many functions at once and represent an extensive investment of time, money, and labor. A huge station's shields and thick hull can keep it intact long enough for reinforcements to arrive, even when faced with an ongoing siege or massive, perfectly coordinated assault."
-msgstr "De la taille d'une ville tentaculaire, les stations de cette ampleur representent le centre spatial de pouvoir regional d'une faction. Ils plusieurs fonctions simultanees et representent un grand investissement de temps, d'argent et de travail. Les enormes boucliers et la carligue epaisse d'une telle station peuvent garder celle-ci intacte assez longtemps pour l'arrivee de renforts, meme face a un siege en continu ou a un assaut massif parfaitement coordonne."
+msgstr "De la taille d'une ville tentaculaire, les stations de cette ampleur representent le centre spatial de pouvoir regional d'une faction. Ils plusieurs fonctions simultanees et representent un grand investissement de temps, d'argent et de travail. Les enormes boucliers et la carlingue epaisse d'une telle station peuvent garder celle-ci intacte assez longtemps pour l'arrivee de renforts, meme face a un siege en continu ou a un assaut massif parfaitement coordonne."
 
 #: src/scienceDatabase.cpp:306
 msgctxt "database"
@@ -3010,7 +3010,7 @@ msgstr "MP52 Hornet"
 
 #: scripts/shipTemplates_StarFighters.lua:32
 msgid "The MP52 Hornet is a significantly upgraded version of MU52 Hornet, with nearly twice the hull strength, nearly three times the shielding, better acceleration, impulse boosters, and a second laser cannon."
-msgstr "Le MP52 Hornet est une version considerablement amelioree du MU52 Hornet, avec pres de deux fois la resistance de la carligue, pres de trois fois le blindage, une meilleure acceleration, des boosters d'impulsion et un deuxieme canon laser."
+msgstr "Le MP52 Hornet est une version considerablement amelioree du MU52 Hornet, avec pres de deux fois la resistance de la carlingue, pres de trois fois le blindage, une meilleure acceleration, des boosters d'impulsion et un deuxieme canon laser."
 
 #: scripts/shipTemplates_StarFighters.lua:65
 msgid "Adder MK5"
@@ -3026,7 +3026,7 @@ msgstr "Adder MK4"
 
 #: scripts/shipTemplates_StarFighters.lua:80
 msgid "The mark 4 Adder is a rare sight these days due to the success its successor, the mark 5 Adder, which often replaces this model. Its similar hull, however, means careless buyers are sometimes conned into buying mark 4 models disguised as the mark 5."
-msgstr "La marque 4 Adder est un spectacle rare de nos jours en raison du succes de son successeur, la marque 5 Adder, qui remplace souvent ce modele. Sa carligue similaire, cependant, signifie que les acheteurs imprudents sont parfois amenes a acheter des modeles de marque 4 deguises en marque 5."
+msgstr "La marque 4 Adder est un spectacle rare de nos jours en raison du succes de son successeur, la marque 5 Adder, qui remplace souvent ce modele. Sa carlingue similaire, cependant, signifie que les acheteurs imprudents sont parfois amenes a acheter des modeles de marque 4 deguises en marque 5."
 
 #: scripts/shipTemplates_StarFighters.lua:88
 #: scripts/shipTemplates_StarFighters.lua:94
@@ -3133,7 +3133,7 @@ msgid "A nuclear missile is similar to a homing missile in that it can seek a ta
 "Some captains oppose the use of nuclear weapons because their large explosions can lead to 'fragging', or unintentional friendly fire. Shields should protect crews from harmful radiation, but because these weapons are often used in the thick of battle, there's no way of knowing if hull plating or shields can provide enough protection."
 msgstr "Un missile nucleaire est similaire a un missile a tete chercheuse en ce qu'il peut rechercher une cible, mais il se deplace et tourne plus lentement et explose une charge utile considerablement accrue. Son explosion nucleaire s'etend sur 1U d'espace et peut detruire plusieurs navires en un seul coup.\n"
 "\n"
-"Certains capitaines s'opposent a l'utilisation d'armes nucleaires parce que leurs grosses explosions peuvent entrainer des tirs amis ou non intentionnels. Les boucliers devraient proteger les equipages des radiations nocives, mais comme ces armes sont souvent utilisees au cœur des combats, il n'y a aucun moyen de savoir si le revetement de la carligue ou les boucliers peuvent fournir une protection suffisante."
+"Certains capitaines s'opposent a l'utilisation d'armes nucleaires parce que leurs grosses explosions peuvent entrainer des tirs amis ou non intentionnels. Les boucliers devraient proteger les equipages des radiations nocives, mais comme ces armes sont souvent utilisees au cœur des combats, il n'y a aucun moyen de savoir si le revetement de la carlingue ou les boucliers peuvent fournir une protection suffisante."
 
 #: scripts/science_db.lua:49
 msgid "Mines are often placed in defensive perimeters around stations. There are also old minefields scattered around the galaxy from older wars.\n"
@@ -3149,7 +3149,7 @@ msgstr "EMP"
 
 #: scripts/science_db.lua:58
 msgid "The electromagnetic pulse missile (EMP) reproduces the disruptive effects of a nuclear explosion, but without the destructive properties. This causes it to only affect shields within its blast radius, leaving their hulls intact. The EMP missile is also smaller and easier to store than heavy nukes. Many captains (and pirates) prefer EMPs over nukes for these reasons, and use them to knock out targets' shields before closing to disable them with focused beam fire."
-msgstr "Le missile a impulsion electromagnetique (EMP) reproduit les effets perturbateurs d'une explosion nucleaire, mais sans les proprietes destructrices. Cela l'amene a n'affecter que les boucliers dans son rayon d'explosion, laissant leurs carligues intactes. Le missile EMP est egalement plus petit et plus facile a stocker que les armes nucleaires lourdes. De nombreux capitaines (et pirates) preferent les EMP aux armes nucleaires pour ces raisons et les utilisent pour assommer les boucliers des cibles avant de les fermer pour les desactiver avec un tir de faisceau concentre."
+msgstr "Le missile a impulsion electromagnetique (EMP) reproduit les effets perturbateurs d'une explosion nucleaire, mais sans les proprietes destructrices. Cela l'amene a n'affecter que les boucliers dans son rayon d'explosion, laissant leurs carlingues intactes. Le missile EMP est egalement plus petit et plus facile a stocker que les armes nucleaires lourdes. De nombreux capitaines (et pirates) preferent les EMP aux armes nucleaires pour ces raisons et les utilisent pour assommer les boucliers des cibles avant de les fermer pour les desactiver avec un tir de faisceau concentre."
 
 #: scripts/science_db.lua:64
 msgid "A high-velocity lead impactor (HVLI) fires a simple slug of lead at a high velocity. This weapon is usually found in simpler ships since it does not require guidance computers. This also means its projectiles fly in a straight line from its tube and can't pursue a target.\n"
@@ -3448,7 +3448,7 @@ msgstr "Adder MK3"
 
 #: scripts/shipTemplates_StarFighters.lua:89
 msgid "The Adder MK3 is one of the first of the Adder line to meet with some success. A large number of them were made before the manufacturer went through its first bankruptcy. There has been a recent surge of purchases of the Adder MK3 in the secondary market due to its low price and its similarity to subsequent models. Compared to the Adder MK4, the Adder MK3 has weaker shields and hull, but a faster turn speed"
-msgstr "L'Adder MK3 est l'un des premiers de la gamme Adder a rencontrer un certain succes. Un grand nombre d'entre eux ont ete realises avant que le fabricant ne fasse sa premiere faillite. Il y a eu une augmentation recente des achats de l'Adder MK3 sur le marche secondaire en raison de son prix bas et de sa similitude avec les modeles suivants. Compare a l'Adder MK4, l'Adder MK3 a des boucliers et une carligue plus faibles, mais une vitesse de rotation plus rapide"
+msgstr "L'Adder MK3 est l'un des premiers de la gamme Adder a rencontrer un certain succes. Un grand nombre d'entre eux ont ete realises avant que le fabricant ne fasse sa premiere faillite. Il y a eu une augmentation recente des achats de l'Adder MK3 sur le marche secondaire en raison de son prix bas et de sa similitude avec les modeles suivants. Compare a l'Adder MK4, l'Adder MK3 a des boucliers et une carlingue plus faibles, mais une vitesse de rotation plus rapide"
 
 #: scripts/shipTemplates_StarFighters.lua:100
 msgid "Adder MK7"
