@@ -21,6 +21,7 @@ public:
     EOperator compare_operator;
     float compare_value;
     int channel_nr;
+    int ship_number;
 
     HardwareMappingEffect* effect;
 };
@@ -43,6 +44,7 @@ public:
     bool previous_valid;
     float previous_value;
     int channel_nr;
+    int ship_number;
 
     HardwareMappingEffect* effect;
 };
@@ -62,11 +64,11 @@ public:
 
     virtual void update(float delta);
 
-    bool getVariableValue(string variable_name, float& value);
+    bool getVariableValue(int ship_number, string variable_name, float& value);
 private:
     void handleConfig(string section, std::unordered_map<string, string>& settings);
-    void createNewHardwareMappingState(int channel_number, std::unordered_map<string, string>& settings);
-    void createNewHardwareMappingEvent(int channel_number, std::unordered_map<string, string>& settings);
+    void createNewHardwareMappingState(int ship_number, int channel_number, std::unordered_map<string, string>& settings);
+    void createNewHardwareMappingEvent(int ship_number, int channel_number, std::unordered_map<string, string>& settings);
     HardwareMappingEffect* createEffect(std::unordered_map<string, string>& settings);
 };
 

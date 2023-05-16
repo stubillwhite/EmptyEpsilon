@@ -60,6 +60,7 @@ class HardwareMappingEffectVariable : public HardwareMappingEffect
 private:
     HardwareController* controller;
     string variable_name;
+    int ship_number;
     float min_input, max_input;
     float min_output, max_output;
 public:
