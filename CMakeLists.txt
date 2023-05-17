@@ -90,14 +90,18 @@ else()
   # Poor man's FetchContent.
   set(EXTERNALS_DIR "${PROJECT_BINARY_DIR}/externals")
   set(DOWNLOADS_DIR "${PROJECT_BINARY_DIR}/downloads")
+  file(MAKE_DIRECTORY "${EXTERNAL_DIR}" "${DOWNLOADS_DIR}")
   set(OSCPP_BASE_PATH "${EXTERNALS_DIR}")
   set(oscpp_POPULATED FALSE)
   if(NOT EXISTS "${OSCPP_BASE_PATH}/oscpp/CMakeLists.txt")
     set(OSCPP_ZIP "${DOWNLOADS_DIR}/oscpp.zip")
     file(DOWNLOAD "https://github.com/tombull/oscpp/archive/${OSCPP_GIT_SHA}.zip" "${OSCPP_ZIP}" TIMEOUT 60 TLS_VERIFY ON)
+	message("Downloaded OSCPP")
 
     execute_process(COMMAND ${CMAKE_COMMAND} -E tar -xf "${OSCPP_ZIP}" WORKING_DIRECTORY "${OSCPP_BASE_PATH}")
+	message("Extracted OSCPP")
     execute_process(COMMAND ${CMAKE_COMMAND} -E rename "oscpp-${OSCPP_GIT_SHA}" oscpp WORKING_DIRECTORY "${OSCPP_BASE_PATH}")
+	message("Renamed OSCPP")
   endif()
 
   set(oscpp_SOURCE_DIR "${OSCPP_BASE_PATH}/oscpp")
@@ -108,8 +112,9 @@ if(NOT oscpp_POPULATED)
   if(COMMAND FetchContent_Populate)
     FetchContent_Populate(oscpp)
   endif()
-  include_directories(${oscpp_SOURCE_DIR}/include)
 endif()
+
+include_directories(${oscpp_SOURCE_DIR}/include)
 
 set(EXECUTABLE_NAME "EmptyEpsilon")
 set(SOURCES
