@@ -88,6 +88,8 @@ if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.11)
   FetchContent_GetProperties(oscpp)
 else()
   # Poor man's FetchContent.
+  set(EXTERNALS_DIR "${PROJECT_BINARY_DIR}/externals")
+  set(DOWNLOADS_DIR "${PROJECT_BINARY_DIR}/downloads")
   set(OSCPP_BASE_PATH "${EXTERNALS_DIR}")
   set(oscpp_POPULATED FALSE)
   if(NOT EXISTS "${OSCPP_BASE_PATH}/oscpp/CMakeLists.txt")
