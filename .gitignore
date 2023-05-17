@@ -39,3 +39,6 @@ options.ini
 *.html
 logs
 *.log
+
+_build_win32
+cmake/_win32

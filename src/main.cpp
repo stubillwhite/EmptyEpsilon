@@ -28,9 +28,9 @@
 #include "tutorialGame.h"
 
 #include "hardware/hardwareController.h"
-#ifdef __WIN32__
-#include "discord.h"
-#endif
+// #ifdef __WIN32__
+// #include "discord.h"
+// #endif
 
 #ifdef __APPLE__
 #include <CoreFoundation/CoreFoundation.h>
@@ -310,9 +310,9 @@ int main(int argc, char** argv)
     else
         hardware_controller->loadConfiguration("hardware.ini");
 
-#ifdef __WIN32__
-    new DiscordRichPresence();
-#endif
+// #ifdef __WIN32__
+//     new DiscordRichPresence();
+// #endif
 
     returnToMainMenu();
     engine->runMainLoop();

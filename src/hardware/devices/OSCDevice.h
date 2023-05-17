@@ -1,8 +1,8 @@
 #ifndef OSC_DEVICE_H
 #define OSC_DEVICE_H
 
-#include <io/network/udpSocket.h>
-#include <io/network/address.h>
+#include <SFML/System.hpp>
+#include <SFML/Network.hpp>
 #include "hardware/hardwareOutputDevice.h"
 
 #include <stdint.h>
@@ -13,10 +13,10 @@ class OSCDevice : public HardwareOutputDevice
 private:
     static constexpr int maximum_udp_packet_size = 65507;
 
-    sp::io::network::UdpSocket socket;
+    sf::UdpSocket socket;
     
     int channel_count;
-    sp::io::network::Address address;
+    sf::IpAddress address;
     int port_number;
     string osc_addresses[512];
     

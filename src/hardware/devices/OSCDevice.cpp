@@ -9,7 +9,7 @@
 OSCDevice::OSCDevice()
 {
     channel_count = 512;
-    address = sp::io::network::Address("127.0.0.1");
+    address = sf::IpAddress("127.0.0.1");
     port_number = 53000;
     for (int i = 0; i < 512; i++) {
         osc_addresses[i] = "/emptyepsilon/channel/" + std::to_string(i);
@@ -25,7 +25,7 @@ bool OSCDevice::configure(std::unordered_map<string, string> settings)
     }
     if (settings.find("server_address") != settings.end())
     {
-        address = sp::io::network::Address(settings["server_address"]);
+        address = sf::IpAddress(settings["server_address"]);
     }
     if (settings.find("port_number") != settings.end())
     {
