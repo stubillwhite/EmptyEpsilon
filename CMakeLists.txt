@@ -90,7 +90,7 @@ else()
   # Poor man's FetchContent.
   set(EXTERNALS_DIR "${PROJECT_BINARY_DIR}/externals")
   set(DOWNLOADS_DIR "${PROJECT_BINARY_DIR}/downloads")
-  file(MAKE_DIRECTORY "${EXTERNAL_DIR}" "${DOWNLOADS_DIR}")
+  file(MAKE_DIRECTORY "${EXTERNALS_DIR}" "${DOWNLOADS_DIR}")
   set(OSCPP_BASE_PATH "${EXTERNALS_DIR}")
   set(oscpp_POPULATED FALSE)
   if(NOT EXISTS "${OSCPP_BASE_PATH}/oscpp/CMakeLists.txt")

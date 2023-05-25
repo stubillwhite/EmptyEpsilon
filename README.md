@@ -324,3 +324,79 @@ Conditions for states, or triggers for events can be based of the following prop
  
 
 (If you need more options. Feel free to file an issue)
+
+
+# Build Process
+
+## Cross compilation on linux
+
+Install Ubuntu 20.04 (must not be later version because it will use recent versions of mingw gcc/gpp which have errors with this codebase)
+
+```
+sudo apt update
+sudo apt upgrade
+sudo apt install wget cmake build-essential git unzip zip p7zip-full mingw-w64 ninja-build libsdl2-dev libfreetype-dev
+mkdir workspace
+cd workspace
+git clone --branch larp-v2-hardware https://github.com/tombull/EmptyEpsilon.git
+git clone https://github.com/tdelc/SeriousProton.git
+cd SeriousProton
+git reset --hard b068a01550d11ddeb57b9437eb193361f24458c6
+cd ..
+cd EmptyEpsilon
+mkdir _build_win32
+cd _build_win32
+cmake .. -G Ninja -DSERIOUS_PROTON_DIR=../../SeriousProton -DCMAKE_TOOLCHAIN_FILE=../cmake/mingw.toolchain -DCMAKE_BUILD_TYPE=RelWithDebInfo
+cmake --build . --target package
+```
+
+This doesn't work.
+
+## Windows Build
+
+* Fresh installation of Windows 10 Pro
+* Install git for windows, Notepad++, 7-zip
+* Install Visual Studio 2019 Community Edition (Include C++ development features)
+* Choose a folder for your source control repos and build, we'll call this {reposRootFolder}
+* Open Visual Studio Community Edition by and when prompted to open a project, clone https://github.com/tombull/EmptyEpsilon.git into a folder {reposRootFolder}\EmptyEpsilon
+* Download https://www.sfml-dev.org/files/SFML-2.5.1-windows-vc15-32-bit.zip and unzip the contents into {reposRootFolder}\externals
+* Open Visual Studio Command Prompt from the 'Tools' menu
+* Change directory to {reposRootFolder} and execute the following commands
+```
+git checkout larp-v2-hardware
+cd ..
+git clone https://github.com/tdelc/SeriousProton.git
+cd SeriousProton
+git reset --hard b068a01550d11ddeb57b9437eb193361f24458c6
+cd ..
+cmake -E make_directory {reposRootFolder}\build
+cd build
+cmake ../EmptyEpsilon -G "Visual Studio 16 2019" -A Win32 -DCMAKE_BUILD_TYPE=RelWithDebInfo -DSFML_ROOT="../externals/SFML-2.5.1" -DSERIOUS_PROTON_DIR="../SeriousProton"
+cmake --build . --config RelWithDebInfo --target package
+```
+
+This doesn't work.
+
+## Cross compilation on linux with older linker
+
+Install Ubuntu 18.04 (must not be later version because it will use recent versions of mingw gcc/gpp which have errors with this codebase)
+
+```
+sudo apt update
+sudo apt upgrade
+sudo apt install wget cmake build-essential git unzip zip p7zip-full mingw-w64 ninja-build libsdl2-dev libfreetype-dev
+mkdir workspace
+cd workspace
+git clone --branch larp-v2-hardware https://github.com/tombull/EmptyEpsilon.git
+git clone https://github.com/tdelc/SeriousProton.git
+cd SeriousProton
+git reset --hard b068a01550d11ddeb57b9437eb193361f24458c6
+cd ..
+cd EmptyEpsilon
+mkdir _build_win32
+cd _build_win32
+cmake .. -G Ninja -DSERIOUS_PROTON_DIR=../../SeriousProton -DCMAKE_TOOLCHAIN_FILE=../cmake/mingw.toolchain -DCMAKE_BUILD_TYPE=RelWithDebInfo
+cmake --build . --target package
+```
+
+This works!
