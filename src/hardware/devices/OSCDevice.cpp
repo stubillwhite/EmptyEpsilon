@@ -59,7 +59,7 @@ bool OSCDevice::configure(std::unordered_map<string, string> settings)
 void OSCDevice::setChannelData(int channel, float value)
 {
     // LOG(INFO) << "Preparing OSC packet: create buffer."; // for: " << osc_addresses[channel] << ", with value: " << value;
-    uint8_t* buffer = new u_int8_t[maximum_udp_packet_size];
+    uint8_t* buffer = new uint8_t[maximum_udp_packet_size];
     LOG(INFO) << "Preparing OSC packet: create packet.";
     OSCPP::Client::Packet packet(buffer, maximum_udp_packet_size);
     LOG(INFO) << "Preparing OSC packet: get pointer to char arrau for address.";
