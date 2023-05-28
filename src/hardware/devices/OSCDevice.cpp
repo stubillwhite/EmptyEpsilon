@@ -21,18 +21,22 @@ bool OSCDevice::configure(std::unordered_map<string, string> settings)
 {
     if (settings.find("channels") != settings.end())
     {
+        LOG(INFO) << "Setting number of channels for OSCDevice to: " << settings["channels"].toInt();
         channel_count = std::max(1, std::min(512, settings["channels"].toInt()));
     }
     if (settings.find("server_address") != settings.end())
     {
+        LOG(INFO) << "Setting IP address for OSCDevice to: " << settings["server_address"];
         address = sf::IpAddress(settings["server_address"]);
     }
     if (settings.find("port_number") != settings.end())
     {
+        LOG(INFO) << "Setting port number for OSCDevice to: " << settings["port_number"];
         port_number = settings["port_number"].toInt();
     }
     if (settings.find("address_prefix") != settings.end())
     {
+        LOG(INFO) << "Setting address prefix for OSCDevice to: " << settings["address_prefix"].strip();
         for (int i = 0; i < 512; i++) {
             osc_addresses[i] = settings["address_prefix"].strip() + std::to_string(i);
         }
@@ -42,6 +46,7 @@ bool OSCDevice::configure(std::unordered_map<string, string> settings)
         int i = 0;
         for(string channel_address : settings["channel_addresses"].split(","))
         {
+            LOG(INFO) << "Setting address for OSCDevice channel " << i << " to: " << channel_address.strip();
             osc_addresses[i] = channel_address.strip();
             i++;   
         }
