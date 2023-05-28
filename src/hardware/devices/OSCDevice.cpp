@@ -60,15 +60,15 @@ void OSCDevice::setChannelData(int channel, float value)
 {
     // LOG(INFO) << "Preparing OSC packet: create buffer."; // for: " << osc_addresses[channel] << ", with value: " << value;
     uint8_t* buffer = new uint8_t[maximum_udp_packet_size];
-    LOG(INFO) << "Preparing OSC packet: create packet.";
+    // LOG(INFO) << "Preparing OSC packet: create packet.";
     OSCPP::Client::Packet packet(buffer, maximum_udp_packet_size);
-    LOG(INFO) << "Preparing OSC packet: get pointer to char arrau for address.";
+    // LOG(INFO) << "Preparing OSC packet: get pointer to char arrau for address.";
     const char* osc_address = osc_addresses[channel].c_str();
-    LOG(INFO) << "Preparing OSC packet: write message contents.";
+    // LOG(INFO) << "Preparing OSC packet: write message contents.";
     packet.openMessage(osc_address, 1).float32(value).closeMessage();
-    LOG(INFO) << "OSC packet prepared for: " << osc_addresses[channel] << ", with value: " << value << ", packet size: " << packet.size();
+    // LOG(INFO) << "OSC packet prepared for: " << osc_addresses[channel] << ", with value: " << value << ", packet size: " << packet.size();
     socket.send(buffer, packet.size(), address, port_number);
-    LOG(INFO) << "Packet sent to: " << address.toString() << ", port number: " << port_number;
+    // LOG(INFO) << "Packet sent to: " << address.toString() << ", port number: " << port_number;
 }
 
 //Return the number of output channels supported by this device.
