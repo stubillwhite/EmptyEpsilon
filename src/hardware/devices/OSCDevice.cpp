@@ -58,10 +58,13 @@ bool OSCDevice::configure(std::unordered_map<string, string> settings)
 //Set a hardware channel output. Value is 0.0 to 1.0 for no to max output.
 void OSCDevice::setChannelData(int channel, float value)
 {
-    // LOG(INFO) << "Preparing OSC packet for: " << osc_addresses[channel] << ", with value: " << value;
+    LOG(INFO) << "Preparing OSC packet: create buffer."; // for: " << osc_addresses[channel] << ", with value: " << value;
     uint8_t buffer[maximum_udp_packet_size] = {};
+    LOG(INFO) << "Preparing OSC packet: create packet.";
     OSCPP::Client::Packet packet(buffer, maximum_udp_packet_size);
+    LOG(INFO) << "Preparing OSC packet: get pointer to char arrau for address.";
     const char* osc_address = osc_addresses[channel].c_str();
+    LOG(INFO) << "Preparing OSC packet: write message contents.";
     packet.openMessage(osc_address, 1).float32(value).closeMessage();
     LOG(INFO) << "OSC packet prepared for: " << osc_addresses[channel] << ", with value: " << value << ", packet size: " << packet.size();
     socket.send(buffer, packet.size(), address, port_number);
