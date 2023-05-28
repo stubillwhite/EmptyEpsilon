@@ -57,7 +57,9 @@ void OSCDevice::setChannelData(int channel, float value)
     OSCPP::Client::Packet packet(buffer, maximum_udp_packet_size);
     const char* osc_address = osc_addresses[channel].c_str();
     packet.openMessage(osc_address, 1).float32(value).closeMessage();
+    LOG(INFO) << "OSC packet prepared for: " << osc_address << ", with value: " << value << ", packet size: " << packet.size();
     socket.send(buffer, packet.size(), address, port_number);
+    LOG(INFO) << "Packet sent to: " << address.toString() << ", port number: " << port_number;
 }
 
 //Return the number of output channels supported by this device.
