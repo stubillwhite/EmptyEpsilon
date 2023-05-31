@@ -11,8 +11,10 @@ OSCDevice::OSCDevice()
     channel_count = 512;
     address = sf::IpAddress("127.0.0.1");
     port_number = 53000;
+    send_data_only_if_changed = false;
     for (int i = 0; i < 512; i++) {
         osc_addresses[i] = "/emptyepsilon/channel/" + std::to_string(i);
+        previous_values[i] = -1;
     }
     socket.bind(0); // Bind to random port
 }
@@ -33,6 +35,11 @@ bool OSCDevice::configure(std::unordered_map<string, string> settings)
     {
         LOG(INFO) << "Setting port number for OSCDevice to: " << settings["port_number"];
         port_number = settings["port_number"].toInt();
+    }
+    if (settings.find("send_data_only_if_changed") != settings.end())
+    {
+        LOG(INFO) << "Setting 'send data only if changed' for OSCDevice to: " << settings["send_data_only_if_changed"];
+        send_data_only_if_changed = settings["send_data_only_if_changed"].strip().lower().startswith("y") || settings["send_data_only_if_changed"].strip().lower().startswith("t") || settings["send_data_only_if_changed"].strip().lower().startswith("1");
     }
     if (settings.find("address_prefix") != settings.end())
     {
@@ -58,17 +65,21 @@ bool OSCDevice::configure(std::unordered_map<string, string> settings)
 //Set a hardware channel output. Value is 0.0 to 1.0 for no to max output.
 void OSCDevice::setChannelData(int channel, float value)
 {
-    // LOG(INFO) << "Preparing OSC packet: create buffer."; // for: " << osc_addresses[channel] << ", with value: " << value;
-    uint8_t* buffer = new uint8_t[maximum_udp_packet_size];
-    // LOG(INFO) << "Preparing OSC packet: create packet.";
-    OSCPP::Client::Packet packet(buffer, maximum_udp_packet_size);
-    // LOG(INFO) << "Preparing OSC packet: get pointer to char arrau for address.";
-    const char* osc_address = osc_addresses[channel].c_str();
-    // LOG(INFO) << "Preparing OSC packet: write message contents.";
-    packet.openMessage(osc_address, 1).float32(value).closeMessage();
-    // LOG(INFO) << "OSC packet prepared for: " << osc_addresses[channel] << ", with value: " << value << ", packet size: " << packet.size();
-    socket.send(buffer, packet.size(), address, port_number);
-    // LOG(INFO) << "Packet sent to: " << address.toString() << ", port number: " << port_number;
+    if (previous_values[channel] != value || !send_data_only_if_changed) {
+        previous_values[channel] = value;
+        // LOG(INFO) << "Preparing OSC packet: create buffer."; // for: " << osc_addresses[channel] << ", with value: " << value;
+        uint8_t* buffer = new uint8_t[maximum_udp_packet_size];
+        // LOG(INFO) << "Preparing OSC packet: create packet.";
+        OSCPP::Client::Packet packet(buffer, maximum_udp_packet_size);
+        // LOG(INFO) << "Preparing OSC packet: get pointer to char arrau for address.";
+        const char* osc_address = osc_addresses[channel].c_str();
+        // LOG(INFO) << "Preparing OSC packet: write message contents.";
+        packet.openMessage(osc_address, 1).float32(value).closeMessage();
+        // LOG(INFO) << "OSC packet prepared for: " << osc_addresses[channel] << ", with value: " << value << ", packet size: " << packet.size();
+        socket.send(buffer, packet.size(), address, port_number);
+        // LOG(INFO) << "Packet sent to: " << address.toString() << ", port number: " << port_number;
+        delete buffer;
+    }
 }
 
 //Return the number of output channels supported by this device.

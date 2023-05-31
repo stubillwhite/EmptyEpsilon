@@ -19,6 +19,8 @@ private:
     sf::IpAddress address;
     int port_number;
     string osc_addresses[512];
+    float previous_values[512];
+    bool send_data_only_if_changed;
     
 public:
     OSCDevice();
