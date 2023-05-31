@@ -86,6 +86,7 @@ The OSC device is confugured using the following directives:
 * `channels` - the number of channels that will be transmitted to the OSC endpoint (defaults to 512)
 * `server_address` - the IP address of the OSC server to send the messages to (defaults to `127.0.0.1`)
 * `port_number` - the UDP port number to send the OSC packets to (defaults to 53000)
+* `send_data_only_if_changed` - tells the OSC device only to update the server if the data has changed - rather than updating whenever data is updated from the game engine (defaults to 'no' / 'false') - you can set this to 'yes', 'y', 'true' or '1' to enable it.
 * `address_prefix` - the OSC address prefix that is used to generate the OSC messages. The channel number will be appended to the OSC address prefix for each of the channels. This defaults to `/emptyepsilon/channel/`, so the OSC addresses will be `/emptyepsilon/channel/1`, `/emptyepsilon/channel/2`, `/emptyepsilon/channel/3`, etc. You can also omit the trailing `/` if you want, and the addresses would be named `/emptyepsilon/channel1`, `/emptyepsilon/channel2`, `/emptyepsilon/channel3`, etc.
 * `channel_addresses` - you can specify individual channel addresses in a comma-separated format. These will override the addresses generated from the address prefix. For example using a value of `/ee/anadddress, /ee/anotheradddress, /ee/thirdadddress` would override the first three channel addresses with the specified addresses. 
 
