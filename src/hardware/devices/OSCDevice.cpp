@@ -13,7 +13,7 @@ OSCDevice::OSCDevice()
     port_number = 53000;
     send_data_only_if_changed = false;
     for (int i = 0; i < 512; i++) {
-        osc_addresses[i] = "/emptyepsilon/channel/" + std::to_string(i);
+        osc_addresses[i] = "/emptyepsilon/channel/" + std::to_string(i + 1);
         previous_values[i] = -1;
     }
     socket.bind(0); // Bind to random port
