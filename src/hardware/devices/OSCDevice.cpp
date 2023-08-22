@@ -65,17 +65,18 @@ bool OSCDevice::configure(std::unordered_map<string, string> settings)
 //Set a hardware channel output. Value is 0.0 to 1.0 for no to max output.
 void OSCDevice::setChannelData(int channel, float value)
 {
-    if (previous_values[channel] != value || !send_data_only_if_changed) {
-        previous_values[channel] = value;
-        // LOG(INFO) << "Preparing OSC packet: create buffer."; // for: " << osc_addresses[channel] << ", with value: " << value;
+    float rounded_value = ((int) (var * 100 + .5)) / 100.0;
+    if (previous_values[channel] != rounded_value || !send_data_only_if_changed) {
+        previous_values[channel] = rounded_value;
+        // LOG(INFO) << "Preparing OSC packet: create buffer."; // for: " << osc_addresses[channel] << ", with value: " << rounded_value;
         uint8_t* buffer = new uint8_t[maximum_udp_packet_size];
         // LOG(INFO) << "Preparing OSC packet: create packet.";
         OSCPP::Client::Packet packet(buffer, maximum_udp_packet_size);
         // LOG(INFO) << "Preparing OSC packet: get pointer to char arrau for address.";
         const char* osc_address = osc_addresses[channel].c_str();
         // LOG(INFO) << "Preparing OSC packet: write message contents.";
-        packet.openMessage(osc_address, 1).float32(value).closeMessage();
-        // LOG(INFO) << "OSC packet prepared for: " << osc_addresses[channel] << ", with value: " << value << ", packet size: " << packet.size();
+        packet.openMessage(osc_address, 1).float32(rounded_value).closeMessage();
+        // LOG(INFO) << "OSC packet prepared for: " << osc_addresses[channel] << ", with value: " << rounded_value << ", packet size: " << packet.size();
         socket.send(buffer, packet.size(), address, port_number);
         // LOG(INFO) << "Packet sent to: " << address.toString() << ", port number: " << port_number;
         delete buffer;
