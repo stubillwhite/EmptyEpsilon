@@ -25,7 +25,7 @@ jobs:
 
     - name: Git Reset Hard (SeriousProton)
       run: |
-        cd seriousproton
+        cd SeriousProton
         git reset --hard b068a01550d11ddeb57b9437eb193361f24458c6
         cd ..
 
