@@ -2,7 +2,7 @@ name: EE Builder
 
 on: 
   push:
-    branches: [ main, github-cicd ]
+    branches: [ main ]
 
 jobs:
   build:
