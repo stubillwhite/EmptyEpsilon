@@ -16,13 +16,10 @@ jobs:
       run: |
         sudo apt-get update
 
-    - name: Make build folder
+    - name: Make build folder and CMake
       run: |
         mkdir _build_win32
         cd _build_win32
-
-    - name: CMake
-      run: |
         cmake .. -G Ninja -DSERIOUS_PROTON_DIR=/ee-workspace/SeriousProton -DCMAKE_TOOLCHAIN_FILE=../cmake/mingw.toolchain -DCMAKE_BUILD_TYPE=RelWithDebInfo
         cmake --build . --target package
 
