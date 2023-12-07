@@ -1,0 +1,46 @@
+name: EE Builder
+
+on: 
+  push:
+    branches: [ main, github-cicd ]
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Update and install packages
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y wget cmake build-essential git unzip zip p7zip-full mingw-w64 ninja-build libsdl2-dev libfreetype6
+
+    - name: Checkout SeriousProton
+      uses: actions/checkout@v2
+      with:
+        repository: "tdelc/SeriousProton"
+        path: "SeriousProton"
+
+    - name: Git Reset Hard (SeriousProton)
+      run: |
+        cd seriousproton
+        git reset --hard b068a01550d11ddeb57b9437eb193361f24458c6
+        cd ..
+
+    - name: Make build folder
+      run: |
+        mkdir _build_win32
+        cd _build_win32
+
+    - name: CMake
+      run: |
+        cmake .. -G Ninja -DSERIOUS_PROTON_DIR=../../SeriousProton -DCMAKE_TOOLCHAIN_FILE=../cmake/mingw.toolchain -DCMAKE_BUILD_TYPE=RelWithDebInfo
+        cmake --build . --target package
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: EmptyEpsilon
+        path: _build_win32/EmptyEpsilon.zip
