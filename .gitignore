@@ -34,7 +34,6 @@ thumbs.db
 # vim
 *.swp
 
-options.ini
 .vscode
 *.html
 logs
