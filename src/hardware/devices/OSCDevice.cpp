@@ -16,6 +16,7 @@ OSCDevice::OSCDevice()
         osc_addresses[i] = "/emptyepsilon/channel/" + std::to_string(i + 1);
         previous_values[i] = -1;
     }
+    send_ship_1 = true;
     socket.bind(0); // Bind to random port
 }
 
@@ -65,8 +66,9 @@ bool OSCDevice::configure(std::unordered_map<string, string> settings)
 //Set a hardware channel output. Value is 0.0 to 1.0 for no to max output.
 void OSCDevice::setChannelData(int channel, float value)
 {
+    bool send = send_ship_1 || channel >= (channel_count / 2)
     int rounded_value = static_cast<int>(value);
-    if (previous_values[channel] != rounded_value || !send_data_only_if_changed) {
+    if (send && (previous_values[channel] != rounded_value || !send_data_only_if_changed)) {
         previous_values[channel] = rounded_value;
         // LOG(INFO) << "Preparing OSC packet: create buffer."; // for: " << osc_addresses[channel] << ", with value: " << rounded_value;
         uint8_t* buffer = new uint8_t[maximum_udp_packet_size];
