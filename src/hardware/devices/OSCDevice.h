@@ -21,6 +21,7 @@ private:
     string osc_addresses[512];
     float previous_values[512];
     bool send_data_only_if_changed;
+    bool primary_ship;
     
 public:
     OSCDevice();
