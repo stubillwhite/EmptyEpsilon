@@ -42,6 +42,10 @@ bool OSCDevice::configure(std::unordered_map<string, string> settings)
         LOG(INFO) << "Setting 'send data only if changed' for OSCDevice to: " << settings["send_data_only_if_changed"];
         send_data_only_if_changed = settings["send_data_only_if_changed"].strip().lower().startswith("y") || settings["send_data_only_if_changed"].strip().lower().startswith("t") || settings["send_data_only_if_changed"].strip().lower().startswith("1");
     }
+    if (settings.find("primary_ship") != settings.end()) {
+        LOG(INFO) << "Setting whether device is primary ship for OSCDevice to: " << settings["primary_ship"];
+        primary_ship = settings["primary_ship"].strip().lower().startswith("y") || settings["primary_ship"].strip().lower().startswith("t") || settings["primary_ship"].strip().lower().startswith("1");
+    }
     if (settings.find("address_prefix") != settings.end())
     {
         LOG(INFO) << "Setting address prefix for OSCDevice to: " << settings["address_prefix"].strip();
