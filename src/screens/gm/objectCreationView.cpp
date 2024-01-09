@@ -40,55 +40,68 @@ GuiObjectCreationView::GuiObjectCreationView(GuiContainer* owner)
     float y = 20;
     std::vector<string> template_names = ShipTemplate::getTemplateNameList(ShipTemplate::Station);
     std::sort(template_names.begin(), template_names.end());
+
+    // Listbox
+    misc_object_listbox = new GuiListbox(box, "CREATE_MISC_OBJECT", [this](int index, string value)
+    {
+        LOG(INFO) << "WHITE: Clicked on button '" << value << "'";          // TODO: Remove
+        string script = misc_object_creation_scripts[index];
+        LOG(INFO) << "WHITE: Running script '" << script << "'";            // TODO: Remove
+        setCreateScript(script);
+    });
+
+    misc_object_listbox->setTextSize(20)->setButtonHeight(30)->setPosition(-350, y, ATopRight)->setSize(300, 460);
+    misc_object_listbox->show();
+
+    // Stations
     for(string template_name : template_names)
     {
-        (new GuiButton(box, "CREATE_STATION_" + template_name, template_name, [this, template_name]() {
-            setCreateScript("SpaceStation():setRotation(random(0, 360)):setFactionId(" + string(faction_selector->getSelectionIndex()) + "):setTemplate(\"" + template_name + "\")");
-        }))->setTextSize(20)->setPosition(-350, y, ATopRight)->setSize(300, 30);
+        misc_object_listbox->addEntry(template_name, template_name);
+        misc_object_creation_scripts.push_back("SpaceStation():setRotation(random(0, 360)):setFactionId(" + string(faction_selector->getSelectionIndex()) + "):setTemplate(\"" + template_name + "\")");
         y += 30;
     }
+    
+    // Other objects
+    misc_object_listbox->addEntry("ARTIFACT", "Create artifact");
+    misc_object_creation_scripts.push_back("Artifact()");
+    y += 30;
+    
+    misc_object_listbox->addEntry("WARP JAMMER", "Create Warp Jammer");
+    misc_object_creation_scripts.push_back("WarpJammer():setRotation(random(0, 360)):setFactionId(" + string(faction_selector->getSelectionIndex()) + ")");
+    y += 30;
 
-    (new GuiButton(box, "CREATE_ARTIFACT", tr("Artifact"), [this]() {
-        setCreateScript("Artifact()");
-    }))->setTextSize(20)->setPosition(-350, y, ATopRight)->setSize(300, 30);
+    misc_object_listbox->addEntry("MINE", "Create Mine");
+    misc_object_creation_scripts.push_back("Mine():setFactionId(" + string(faction_selector->getSelectionIndex()) + ")");
     y += 30;
-    (new GuiButton(box, "CREATE_WARP_JAMMER", tr("Warp Jammer"), [this]() {
-        setCreateScript("WarpJammer():setRotation(random(0, 360)):setFactionId(" + string(faction_selector->getSelectionIndex()) + ")");
-    }))->setTextSize(20)->setPosition(-350, y, ATopRight)->setSize(300, 30);
+
+    misc_object_listbox->addEntry("SUPPLY DROP", "Supply Drop");
+    misc_object_creation_scripts.push_back("SupplyDrop():setFactionId(" + string(faction_selector->getSelectionIndex()) + "):setEnergy(500):setWeaponStorage('Nuke', 1):setWeaponStorage('Homing', 4):setWeaponStorage('Mine', 2):setWeaponStorage('EMP', 1)");
     y += 30;
-    (new GuiButton(box, "CREATE_MINE", tr("Mine"), [this]() {
-        setCreateScript("Mine():setFactionId(" + string(faction_selector->getSelectionIndex()) + ")");
-    }))->setTextSize(20)->setPosition(-350, y, ATopRight)->setSize(300, 30);
+
+    misc_object_listbox->addEntry("ASTEROID", "Asteroid");
+    misc_object_creation_scripts.push_back("Asteroid()");
     y += 30;
-    // Default supply drop values copied from scripts/supply_drop.lua
-    (new GuiButton(box, "CREATE_SUPPLY_DROP", tr("Supply Drop"), [this]() {
-        setCreateScript("SupplyDrop():setFactionId(" + string(faction_selector->getSelectionIndex()) + "):setEnergy(500):setWeaponStorage('Nuke', 1):setWeaponStorage('Homing', 4):setWeaponStorage('Mine', 2):setWeaponStorage('EMP', 1)");
-    }))->setTextSize(20)->setPosition(-350, y, ATopRight)->setSize(300, 30);
+
+    misc_object_listbox->addEntry("VISUAL ASTEROID", "Visual Asteroid");
+    misc_object_creation_scripts.push_back("VisualAsteroid()");
     y += 30;
-    (new GuiButton(box, "CREATE_ASTEROID", tr("Asteroid"), [this]() {
-        setCreateScript("Asteroid()");
-    }))->setTextSize(20)->setPosition(-350, y, ATopRight)->setSize(300, 30);
+
+    misc_object_listbox->addEntry("PLANET", "Planet");
+    misc_object_creation_scripts.push_back("Planet()");
     y += 30;
-    (new GuiButton(box, "CREATE_VISUAL_ASTEROID", tr("Visual Asteroid"), [this]() {
-        setCreateScript("VisualAsteroid()");
-    }))->setTextSize(20)->setPosition(-350, y, ATopRight)->setSize(300, 30);
+
+    misc_object_listbox->addEntry("BLACKHOLE", "BlackHole");
+    misc_object_creation_scripts.push_back("BlackHole()");
     y += 30;
-    (new GuiButton(box, "CREATE_PLANET", tr("Planet"), [this]() {
-        setCreateScript("Planet()");
-    }))->setTextSize(20)->setPosition(-350, y, ATopRight)->setSize(300, 30);
+
+    misc_object_listbox->addEntry("NEBULA", "Nebula");
+    misc_object_creation_scripts.push_back("Nebula()");
     y += 30;
-    (new GuiButton(box, "CREATE_BLACKHOLE", tr("BlackHole"), [this]() {
-        setCreateScript("BlackHole()");
-    }))->setTextSize(20)->setPosition(-350, y, ATopRight)->setSize(300, 30);
+
+    misc_object_listbox->addEntry("WORM HOLE", "Worm Hole");
+    misc_object_creation_scripts.push_back("WormHole()");
     y += 30;
-    (new GuiButton(box, "CREATE_NEBULA", tr("Nebula"), [this]() {
-        setCreateScript("Nebula()");
-    }))->setTextSize(20)->setPosition(-350, y, ATopRight)->setSize(300, 30);
-    y += 30;
-    (new GuiButton(box, "CREATE_WORMHOLE", tr("Worm Hole"), [this]() {
-        setCreateScript("WormHole()");
-    }))->setTextSize(20)->setPosition(-350, y, ATopRight)->setSize(300, 30);
-    y += 30;
+
     y = 20;
 
     template_names = ShipTemplate::getTemplateNameList(ShipTemplate::Ship);

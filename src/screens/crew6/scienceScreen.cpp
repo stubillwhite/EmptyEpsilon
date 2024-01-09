@@ -187,12 +187,12 @@ ScienceScreen::ScienceScreen(GuiContainer* owner, ECrewPosition crew_position)
     
     // Prep and hide the detailed signal bands.
     info_electrical_signal_band = new GuiSignalQualityIndicator(info_sidebar, "ELECTRICAL_SIGNAL");
-    info_electrical_signal_band->showGreen(false)->showBlue(false)->setSize(GuiElement::GuiSizeMax, 80)->hide();
+    info_electrical_signal_band->showGreen(false)->showRed(false)->setSize(GuiElement::GuiSizeMax, 80)->hide();
     info_electrical_signal_label = new GuiLabel(info_electrical_signal_band, "", "Electrical", 30);
     info_electrical_signal_label->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
 
     info_gravity_signal_band = new GuiSignalQualityIndicator(info_sidebar, "GRAVITY_SIGNAL");
-    info_gravity_signal_band->showRed(false)->showGreen(false)->setSize(GuiElement::GuiSizeMax, 80)->hide();
+    info_gravity_signal_band->showBlue(false)->showGreen(false)->setSize(GuiElement::GuiSizeMax, 80)->hide();
     info_gravity_signal_label = new GuiLabel(info_gravity_signal_band, "", "Gravitational", 30);
     info_gravity_signal_label->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
 
