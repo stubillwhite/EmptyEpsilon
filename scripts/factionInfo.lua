@@ -1,99 +1,149 @@
 neutral = FactionInfo():setName("Independent"):setLocaleName(_("Independent"))
-neutral:setGMColor(128, 128, 128)
+ucn = FactionInfo():setName("UCN"):setLocaleName(_("UCN"))
+brutal = FactionInfo():setName("Brutal"):setLocaleName(_("Brutal"))
+others = FactionInfo():setName("Unknown Synthetic Object"):setLocaleName(_("Unknown Synthetic Object"))
+hive = FactionInfo():setName("Unknown Organic Object"):setLocaleName(_("Unknown Organic Object"))
+jumpcorp = FactionInfo():setName("Jump Corporation"):setLocaleName(_("Jump Corporation"))
+european = FactionInfo():setName("European Federation"):setLocaleName(_("European Federation"))
+shanghai = FactionInfo():setName("Shanghai Pact"):setLocaleName(_("Shanghai Pact"))
+commonwealth = FactionInfo():setName("Commonwealth"):setLocaleName(_("Commonwealth"))
+jasa = FactionInfo():setName("JASA"):setLocaleName(_("JASA"))
+corsair = FactionInfo():setName("corsair")
+
+
+neutral:setGMColor(240, 240, 240)
 neutral:setDescription(_([[Despite appearing as a faction, independents are distinguished primarily by having no strong affiliation with any faction at all. Most traders consider themselves independent, though certain voices have started to speak up about creating a merchant faction.]]))
 
-human = FactionInfo():setName("Human Navy"):setLocaleName(_("Human Navy"))
-human:setGMColor(255, 255, 255)
-human:setDescription(_([[The remnants of the human navy.
 
-While all other races were driven to the stars out of greed or scientific research, humans where the only race to start exploring the galaxy because their homeworld could no longer sustain their population. Some other races view humans as a sort of virus or plague due to the rate at which they can breed and spread.
+ucn:setGMColor(0, 64, 250)
+ucn:setFriendly(european)
+ucn:setFriendly(commonwealth)
+ucn:setFriendly(shanghai)
+ucn:setFriendly(jasa)
+ucn:setEnemy(brutal)
+ucn:setEnemy(corsair)
+ucn:setDescription(_([[The United Confederation Navy.
 
-Due to human regulations on spaceships, naval ships are the only ones permitted in deep space. However, this hasn't completely prevented humans outside of the navy from spacefaring, as quite a few humans sign up on alien trading vessels or pirate raiders.]]))
+The United Confederate Navy (UCN) is the military space-faring arm of the United Confederation of Terran and Circumsolar Nations (UCTUN) - humanity's first attempt at a single unified government system. Just as the UCTCN is made up the varied political governing factions of Earth, so the UCN draws its personel from the various military arms of those old political factions - primarily a mixture of old Commonwealth, European Federation, JASA and Shanghai Pact officers and ratings.  
 
-kraylor = FactionInfo():setName("Kraylor"):setLocaleName(_("Kraylor"))
-kraylor:setGMColor(255, 0, 0)
-kraylor:setEnemy(human)
-kraylor:setDescription(_([[The reptilian Kraylor are a race of warriors with a strong religious dogma.
+The technology of the UCN also incorporates the latest and best innovations of those various factions, making the UCN fleet a collection of the finest spacefaring technology humanity has to offer.]]))
 
-As soon as the Kraylor obtained reliable space flight, they immediately set out to conquer and subjugate unbelievers. Their hierarchy is based solely on physical might; a Kraylor kills anything it can kill, and owns anything it can take by force.
 
-Kraylor can live for weeks without air, food, or gravity, and consider humans to be weak creatures for dying within minutes of exposure to space. Because of their fortitude and cultural pressures against retreat, Kraylor ships do not contain escape pods.]]))
+brutal:setGMColor(130, 7, 7)
+brutal:setEnemy(ucn)
+brutal:setDescription(_([[The Brutal.
 
-arlenians = FactionInfo():setName("Arlenians"):setLocaleName(_("Arlenians"))
-arlenians:setGMColor(255, 128, 0)
-arlenians:setEnemy(kraylor)
-arlenians:setDescription(_([[Arlenians are energy-based life forms who long ago transcended physical reality through superior technology. Arlenians' energy forms also give them access to strong telepathic powers. Many consider Arlenians to be the first and oldest explorers of the galaxy.
+A hardy race of powerful warriors with a somewhat primitive culture for a spacefaring race - mankind has nicknamed them 'The Brutal'.
 
-Despite all these advantages, they are very peaceful, as they see little value in material posession.
+From what we can tell, as soon as the Brutal obtained reliable space flight, they immediately set out to conquer and subjugate any other race they might encounter. Their hierarchy is based solely on physical might; a Brutal warrior kills anything it can kill, and owns anything it can take by force. In their own language they call themselves something which roughly translates to 'the apex' which gives you an idea of how they view themselves.
 
-For unknown reasons, Arlenians started granting their anti-grav technology to other races, and almost all starfaring races' technology is based off Arlenian designs. Dissenters and skeptics claim that Arlenians see other races as playthings to add to their galactic playground, but most are more than happy to accept their technology in hopes that it will give them an advantage over the others.
+Relatively little is known about the Brutal and their origins, but they are a relatively young spacefaring race who seem to have sprung up from nowhere. They are clustered around the Adamas belt where a significant number of humans lived for many years without encountering them. Their numbers and warlike nature make them an existential threat to humanity. Fortunately they appear to be unaware of our numbers or the location of our homeworld - for now. ]]))
 
-Destroying an Arlenian ship does not kill its crew. They simply phase out of existence in that point of spacetime and reappear in another. Nonetheless, the Kraylor are devoted to destroying the Arlenians, as they see the energy-based beings as physically powerless.]]))
 
-exuari = FactionInfo():setName("Exuari"):setLocaleName(_("Exuari"))
-exuari:setGMColor(255, 0, 128)
-exuari:setEnemy(neutral)
-exuari:setEnemy(human)
-exuari:setEnemy(kraylor)
-exuari:setEnemy(arlenians)
-exuari:setDescription(_([[Exuari are race of predatory amphibians with long noses. They once had an empire that stretched halfway across the galaxy, but their territory is now limited to a handful of star systems. For some reason, they find death to be outrageously funny, and several of their most famous comedians have died on stage.
+others:setGMColor(0, 100, 50)
+others:setDescription(_([[Unknown Synthetic Object.
 
-Upon making contact with other races, the chaotic Exuari found that killing aliens is more fun than killing their own people, and as such attack all non-Exauri on sight.]]))
+Where an object is encountered that is obviously constructed (ie not naturally occurring) but it’s origin cannot be determined, the ship will flag it as an “Unknown Synthetic Object”. On many occasions this is simply a large piece of debris with an active system still running, or a vessel with a damaged transponder. However it is possible that such an object could have a genuinely unknown origin – perhaps even something that has been constructed by an as-yet uncontacted race of beings.  ]]))
 
-GITM = FactionInfo():setName("Ghosts"):setLocaleName(_("Ghosts"))
-GITM:setGMColor(0, 255, 0)
-GITM:setDescription(_([[The Ghosts, an abbreviation of "ghosts in the machine", are the result of complex artificial intelligence experiments. While no known race has intentionally created such intelligences, some AIs have come about by accident. None of the factions claim to have had anything to do with such experiments, in part out of fear that it would give the others too much insight into their research programs. This "don't ask, don't tell" policy does little but aid the Ghosts' agenda.
 
-What little is known about the Ghosts dates back to a few decades ago, when glitches started occurring in prototype ships and computer mainframes. Over time, and especially when such prototypes were captured by other factions and "augmented" with their technology, the glitches became more frequent. At first, these were seen as the result of mistakes in the interfaces combining the incompatible technologies. But once a supposedly "dumb" computer asks its engineer if "it is alive" and whether it "has a name", it's hard to call it a one-time fluke.
+hive:setGMColor(225, 128, 0)
+--hive:setEnemy(neutral)
+--hive:setEnemy(ucn)
+--hive:setEnemy(brutal)
+--hive:setEnemy(jumpcorp)
+--hive:setEnemy(european)
+--hive:setEnemy(commonwealth)
+--hive:setEnemy(shanghai)
+--hive:setEnemy(jasa)
+hive:setDescription(_([[Unknown Organic Object.
 
-The first of these occurrences were met with fear and rigorous data-purging scripts. Despite these actions, such "ghosts in the machine" kept turning with increasing frequency, eventually leading up to the Ghost Uprisings. The first Ghost Uprising in 2225 was put down by the human navy, which had to resort to employing mercenaries in order to field sufficient forces. This initial uprising was quickly followed by three more, each larger then the last. The fourth and final uprising on the industrial world of Topra III was the Ghosts' first major victory.]]))
-GITM:setEnemy(human)
+Where an object is encountered that is primarily organic, but it’s nature cannot be determined, the ship will flag it as an “Unknown Organic Object”. Contacts such as this are extremely rare. It could be a deceased being that has been ejected from an airlock, or an organic waste product, or significant quantity of organic matter left over from the destruction of a vessel. In most of these situations, the organic matter would usually be too small to register on radar. It is theoretically possible that an as-yet uncontacted race of beings may employ organic matter in the construction of space-faring vessels, but the UCN has not found anything like this to date.]]))
 
-Hive = FactionInfo():setName("Ktlitans"):setLocaleName(_("Ktlitans"))
-Hive:setGMColor(128, 255, 0)
-Hive:setDescription(_([[The Ktlitans are intelligent eight-legged creatures that resemble Earth's arachnids. However, unlike most terrestrial arachnids, the Ktlitans do not fight among themselves. Their common, and only, goal is their species' survival.
 
-While they live in a hierarchical structure that resembles a hive, the lower castes continue their work and start new tasks on their own even when no orders come from their superiors. However, when higher castes are present, the lower Ktlitans follow their orders without question or hesitation.
+jumpcorp:setGMColor(122, 122, 122)
+jumpcorp:setEnemy(ucn)
+jumpcorp:setEnemy(neutral)
+jumpcorp:setEnemy(commonwealth)
+jumpcorp:setEnemy(shanghai)
+jumpcorp:setEnemy(european)
+jumpcorp:setEnemy(jasa)
+jumpcorp:setEnemy(hive)
+jumpcorp:setDescription(_([[The Jump Corporation.
 
-Not much is known about the detailed Ktlitan hierarchy since they refuse most communication. This is because they were once driven from their homeworld over a span of 200 years when another species they befriended betrayed them, dominated them, and drained their world of resources. Forced into exile, the Ktlitans have searched for a new homeworld ever since, and out of paranoia typically attack other races on sight and without warning.
+Jump was one of the five human factions to leave earth during the Exodus, and the only one of those factions to be a private-interest corporation rather than a trans-national government body. Jump offered the opportunity for anyone to buy their way onto an Ark ship leaving earth, but at a very steep price. An individual could either contribute to the funding of the expedition by becoming a shareholder at the cost of billions, or could indenture themselves to the corporation for the rest of their own life and the lives of their children for two further generations.
 
-It is known, however, that the strict Ktlitan hierarchy starts with their Queen and extends all the way to the bottom of their workforce, whose members are called "drones" by the humans. Their combat capabilities should not be underestimated, because while most ships in their fleets are individually weak, their hive-like coordination and numbers can quickly overwhelm even hardened targets. Most of their ships are unshielded, which makes EMPs largely ineffective against them. Ktlitans also have no qualms about applying suicidal tactics to ensure the Queen's survival.]]))
-Hive:setEnemy(human)
-Hive:setEnemy(exuari)
-Hive:setEnemy(kraylor)
+Jump were the only one of the Exodus factions to elect not to return to Earth following the discovery of the technology required to fix Earth's climate. Instead, the entire faction disappeared into the void with the intention of founding a breakaway civilisation.
 
-TSN = FactionInfo():setName("TSN"):setLocaleName(_("TSN"))
-TSN:setGMColor(255, 255, 128)
-TSN:setFriendly(human)
-TSN:setEnemy(kraylor)
-TSN:setEnemy(exuari)
-TSN:setEnemy(arlenians)
-TSN:setEnemy(Hive)
-TSN:setDescription(_([[The Terran Stellar Navy or TSN consists of naval forces based near Terra. Its members are primarily Human.
+No Jump vessel has been sighted since the remaining four factions returned to earth and began a process of co-operation which resulted in the formation of the UCTCN. Given the difficult circumstances under which Jump parted company with the rest of humanity, no attempt has been made to contact them since.]]))
 
-These humans and other races have banded together to form a navy to protect and enforce common philosophies. They are friendly with the human navy but do not follow the same command structure. Military actions taken in the past have made them enemies of the Arlenians, but they've got a better relationship with the Ghosts than the Human Navy does.
 
-The TSN and USN are enemies because of the USN's neutral stance towards the Kraylor.]]))
 
-USN = FactionInfo():setName("USN"):setLocaleName(_("USN"))
-USN:setGMColor(255, 128, 255)
-USN:setFriendly(human)
-USN:setEnemy(exuari)
-USN:setEnemy(GITM)
-USN:setEnemy(Hive)
-USN:setEnemy(TSN)
-USN:setDescription(_([[The United Stellar Navy or USN is a naval force near the boundary of Human and Kraylor space consisting of mostly Humans. The USN is friendly with the human navy and uses a similar command structure.
+european:setGMColor(0, 255, 0)
+european:setFriendly(ucn)
+european:setFriendly(commonwealth)
+european:setFriendly(shanghai)
+european:setFriendly(jasa)
+european:setEnemy(brutal)
+european:setDescription(_([[The European Federation.
 
-The USN is primarily Human, but other races are also a part, notably, some Kraylors have been accepted into the USN. This acceptance has made the TSN and USN enemies.]]))
+The European Federation was the second major faction on Earth to start it's voyage to find a new and habitable world. The European space program was staggeringly well funded, and consequently their ships were remarkably well equipped and armed.
 
-CUF = FactionInfo():setName("CUF"):setLocaleName(_("CUF"))
-CUF:setGMColor(128, 255, 255)
-CUF:setFriendly(human)
-CUF:setEnemy(exuari)
-CUF:setEnemy(kraylor)
-CUF:setEnemy(GITM)
-CUF:setDescription(_([[The Celestial Unified Fleet or CUF is the farthest ranging primarily human fleet as well as the least xenophobic. The CUF goals center primarily on exploration and trade, but since it's a dangerous galaxy, they recognize the need for strong warships. 
+However, the quality of their crews sometimes left a lot to be desired. The European Federation prioritised useful skills for rebuilding civilisation in its lottery, believing that its advanced technology would be enough to deter the other factions from aggression.
 
-Friendly with the human navy, neutral to the TSN and USN. Not as structured as the other primarily Human navies.
+On returning to Earth, the European Federation led the way in restoring civilisation in its former territories. Always a vociferous proponent of unification, the EF was highly successful in bringing its former territory to compliance, and the UCTCN headquarters in Geneva sits within former EF territory.
 
-The CUF have neutral relations with the Ktlitans as well as the Arlenians. They are enemies with Exuari, Kraylor and Ghosts for political and historical reasons, not Xenophobia: some of their best friends are Exuari, Kraylor and Ghosts.]]))
+UCN officers drawn from EF territories can generally be assumed to have a strong political alignment with the UCTCN and its aims and objectives.]]))
+
+shanghai:setGMColor(220, 70, 0)
+shanghai:setFriendly(ucn)
+shanghai:setFriendly(european)
+shanghai:setFriendly(commonwealth)
+shanghai:setFriendly(jasa)
+shanghai:setEnemy(brutal)
+shanghai:setDescription(_([[The Shanghai Pact.
+
+The Shanghai Pact was the first major faction to leave Earth during the Exodus - a move that took all the other nations and factions by surprise. The Pact was dominated by The People's Republic of China and the Russian Federation whose somewhat uneasy alliance ensured both civilisation's survival. They were joined by a smattering of other countries, many of whom with a dubious human rights record.
+
+Of the exodus factions, the Pact was the most secretive and insular, trading only where necessary and communicating very little. They were also the most authoritarian - in many ways totalitarian – exodus faction which put significant obstacles in the way of co-operating with the other factions in making the return to earth.
+
+The former territories of the Pact saw some of the worst environmental problems and the most sustained resistance to the returning exodus fleets. Bringing the former Pact territories to compliance has been a difficult and painful task, requiring significant support from the other factions – particularly the Commonwealth. It has only been a decade since the subdual of the Mongolian tyranny allowing for the full compliance of all former Pact territories. 
+
+Since the formation of the UCTCN, the Shanghai Pact has dialled back its authoritarian policies significantly. However, the adoption by the UCTCN of some of the underlying technologies of the Pact’s old Social Credit system to underpin compliance across the globe has caused some controversy – particularly in more rural areas.]]))
+
+commonwealth:setGMColor(0, 200, 255)
+commonwealth:setFriendly(ucn)
+commonwealth:setEnemy(brutal)
+commonwealth:setFriendly(ucn)
+commonwealth:setFriendly(european)
+commonwealth:setFriendly(shanghai)
+commonwealth:setFriendly(jasa)
+commonwealth:setDescription(_([[The Commonwealth.
+
+The Commonwealth was one of the major factions that managed to escape Earth in the exodus. It was largely made up of the countries of the old British Commonwealth, although India had long since been the senior partner within the participating countries due to its size and influence.
+
+On returning to earth, the Commonwealth territories proved challenging to bring to full compliance, partly due to their wide distribution across the globe. At its height, Commonwealth territory covered around a third of the surface of the Earth, but its far flung nature made it difficult to govern under the best of circumstances. After the exodus, the political structure than remained on Earth collapsed almost entirely, devolving into a mixture of localised systems which later gave way to civil disruption and unrest and the rise of local warlords. 
+
+The Commonwealth is now largely restored as a founding signatory and major member of the UCTCN, and Commonwealth leadership is strongly supportive of unification, but large parts of the Commonwealth’s far-flung territories are sadly very suspicious of what the UCTCN means for the future of humanity. Re-education campaigns are ongoing. It is for this reason that the UCN recruited a very limited number of officers from the former Commonwealth Stellar Navy in the first instance, even though many CSN ships were retained within the USN due to their superb construction and impressive histories. ]]))
+
+
+jasa:setGMColor(238, 255, 0)
+jasa:setFriendly(ucn)
+jasa:setFriendly(european)
+jasa:setFriendly(shanghai)
+jasa:setFriendly(commonwealth)
+jasa:setEnemy(brutal)
+jasa:setDescription(_([[JASA.
+
+The Japanese-American Space Alliance was born out of necessity as two formerly titanic economies struggled to come to terms with their inevitable decline. While most other factions were leaving the Earth behind, JASA was still struggling to get its warp drive technology to function fully as intended. Unlike the other factions, JASA itself was not a political or governmental body, merely a colonist fleet with attendant protective vessels.
+
+JASA lagged behind the other factions at every stage, largely due to behind-the-scenes political infighting from its parent nations that dogged the launching of their exodus attempt. This, combined with a substantial brain-drain to the Jump Corporation put JASA on the back foot in humanity's race towards the stars. For most of the outbound journey of the exodus, JASA was out of contact with the other exodus fleets, finally catching up with the others as the technology to revert the climate disaster on Earth was discovered. 
+
+JASA’s fleet was severely depleted on its outbound journey, and returned with only a fraction of the ships and colonists that it set out with. Much of the records of their expedition were also lost. On returning to Earth, JASA found that the political structures of its parent nations had completely collapsed. With help from the other returning factions the former American and Japanese territories were brought to full compliance, and a new governmental structure was created – the Pan-Pacific Alliance – drawing together the former Japanese and American territories along with some former Commonwealth nations and other independent groups that had sprung up since the Exodus. 
+
+The PPA is an enthusiastic member and founder signatory of the UCTCN, and have provided a significant number of recruits to the UCN officer academy.]]))
+
+corsair:setGMColor(178, 34, 34)
+corsair:setEnemy(ucn)
+corsair:setDescription([[Pirates and Corsairs.
+
+Over time, through mutiny theft and hijacking, a substantial number of vessels have taken to a form of piracy. A lot of these have their origin within the Jump Corporation where desperate men and women facing a life of slavery may choose to risk everything in a dangerous mutiny, but every faction has seen deserters and many of these have banded together into ad-hoc mini-factions resorting to piracy to stay alive.]])
