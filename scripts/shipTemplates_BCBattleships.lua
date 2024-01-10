@@ -80,6 +80,187 @@ variation:addDoor(6, 4, false);
 variation:addDoor(8, 3, false);
 variation:addDoor(8, 4, false);
 
+
+template = ShipTemplate():setName("Centurion Battleship"):setClass("Battleship", "Centurion"):setModel("HeliconCorpHaydronClassBattleshipBlue"):setRecorded(false)
+template:setDescription([[The Centurion class Battleship is the first of the Battleship-scale vessels to be constructed by the UCN. Its capabilities far outmatch any other vessel of its weight class.]])
+template:setRadarTrace("radar_battleship.png")
+template:setHull(1000)
+template:setShields(750, 750, 750, 700, 700, 700)
+template:setSpeed(60, 6, 8)
+--                  Arc, Dir, Range, CycleTime, Dmg
+template:setBeam(0,100, -90, 3000.0, 3.0, 25)
+template:setBeam(1,100,  90, 3000.0, 3.0, 25)
+template:setBeam(2,150, -90, 4000.0, 1.0, 25)
+template:setBeam(3,150,  90, 4000.0, 1.0, 25)
+template:setBeam(4,10, 0, 5000.0, 3.0, 30)
+template:setBeam(5,10, -180, 5000.0, 3.0, 30)
+template:setBeamWeaponDamageType(2,2)
+template:setBeamWeaponDamageType(3,2)
+template:setBeamWeaponDamageType(4,2)
+template:setBeamWeaponDamageType(5,3)
+template:setBeamStation(0,1)
+template:setBeamStation(1,1)
+template:setBeamStation(2,1)
+template:setBeamStation(3,1)
+template:setBeamStation(4,2)
+template:setBeamStation(5,2)
+template:setTubes(8, 10.0)
+template:setWeaponStorage("HVLI", 60)
+template:setWeaponStorage("Homing", 60)
+template:setWeaponStorage("EMP", 40)
+template:setWeaponStorage("Nuke", 20)
+template:setTubeStation(0,2)
+template:setTubeStation(1,2)
+template:setTubeStation(2,2)
+template:setTubeStation(3,2)
+template:setTubeStation(4,2)
+template:setTubeStation(5,2)
+template:setTubeStation(6,2)
+template:setTubeStation(7,2)
+template:setTubeDirection(0, 0)
+template:setTubeDirection(1, 0)
+template:setTubeDirection(2, 90)
+template:setTubeDirection(3, 90)
+template:setTubeDirection(4, 90)
+template:setTubeDirection(5, 90)
+template:setTubeDirection(6, 180)
+template:setTubeDirection(7, 180)
+template:setDockClasses("Starfighter", "Frigate", "Destroyer", "Cruiser")
+template:setSharesEnergyWithDocked(true)
+template:setTractorBeam(5000, 100)
+
+
+
+variation = template:copy("UCS Centurion Battleship")
+variation:setBeamWeaponTurret( 4, 360, 0, 1)
+variation:setBeamWeaponTurret( 5, 360, 0, 1)
+
+
+variation = template:copy("UCS Centurion Class Battleship"):setType("playership"):setRecorded(false)
+variation:setCombatManeuver(400, 250)
+variation:setSpeed(60, 8, 10)
+variation:setBeamWeaponTurret( 4, 360, 0, 1)
+variation:setBeamWeaponTurret( 5, 360, 0, 1)
+variation:weaponTubeDisallowMissle(0, "Mine"):weaponTubeDisallowMissle(1, "Mine")
+variation:weaponTubeDisallowMissle(2, "Mine"):weaponTubeDisallowMissle(3, "Mine")
+variation:weaponTubeDisallowMissle(4, "Mine"):weaponTubeDisallowMissle(5, "Mine")
+variation:setWeaponTubeExclusiveFor(6, "Mine")
+variation:setWeaponTubeExclusiveFor(7, "Mine")
+
+variation:addRoomSystem(1, 0, 2, 1, "Maneuver");
+variation:addRoomSystem(1, 1, 2, 1, "BeamWeapons");
+variation:addRoom(2, 2, 2, 1);
+
+variation:addRoomSystem(0, 3, 1, 2, "RearShield");
+variation:addRoomSystem(1, 3, 2, 2, "Reactor");
+variation:addRoomSystem(3, 3, 2, 2, "Warp");
+variation:addRoomSystem(5, 3, 1, 2, "JumpDrive");
+variation:addRoom(6, 3, 2, 1);
+variation:addRoom(6, 4, 2, 1);
+variation:addRoomSystem(8, 3, 1, 2, "FrontShield");
+
+variation:addRoom(2, 5, 2, 1);
+variation:addRoomSystem(1, 6, 2, 1, "MissileSystem");
+variation:addRoomSystem(1, 7, 2, 1, "Impulse");
+
+variation:addDoor(1, 1, true);
+variation:addDoor(2, 2, true);
+variation:addDoor(3, 3, true);
+variation:addDoor(1, 3, false);
+variation:addDoor(3, 4, false);
+variation:addDoor(3, 5, true);
+variation:addDoor(2, 6, true);
+variation:addDoor(1, 7, true);
+variation:addDoor(5, 3, false);
+variation:addDoor(6, 3, false);
+variation:addDoor(6, 4, false);
+variation:addDoor(8, 3, false);
+variation:addDoor(8, 4, false);
+
+template = ShipTemplate():setName("President Carrier"):setClass("Carrier", "President"):setModel("HeliconCorpValenClassCarrierBlue"):setRecorded(false)
+template:setDescription([[The President class Carrier is the first of the Carrier-scale vessels to be constructed by the UCN. Its capabilities far outmatch any other vessel of its weight class.]])
+template:setRadarTrace("radar_ktlitan_destroyer")
+template:setHull(900)
+template:setShields(750, 750, 750, 700, 700, 700)
+template:setSpeed(60, 6, 8)
+--                  Arc, Dir, Range, CycleTime, Dmg
+template:setBeam(0,100, -90, 3000.0, 4.0, 25)
+template:setBeam(1,100,  90, 3000.0, 4.0, 25)
+template:setBeam(2,10, 0, 2500.0, 3.0, 25)
+template:setBeam(3,10, -180, 2500.0, 3.0, 25)
+template:setBeamStation(0,1)
+template:setBeamStation(1,1)
+template:setBeamStation(2,2)
+template:setBeamStation(3,2)
+template:setBeamWeaponDamageType(0,2)
+template:setBeamWeaponDamageType(1,2)
+template:setTubes(5, 10.0)
+template:setWeaponStorage("HVLI", 60)
+template:setWeaponStorage("Homing", 60)
+template:setWeaponStorage("EMP", 40)
+template:setWeaponStorage("Nuke", 20)
+template:setTubeDirection(0, 0)
+template:setTubeDirection(1, 0)
+template:setTubeDirection(2, 90)
+template:setTubeDirection(3, 90)
+template:setTubeDirection(4, 180)
+template:setTubeStation(0,2)
+template:setTubeStation(1,2)
+template:setTubeStation(2,2)
+template:setTubeStation(3,2)
+template:setTubeStation(4,2)
+
+template:setDockClasses("Starfighter", "Frigate", "Destroyer", "Cruiser")
+template:setSharesEnergyWithDocked(true)
+template:setTractorBeam(5000, 100)
+
+
+
+variation = template:copy("UCS President Carrier")
+variation:setBeamWeaponTurret( 2, 120, -90, 1)
+variation:setBeamWeaponTurret( 3, 120, 90, 1)
+
+
+variation = template:copy("UCS President Class Carrier"):setType("playership"):setRecorded(false)
+variation:setCombatManeuver(400, 250)
+variation:setShields(750, 750, 750, 750)
+variation:setHull(850)
+variation:setSpeed(60, 8, 10)
+variation:weaponTubeDisallowMissle(0, "Mine"):weaponTubeDisallowMissle(1, "Mine")
+variation:weaponTubeDisallowMissle(2, "Mine"):weaponTubeDisallowMissle(3, "Mine")
+variation:setWeaponTubeExclusiveFor(4, "Mine")
+
+variation:addRoomSystem(1, 0, 2, 1, "Maneuver");
+variation:addRoomSystem(1, 1, 2, 1, "BeamWeapons");
+variation:addRoom(2, 2, 2, 1);
+
+variation:addRoomSystem(0, 3, 1, 2, "RearShield");
+variation:addRoomSystem(1, 3, 2, 2, "Reactor");
+variation:addRoomSystem(3, 3, 2, 2, "Warp");
+variation:addRoomSystem(5, 3, 1, 2, "JumpDrive");
+variation:addRoom(6, 3, 2, 1);
+variation:addRoom(6, 4, 2, 1);
+variation:addRoomSystem(8, 3, 1, 2, "FrontShield");
+
+variation:addRoom(2, 5, 2, 1);
+variation:addRoomSystem(1, 6, 2, 1, "MissileSystem");
+variation:addRoomSystem(1, 7, 2, 1, "Impulse");
+
+variation:addDoor(1, 1, true);
+variation:addDoor(2, 2, true);
+variation:addDoor(3, 3, true);
+variation:addDoor(1, 3, false);
+variation:addDoor(3, 4, false);
+variation:addDoor(3, 5, true);
+variation:addDoor(2, 6, true);
+variation:addDoor(1, 7, true);
+variation:addDoor(5, 3, false);
+variation:addDoor(6, 3, false);
+variation:addDoor(6, 4, false);
+variation:addDoor(8, 3, false);
+variation:addDoor(8, 4, false);
+
+
 template = ShipTemplate():setName("Merkel Battleship"):setClass("Battleship", "Merkel"):setModel("HeavyDestroyerGreen"):setRecorded(false)
 template:setDescription([[The Merkel Battleship is the pinnacle of European Federation ship design. Its technology base is unrivalled, yet it requires an experienced captain to get the best out of it.]])
 template:setRadarTrace("radar_battleship.png")

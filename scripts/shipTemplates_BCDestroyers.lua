@@ -251,23 +251,26 @@ template:setWeaponStorage("EMP", 2)
 
 -- UCN
 
-template = ShipTemplate():setName("UCS Hoplite Destroyer"):setClass("Destroyer", "Hoplite"):setModel("HeliconCorpBastionClassDestroyerBlue")
+template = ShipTemplate():setName("Hoplite Destroyer"):setClass("Destroyer", "Hoplite"):setModel("HeliconCorpBastionClassDestroyerBlue"):setRecorded(false)
 template:setDescription([[The Hoplite class destroyer is an excellent escort ship when defending larger ships against multiple smaller enemies.]])
 template:setRadarTrace("radar_adv_gunship.png")
 template:setHull(250)
 template:setShields(200, 200, 200, 200)
-template:setSpeed(60, 10, 20)
+template:setSpeed(100, 10, 20)
 --                  Arc, Dir, Range, CycleTime, Dmg
 template:setBeam(0,100, -30, 1500.0, 6.0, 8)
 template:setBeam(1,100,  30, 1500.0, 6.0, 8)
 --template:setBeam(2,120, 0, 1500.0, 6.0, 8)
 template:setBeam(3,10, 180, 2000, 1.0, 20)
+template:setBeam(4,10, 180, 2000, 1.0, 20)
 
 template:setBeamStation(0,1)
 template:setBeamStation(1,1)
 --template:setBeamStation(2,1)
 template:setBeamStation(3,2)
-template:setBeamWeaponDamageType(3,3)
+template:setBeamStation(4,2)
+template:setBeamWeaponDamageType(3,2)
+template:setBeamWeaponDamageType(4,3)
 template:setTubes(5, 10.0)
 template:setWeaponStorage("HVLI", 20)
 template:setWeaponStorage("Homing", 4)
@@ -288,23 +291,28 @@ template:addDrones("Scout Drone", 1)
 template:addDrones("Defence Drone", 1)
 template:addDrones("Mine Layer Drone", 1)
 
-variation = template:copy("UCS Hoplite Class Destroyer"):setType("playership")
+variation = template:copy("UCS Hoplite Destroyer")
+variation:setBeamWeaponTurret( 3, 360, 0, 1)
+variation:setBeamWeaponTurret( 4, 360, 0, 1)
+
+variation = template:copy("UCS Hoplite Class Destroyer"):setType("playership"):setRecorded(false)
 variation:setDescription([[The Hoplite class destroyer is an excellent escort ship when defending larger ships against multiple smaller enemies.]])
 variation:setShields(200, 200)
 variation:setHull(250)
-variation:setSpeed(60, 10, 20)
+variation:setSpeed(100, 10, 20)
 variation:setCombatManeuver(400, 250)
 variation:setWeaponStorage("Homing", 12)
 variation:setWeaponStorage("Nuke", 2)
-variation:setWeaponStorage("Mine", 8)
+variation:setWeaponStorage("Mine", 2)
 variation:setWeaponStorage("EMP", 8)
+variation:setWeaponStorage("HVLI", 8)
 variation:weaponTubeDisallowMissle(0, "Mine"):weaponTubeDisallowMissle(1, "Mine")
 variation:weaponTubeDisallowMissle(2, "Mine"):weaponTubeDisallowMissle(3, "Mine")
 variation:setTubeDirection(4, 180):setWeaponTubeExclusiveFor(4, "Mine")
 --                       Arc, Dir, Rotate speed
 --variation:setBeamWeaponTurret( 0, 90, 0, 1)
 --variation:setBeamWeaponTurret( 1, 90, 180, 1)
-variation:setBeamWeaponTurret( 3, 360, 0, 1)
+
 
 variation:addRoomSystem(1, 0, 2, 1, "Maneuver");
 variation:addRoomSystem(1, 1, 2, 1, "BeamWeapons");

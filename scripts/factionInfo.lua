@@ -10,12 +10,18 @@ commonwealth = FactionInfo():setName("Commonwealth"):setLocaleName(_("Commonweal
 jasa = FactionInfo():setName("JASA"):setLocaleName(_("JASA"))
 corsair = FactionInfo():setName("corsair")
 
+--Colour Blindness Friendly Colours: 
+-- Hostile (OpFor): C9005F - Maroon - 201, 0, 95
+-- Allied: 1FFF00 - Green - 31, 255, 0
+-- Neutral but armed/A threat: C97900 - Amber - 201, 121, 0
+-- BluFor: 6060FF - Blue - 96,96,255
+-- Unknown F8FF52 - Yellow	- 248, 255, 82
 
 neutral:setGMColor(240, 240, 240)
 neutral:setDescription(_([[Despite appearing as a faction, independents are distinguished primarily by having no strong affiliation with any faction at all. Most traders consider themselves independent, though certain voices have started to speak up about creating a merchant faction.]]))
 
 
-ucn:setGMColor(0, 64, 250)
+ucn:setGMColor(96,96,255)
 ucn:setFriendly(european)
 ucn:setFriendly(commonwealth)
 ucn:setFriendly(shanghai)
@@ -29,7 +35,7 @@ The United Confederate Navy (UCN) is the military space-faring arm of the United
 The technology of the UCN also incorporates the latest and best innovations of those various factions, making the UCN fleet a collection of the finest spacefaring technology humanity has to offer.]]))
 
 
-brutal:setGMColor(130, 7, 7)
+brutal:setGMColor(201, 0, 95)
 brutal:setEnemy(ucn)
 brutal:setDescription(_([[The Brutal.
 
@@ -40,13 +46,12 @@ From what we can tell, as soon as the Brutal obtained reliable space flight, the
 Relatively little is known about the Brutal and their origins, but they are a relatively young spacefaring race who seem to have sprung up from nowhere. They are clustered around the Adamas belt where a significant number of humans lived for many years without encountering them. Their numbers and warlike nature make them an existential threat to humanity. Fortunately they appear to be unaware of our numbers or the location of our homeworld - for now. ]]))
 
 
-others:setGMColor(0, 100, 50)
+others:setGMColor(248, 255, 82)
 others:setDescription(_([[Unknown Synthetic Object.
 
 Where an object is encountered that is obviously constructed (ie not naturally occurring) but it’s origin cannot be determined, the ship will flag it as an “Unknown Synthetic Object”. On many occasions this is simply a large piece of debris with an active system still running, or a vessel with a damaged transponder. However it is possible that such an object could have a genuinely unknown origin – perhaps even something that has been constructed by an as-yet uncontacted race of beings.  ]]))
 
-
-hive:setGMColor(225, 128, 0)
+hive:setGMColor(248, 255, 82)
 --hive:setEnemy(neutral)
 --hive:setEnemy(ucn)
 --hive:setEnemy(brutal)
@@ -60,7 +65,7 @@ hive:setDescription(_([[Unknown Organic Object.
 Where an object is encountered that is primarily organic, but it’s nature cannot be determined, the ship will flag it as an “Unknown Organic Object”. Contacts such as this are extremely rare. It could be a deceased being that has been ejected from an airlock, or an organic waste product, or significant quantity of organic matter left over from the destruction of a vessel. In most of these situations, the organic matter would usually be too small to register on radar. It is theoretically possible that an as-yet uncontacted race of beings may employ organic matter in the construction of space-faring vessels, but the UCN has not found anything like this to date.]]))
 
 
-jumpcorp:setGMColor(122, 122, 122)
+jumpcorp:setGMColor(201, 0, 95)
 jumpcorp:setEnemy(ucn)
 jumpcorp:setEnemy(neutral)
 jumpcorp:setEnemy(commonwealth)
@@ -78,7 +83,7 @@ No Jump vessel has been sighted since the remaining four factions returned to ea
 
 
 
-european:setGMColor(0, 255, 0)
+european:setGMColor(31, 255, 0)
 european:setFriendly(ucn)
 european:setFriendly(commonwealth)
 european:setFriendly(shanghai)
@@ -94,7 +99,7 @@ On returning to Earth, the European Federation led the way in restoring civilisa
 
 UCN officers drawn from EF territories can generally be assumed to have a strong political alignment with the UCTCN and its aims and objectives.]]))
 
-shanghai:setGMColor(220, 70, 0)
+shanghai:setGMColor(31, 255, 0)
 shanghai:setFriendly(ucn)
 shanghai:setFriendly(european)
 shanghai:setFriendly(commonwealth)
@@ -110,7 +115,7 @@ The former territories of the Pact saw some of the worst environmental problems 
 
 Since the formation of the UCTCN, the Shanghai Pact has dialled back its authoritarian policies significantly. However, the adoption by the UCTCN of some of the underlying technologies of the Pact’s old Social Credit system to underpin compliance across the globe has caused some controversy – particularly in more rural areas.]]))
 
-commonwealth:setGMColor(0, 200, 255)
+commonwealth:setGMColor(31, 255, 0)
 commonwealth:setFriendly(ucn)
 commonwealth:setEnemy(brutal)
 commonwealth:setFriendly(ucn)
@@ -126,7 +131,7 @@ On returning to earth, the Commonwealth territories proved challenging to bring 
 The Commonwealth is now largely restored as a founding signatory and major member of the UCTCN, and Commonwealth leadership is strongly supportive of unification, but large parts of the Commonwealth’s far-flung territories are sadly very suspicious of what the UCTCN means for the future of humanity. Re-education campaigns are ongoing. It is for this reason that the UCN recruited a very limited number of officers from the former Commonwealth Stellar Navy in the first instance, even though many CSN ships were retained within the USN due to their superb construction and impressive histories. ]]))
 
 
-jasa:setGMColor(238, 255, 0)
+jasa:setGMColor(31, 255, 0)
 jasa:setFriendly(ucn)
 jasa:setFriendly(european)
 jasa:setFriendly(shanghai)
@@ -142,7 +147,7 @@ JASA’s fleet was severely depleted on its outbound journey, and returned with 
 
 The PPA is an enthusiastic member and founder signatory of the UCTCN, and have provided a significant number of recruits to the UCN officer academy.]]))
 
-corsair:setGMColor(178, 34, 34)
+corsair:setGMColor(201, 0, 95)
 corsair:setEnemy(ucn)
 corsair:setDescription([[Pirates and Corsairs.
 
