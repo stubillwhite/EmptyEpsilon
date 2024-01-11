@@ -25,11 +25,11 @@ function mainMenu()
                 EMP = "friend"
             },
             weapon_cost = {
-                Homing = 2,
-                HVLI = 2,
-                Mine = 2,
-                Nuke = 15,
-                EMP = 10
+                Homing = 50,
+                HVLI = 25,
+                Mine = 50,
+                Nuke = 150,
+                EMP = 50
             },
             services = {
                 supplydrop = "friend",
@@ -153,15 +153,15 @@ function handleUndockedState()
     end
     if isAllowedTo(comms_target.comms_data.services.supplydrop) then
         addCommsReply("Can you send a supply drop? ("..getServiceCost("supplydrop").."rep)", function()
-            if player:getWaypointCount() < 1 then
-                setCommsMessage("You need to set a waypoint before you can request backup.");
+            if player:getWaypointCount(0) < 1 then
+                setCommsMessage("You need to set a waypoint on route 1 before you can request backup.");
             else
-                setCommsMessage("To which waypoint should we deliver your supplies?");
-                for n=1,player:getWaypointCount() do
+                setCommsMessage("To which waypoint on route 1 should we deliver your supplies?");
+                for n=1,player:getWaypointCount(0) do
                     addCommsReply("WP" .. n, function()
                         if player:takeReputationPoints(getServiceCost("supplydrop")) then
                             local position_x, position_y = comms_target:getPosition()
-                            local target_x, target_y = player:getWaypoint(n)
+                            local target_x, target_y = player:getWaypoint(n,0)
                             local script = Script()
                             script:setVariable("position_x", position_x):setVariable("position_y", position_y)
                             script:setVariable("target_x", target_x):setVariable("target_y", target_y)
@@ -179,14 +179,14 @@ function handleUndockedState()
     end
     if isAllowedTo(comms_target.comms_data.services.reinforcements) then
         addCommsReply("Please send reinforcements! ("..getServiceCost("reinforcements").."rep)", function()
-            if player:getWaypointCount() < 1 then
-                setCommsMessage("You need to set a waypoint before you can request reinforcements.");
+            if player:getWaypointCount(0) < 1 then
+                setCommsMessage("You need to set a waypoint on route 1 before you can request reinforcements.");
             else
-                setCommsMessage("To which waypoint should we dispatch the reinforcements?");
-                for n=1,player:getWaypointCount() do
+                setCommsMessage("To which waypoint on route 1 should we dispatch the reinforcements?");
+                for n=1,player:getWaypointCount(0) do
                     addCommsReply("WP" .. n, function()
                         if player:takeReputationPoints(getServiceCost("reinforcements")) then
-                            local ship = CpuShip():setFactionId(comms_target:getFactionId()):setPosition(comms_target:getPosition()):setTemplate("Adder MK5"):setScanned(true):orderDefendLocation(player:getWaypoint(n))
+                            local ship = CpuShip():setFactionId(comms_target:getFactionId()):setPosition(comms_target:getPosition()):setTemplate("UCS Skirmish Frigate"):setCallSign("UCS Havock"):setScanned(true):setWarpDrive(true):setWarpSpeed(1000.00):orderDefendLocation(player:getWaypoint(n,0))
                             setCommsMessage("We have dispatched " .. ship:getCallSign() .. " to assist at WP" .. n);
                         else
                             setCommsMessage("Not enough reputation!");

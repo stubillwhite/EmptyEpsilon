@@ -35,14 +35,14 @@ function friendlyComms(comms_data)
         setCommsMessage("Sir, how can we assist?")
     end
     addCommsReply("Defend a waypoint", function()
-        if player:getWaypointCount() == 0 then
-            setCommsMessage("No waypoints set. Please set a waypoint first.");
+        if player:getWaypointCount(0) == 0 then
+            setCommsMessage("No waypoints set. Please set a waypoint first on route 1.");
             addCommsReply("Back", mainMenu)
         else
-            setCommsMessage("Which waypoint should we defend?");
-            for n=1,player:getWaypointCount() do
+            setCommsMessage("Which waypoint should we defend on route 1?");
+            for n=1,player:getWaypointCount(0) do
                 addCommsReply("Defend WP" .. n, function()
-                    comms_target:orderDefendLocation(player:getWaypoint(n))
+                    comms_target:orderDefendLocation(player:getWaypoint(n,0))
                     setCommsMessage("We are heading to assist at WP" .. n ..".");
                     addCommsReply("Back", mainMenu)
                 end)

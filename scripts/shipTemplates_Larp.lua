@@ -24,10 +24,9 @@ template:setTubeDirection(1, 0)
 template:setTubeDirection(2,  -90)
 template:setTubeDirection(3,  90)
 template:setDocks(2, 1, 1, 1, 1, 1)
-template:addDrones("L3 Mouse", 1)
-template:addDrones("L3 Cat", 1)
-template:addDrones("H9 Owl", 1)
-template:addDrones("M19 Rino", 1)
+template:addDrones("Defence Drone", 1)
+template:addDrones("Scout Drone", 1)
+template:addDrones("Mine Layer Drone", 1)
 template:setTractorBeam(2000, 100)
 
 template:addRoomSystem(1, 0, 2, 1, "Maneuver");

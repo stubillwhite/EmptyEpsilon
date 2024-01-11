@@ -24,9 +24,9 @@ PowerManagementScreen::PowerManagementScreen(GuiContainer* owner)
     layout->setPosition(20, 60, ATopLeft)->setSize(GuiElement::GuiSizeMax, 400);
     for(int n=0; n<SYS_COUNT; n++)
     {
-        if (n == 5)
+        if (n == 6)
         {
-            //Start the 2nd row after 4 elements.
+            //Start the 2nd row after 4 (now 5) elements.
             layout = new GuiAutoLayout(this, "", GuiAutoLayout::LayoutHorizontalLeftToRight);
             layout->setPosition(20, 450, ATopLeft)->setSize(GuiElement::GuiSizeMax, 400);
         }

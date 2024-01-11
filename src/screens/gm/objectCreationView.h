@@ -15,6 +15,8 @@ private:
 public:
     GuiListbox* cpu_ship_listbox;
     GuiListbox* player_ship_listbox;
+    GuiListbox* misc_object_listbox;
+    std::vector<string> misc_object_creation_scripts;
     GuiObjectCreationView(GuiContainer* owner);
 
     virtual void onDraw(sf::RenderTarget& window) override;
