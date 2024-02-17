@@ -357,7 +357,7 @@ void GameMasterActions::executeContextualGoTo(sf::Vector2f position, bool force,
                 }
                 else
                 {
-                    if (!force && target->canBeDockedBy(cpu_ship))
+                    if (!force && target->canBeDockedBy(cpu_ship) != DockStyle::None)
                         cpu_ship->orderDock(target);
                     else
                         cpu_ship->orderDefendTarget(target);
