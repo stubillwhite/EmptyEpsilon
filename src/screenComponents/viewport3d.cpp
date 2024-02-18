@@ -190,7 +190,11 @@ void GuiViewport3D::onDraw(sf::RenderTarget& window)
         depth_cutoff_front = std::numeric_limits<float>::infinity();
     if (camera_pitch + camera_fov/2.0 >= 180.0)
         depth_cutoff_back = -std::numeric_limits<float>::infinity();
-    foreach(SpaceObject, obj, space_object_list)
+
+    // LOG(INFO) << "SBW:"
+    //           << " depth_cutoff_back " << depth_cutoff_back
+    //           << ", depth_cutoff_front " << depth_cutoff_front;
+    foreach (SpaceObject, obj, space_object_list)
     {
         float depth = sf::dot(viewVector, obj->getPosition() - sf::Vector2f(camera_position.x, camera_position.y));
         if (depth + obj->getRadius() < depth_cutoff_back)
@@ -260,22 +264,62 @@ void GuiViewport3D::onDraw(sf::RenderTarget& window)
 
     if (show_spacedust && my_spaceship)
     {
+        bool hack_active = true;
+
         static std::vector<sf::Vector3f> space_dust;
 
-        while(space_dust.size() < 1000)
+        while(space_dust.size() < 3000)
             space_dust.push_back(sf::Vector3f());
 
         sf::Vector2f dust_vector = my_spaceship->getVelocity() / 100.0f;
-        sf::Vector3f dust_center = sf::Vector3f(my_spaceship->getPosition().x, my_spaceship->getPosition().y, my_spaceship->getPositionZ());
-        glColor4f(0.7, 0.5, 0.35, 0.07);
+        sf::Vector3f dust_center = sf::Vector3f(my_spaceship->getPosition().x, my_spaceship->getPosition().y, my_spaceship->getPositionZ());;
 
-        for(unsigned int n=0; n<space_dust.size(); n++)
+        if (hack_active)
         {
-            const float maxDustDist = 500.0f;
-            const float minDustDist = 100.0f;
-            glPushMatrix();
-            if ((space_dust[n] - dust_center) > maxDustDist || (space_dust[n] - dust_center) < minDustDist)
-                space_dust[n] = dust_center + sf::Vector3f(random(-maxDustDist, maxDustDist), random(-maxDustDist, maxDustDist), random(-maxDustDist, maxDustDist));
+            dust_vector = my_spaceship->getVelocity() / 100.f;
+            dust_center = sf::Vector3f(my_spaceship->getPosition().x, my_spaceship->getPosition().y, 0.f); 
+        }
+        else
+        {
+            dust_center = sf::Vector3f(my_spaceship->getPosition().x, my_spaceship->getPosition().y, my_spaceship->getPositionZ());
+        }
+
+        // glColor4f(0.7, 0.5, 0.35, 0.07);
+        glColor4f(0.0, 1.0, 1.0, 0.9);
+
+        // LOG(INFO)
+        //     << "SBW: dust_center [" << dust_center.x << ", " << dust_center.y << ", " << dust_center.z << "]"
+        //     << ", dust_vector " << dust_vector;
+
+        for (unsigned int n = 0; n < space_dust.size(); n++)
+        {
+            if (hack_active)
+            {
+                const float maxDustDist = 500.0f;
+                const float minDustDist = 10.0f;
+                glPushMatrix();
+
+                auto delta = space_dust[n] - dust_center;
+                if (delta > maxDustDist || delta < minDustDist)
+                {
+                    // space_dust[n] = dust_center + sf::Vector3f(
+                    //     random(-maxDustDist, maxDustDist), 
+                    //     random(-maxDustDist, maxDustDist), 
+                    //     random(-maxDustDist, maxDustDist));
+                    space_dust[n] = dust_center + sf::Vector3f(
+                        random(0, maxDustDist), 
+                        random(-maxDustDist/3, maxDustDist/3), 
+                        random(-5, 5));
+                }
+            }
+            else
+            {
+                const float maxDustDist = 500.0f;
+                const float minDustDist = 100.0f;
+                glPushMatrix();
+                if ((space_dust[n] - dust_center) > maxDustDist || (space_dust[n] - dust_center) < minDustDist)
+                    space_dust[n] = dust_center + sf::Vector3f(random(-maxDustDist, maxDustDist), random(-maxDustDist, maxDustDist), random(-maxDustDist, maxDustDist));
+            }
             glTranslatef(space_dust[n].x, space_dust[n].y, space_dust[n].z);
             glBegin(GL_LINES);
             glVertex3f(-dust_vector.x, -dust_vector.y, 0);
@@ -316,7 +360,7 @@ void GuiViewport3D::onDraw(sf::RenderTarget& window)
     sf::Shader::bind(NULL);
     glColor3f(1, 1, 1);
 
-#ifdef DEBUG
+#ifndef DEBUG // SBW
     glDisable(GL_DEPTH_TEST);
     foreach(SpaceObject, obj, space_object_list)
     {

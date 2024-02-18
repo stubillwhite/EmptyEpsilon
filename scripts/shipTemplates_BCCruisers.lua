@@ -12,6 +12,7 @@ template = ShipTemplate():setName("Mohondas Cruiser"):setClass("Cruiser", "Mohon
 template:setRadarTrace("radar_blockade.png")
 template:setHull(500)
 template:setShields(450, 450, 450, 450)
+template:setWarpSpeed(800)
 template:setSpeed(30, 3, 4)
 --                  Arc, Dir, Range, CycleTime, Dmg
 template:setBeam(0,100, -20, 2500.0, 6.0, 15)
@@ -30,6 +31,8 @@ template:setTubeDirection(3,  10)
 template:setTubeDirection(4,  40)
 template:setTubeDirection(5, -40)
 template:setDockClasses("Starfighter", "Frigate", "Destroyer")
+-- template:setExternalDockClasses("Frigate", "Destroyer")
+-- template:setInternalDockClasses("Starfighter")
 template:setSharesEnergyWithDocked(true)
 
 variation = template:copy("CNS Mohondas Cruiser"):setRecorded(false)
@@ -45,6 +48,7 @@ variation:setSpeed(40, 5, 8)
 variation = template:copy("CNS Mohondas Class Cruiser"):setType("playership"):setRecorded(false)
 variation:setDescription([[The Mohondas class cruiser is the mainstay of the commonwealth fleet and a solid ship of the line. Most bridge officers are likely to spend at least some time on a Mohondas over the course of their career.]])
 variation:setCombatManeuver(400, 250)
+variation:setEnergyStorage(1500)
 
 
 variation:addRoomSystem(1, 0, 2, 1, "Maneuver");
@@ -84,6 +88,7 @@ template = ShipTemplate():setName("Seydlitz Cruiser"):setClass("Cruiser", "Seydl
 template:setRadarTrace("radar_blockade.png")
 template:setHull(550)
 template:setShields(400, 350, 400, 350)
+template:setWarpSpeed(800)
 template:setSpeed(35, 4, 4.5)
 --                  Arc, Dir, Range, CycleTime, Dmg
 template:setBeam(0, 100, -10, 2000.0, 8.0, 12)
@@ -102,6 +107,8 @@ template:setTubeDirection(1, -20)
 template:setTubeDirection(2,  10)
 template:setTubeDirection(3,  20)
 template:setDockClasses("Starfighter", "Frigate", "Destroyer")
+-- template:setExternalDockClasses("Frigate", "Destroyer")
+-- template:setInternalDockClasses("Starfighter")
 template:setSharesEnergyWithDocked(true)
 
 variation = template:copy("EFS Seydlitz Cruiser"):setRecorded(false)
@@ -122,6 +129,7 @@ template = ShipTemplate():setName("Zuckerberg Cruiser"):setClass("Cruiser", "Zuc
 template:setRadarTrace("radar_blockade.png")
 template:setHull(450)
 template:setShields(400, 350, 400, 350)
+template:setWarpSpeed(800)
 template:setSpeed(35, 5, 8)
 --                  Arc, Dir, Range, CycleTime, Dmg
 template:setBeam(0, 80, -20, 2000.0, 8.0, 15)
@@ -138,6 +146,8 @@ template:setTubeDirection(1, -90)
 template:setTubeDirection(2, -40)
 template:setTubeDirection(3, -40)
 template:setDockClasses("Starfighter", "Frigate", "Destroyer")
+-- template:setExternalDockClasses("Frigate", "Destroyer")
+-- template:setInternalDockClasses("Starfighter")
 template:setSharesEnergyWithDocked(true)
 
 variation = template:copy("JCS Zuckerberg Cruiser"):setRecorded(false)
@@ -151,6 +161,7 @@ template = ShipTemplate():setName("Zedong Cruiser"):setClass("Cruiser", "Zedong"
 template:setRadarTrace("radar_blockade.png")
 template:setHull(550)
 template:setShields(400, 400, 400, 400, 400, 400)
+template:setWarpSpeed(800)
 template:setSpeed(40, 8, 12)
 --                  Arc, Dir, Range, CycleTime, Dmg
 template:setBeam(0, 60, -20, 2500.0, 4.0, 18)
@@ -162,6 +173,8 @@ template:setWeaponStorage("HVLI", 40)
 template:setWeaponStorage("EMP", 20)
 template:setWeaponStorage("Nuke", 2)
 template:setDockClasses("Starfighter", "Frigate", "Destroyer")
+-- template:setExternalDockClasses("Frigate", "Destroyer")
+-- template:setInternalDockClasses("Starfighter")
 template:setSharesEnergyWithDocked(true)
 
 variation = template:copy("SPS Zedong Cruiser"):setRecorded(false)
@@ -180,6 +193,7 @@ template = ShipTemplate():setName("Shasta Cruiser"):setClass("Cruiser", "Shasta"
 template:setRadarTrace("radar_blockade.png")
 template:setHull(500)
 template:setShields(450, 450, 450, 450)
+template:setWarpSpeed(800)
 template:setSpeed(40, 6, 4)
 --                  Arc, Dir, Range, CycleTime, Dmg
 template:setBeam(0,100, -20, 2500.0, 6.0, 15)
@@ -192,6 +206,8 @@ template:setWeaponStorage("Homing", 40)
 template:setWeaponStorage("EMP", 20)
 template:setWeaponStorage("Nuke", 4)
 template:setDockClasses("Starfighter", "Frigate", "Destroyer")
+-- template:setExternalDockClasses("Frigate", "Destroyer")
+-- template:setInternalDockClasses("Starfighter")
 template:setSharesEnergyWithDocked(true)
 
 variation = template:copy("JASA Shasta Cruiser"):setRecorded(false)
@@ -209,6 +225,7 @@ template = ShipTemplate():setName("Mississippi Stealth Cruiser"):setClass("Cruis
 template:setRadarTrace("radar_cloak.png")
 template:setHull(300)
 template:setShields(250, 250, 250, 250)
+template:setWarpSpeed(800)
 template:setSpeed(60, 10, 15)
 template:setTubes(3, 8.0)
 template:setWeaponStorage("HVLI", 40)
@@ -225,6 +242,7 @@ template:setDescription([[The Scylla class cruiser is the mainstay of the Brutal
 template:setRadarTrace("radar_blockade.png")
 template:setHull(500)
 template:setShields(450, 450, 450, 450)
+template:setWarpSpeed(800)
 template:setSpeed(35, 5, 6)
 --                  Arc, Dir, Range, CycleTime, Dmg
 template:setBeam(0,100, -20, 2500.0, 6.0, 15)
@@ -241,15 +259,18 @@ template:setTubeDirection(1, 0)
 template:setTubeDirection(2, 0)
 template:setTubeDirection(3, 0)
 
-template:setDockClasses("Starfighter", "Frigate", "Destroyer")
+--template:setDockClasses("Starfighter", "Frigate", "Destroyer")
+template:setExternalDockClasses("Frigate", "Destroyer")
+template:setInternalDockClasses("Starfighter")
 template:setSharesEnergyWithDocked(true)
 
 
 template = ShipTemplate():setName("BRU Charybdis Battlecruiser"):setClass("Cruiser", "Charybdis"):setModel("ProgenitorBattlecruiserBlack"):setRecorded(false)
 template:setDescription([[The Charybdis class Battlecruiser does not appear to have been built in large numbers, which is fortunate for the UCN as it is a powerhouse of destruction. It has the speed and maneuverability of the smaller Scylla class, with armaments akin to the heavier Jormungandr class. Thankfully it is rare to see more than one at a time.]])
-template:setRadarTrace("radar_blockade.png")
+template:setRadarTrace("radar_battlecruiser.png")
 template:setHull(500)
 template:setShields(450, 450, 450, 450)
+template:setWarpSpeed(800)
 template:setSpeed(35, 4, 6)
 --                  Arc, Dir, Range, CycleTime, Dmg
 template:setBeam(0,100, -20, 2500.0, 6.0, 15)
@@ -267,7 +288,9 @@ template:setTubeDirection(2, 0)
 template:setTubeDirection(3, 0)
 template:setTubeDirection(4, 45)
 template:setTubeDirection(5, -45)
-template:setDockClasses("Starfighter", "Frigate", "Destroyer")
+template:setExternalDockClasses("Frigate", "Destroyer")
+template:setInternalDockClasses("Starfighter")
+--template:setDockClasses("Starfighter", "Frigate", "Destroyer")
 template:setSharesEnergyWithDocked(true)
 
 --UCN
@@ -309,17 +332,23 @@ template:setTubeDirection(2, 0)
 template:setTubeDirection(3, 0)
 template:setTubeDirection(4, 90)
 template:setTubeDirection(5, -90)
-template:setDockClasses("Starfighter", "Frigate", "Destroyer")
+--template:setDockClasses("Starfighter", "Frigate", "Destroyer")
+template:setExternalDockClasses("Frigate", "Destroyer")
+template:setInternalDockClasses("Starfighter")
 template:setSharesEnergyWithDocked(true)
+template:setDefaultAI('missilevolley')
 
 variation = template:copy("UCS Sword Cruiser")
+template:setWarpSpeed(1000)
 
 
 variation = template:copy("UCS Sword Class Cruiser"):setType("playership"):setRecorded(false)
+variation:setWarpSpeed(1000)
 variation:setDescription([[The Sword class cruiser is the mainstay of the confederation fleet and a solid ship of the line. Most bridge officers are likely to spend at least some time on a Sword class over the course of their career.]])
 variation:setCombatManeuver(400, 250)
 variation:setBeamWeaponTurret( 2, 120, 90, 1)
 variation:setBeamWeaponTurret( 3, 120, -90, 1)
+variation:setEnergyStorage(1500)
 
 variation:addRoomSystem(1, 0, 2, 1, "Maneuver");
 variation:addRoomSystem(1, 1, 2, 1, "BeamWeapons");
@@ -353,7 +382,7 @@ variation:addDoor(8, 4, false);
 
 template = ShipTemplate():setName("Colony Battlecruiser"):setClass("Cruiser", "Colony"):setModel("HeliconCorpChroneClassBattlecruiserBlue"):setRecorded(false)
 template:setDescription([[The Colony class Battlecruiser is a fast, heavy hitting beast of a ship. It has the speed and maneuverability of a modern cruiser coupled with the punch of a battleship. While it may not have the shielding or durability to go toe-to-toe with battleship sized vessels, it can deliver a knock-out punch to an unprepared foe.]])
-template:setRadarTrace("radar_blockade.png")
+template:setRadarTrace("radar_battlecruiser.png")
 template:setHull(500)
 template:setShields(450, 450, 450, 450)
 template:setSpeed(40, 6, 8)
@@ -389,17 +418,23 @@ template:setTubeDirection(2, 0)
 template:setTubeDirection(3, 0)
 template:setTubeDirection(4, 90)
 template:setTubeDirection(5, -90)
-template:setDockClasses("Starfighter", "Frigate", "Destroyer")
+--template:setDockClasses("Starfighter", "Frigate", "Destroyer")
+template:setExternalDockClasses("Frigate", "Destroyer")
+template:setInternalDockClasses("Starfighter")
 template:setSharesEnergyWithDocked(true)
+template:setDefaultAI('missilevolley')
 
-variation = template:copy("UCS Colony Class Battlecruiser")
+variation = template:copy("UCS Colony Battlecruiser")
+template:setWarpSpeed(1000)
 
 
 variation = template:copy("UCS Colony Class Battlecruiser"):setType("playership"):setRecorded(false)
+variation:setWarpSpeed(1000)
 variation:setDescription([[The Colony class Battlecruiser is a fast, heavy hitting beast of a ship. It has the speed and maneuverability of a modern cruiser coupled with the punch of a battleship. While it may not have the shielding or durability to go toe-to-toe with battleship sized vessels, it can deliver a knock-out punch to an unprepared foe.]])
 variation:setCombatManeuver(400, 250)
 variation:setBeamWeaponTurret( 2, 120, 90, 1)
 variation:setBeamWeaponTurret( 3, 120, -90, 1)
+variation:setEnergyStorage(1500)
 
 variation:addRoomSystem(1, 0, 2, 1, "Maneuver");
 variation:addRoomSystem(1, 1, 2, 1, "BeamWeapons");

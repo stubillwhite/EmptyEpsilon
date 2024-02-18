@@ -457,12 +457,6 @@ model:addEngineEmitter(-120,  10, -8.3,  1.0, 0.2, 0.2, 10.0)
 
 -- SolCommand Misc ----------
 model = ModelData()
-model:setName("shield_generator")
-model:setRadius(150)
-model:setScale(3)
-model:setMesh("SC-Misc/Shield bubble generator.obj")
-model:setTexture("SC-Misc/Shield bubble generator.jpg")
-model:setSpecular("SC-Misc/Shield bubble generator specular.jpg")
 
 model = ModelData()
 model:setName("sensor-buoy")
@@ -508,7 +502,7 @@ for _, color in ipairs({"Beige", "Black", "Blue", "Green", "Grey"}) do
     model:setSpecular("HeliconCorpBulkClassFrigate/HeliconCorpBulkClassFrigateSpecular.png")
     model:setIllumination("HeliconCorpBulkClassFrigate/HeliconCorpBulkClassFrigateIllumination.png")
     model:setScale(1)
-    model:setRadius(150)
+    model:setRadius(100) -- SBW
 
     -- Visual positions of the beams/missiletubes (blender: -X, Y, Z)
     model:addBeamPosition(2.4, 0.1, -0.25)
@@ -967,7 +961,7 @@ model:addEngineEmitter(-91, 32,-4,  0.2, 0.2, 1.0, 8.0)
 model:addEngineEmitter(-95, 32,-17,  0.2, 0.2, 1.0, 8.0)
 model:addEngineEmitter(-91,-32,-4,  0.2, 0.2, 1.0, 8.0)
 model:addEngineEmitter(-95,-32,-17,  0.2, 0.2, 1.0, 8.0)
-
+ 
 model = ModelData()
 model:setName("small_frigate_4")
 model:setMesh("small_frigate_4/small_frigate_4.model")
@@ -1380,6 +1374,8 @@ for _, color in ipairs({"Black", "Grey", "Blue", "Purple", "Red", "White"}) do
     model:setRadius(350)
 end
 
+---- BUOYS
+
 model = ModelData()
 model:setName("SensorBuoyMKI")
 model:setMesh("SensorBuoy/SensorBuoyMKI.model")
@@ -1416,3 +1412,17 @@ for type=1,5 do
         model:setIllumination("transport_space_ship_" .. type .. "/transport_space_ship_" .. type .. "_illumination.png")
     end
 end
+
+-- WRECKS AND ADDITIONAL "ARTIFACTS"
+
+ModelData():setName("cargo"):setScale(1):setRadius(30):setMesh("cargo.obj"):setTexture("Military_Box_ao.png")
+
+ModelData():setName("cargo-scanned"):setScale(10):setRadius(30):setMesh("cargo-scanned.obj"):setTexture("cargo-scanned.png")
+
+ModelData():setName("cassard-wreck"):setScale(5):setRadius(150):setMesh("cassard-wreck.obj"):setTexture("FlakDestroyer/FlakDestroyerGreenAlbedo.png")
+
+ModelData():setName("hoplite-wreck"):setScale(0.5):setRadius(150):setMesh("hoplite-wreck.obj"):setTexture("HeliconCorpBastionClassDestroyer/HeliconCorpBastionClassDestroyerBlueAlbedo.png")
+
+ModelData():setName("vanguard-wreck"):setScale(1):setRadius(150):setMesh("vanguard-wreck.obj"):setTexture("HeliconCorpBruteClassFrigate/HeliconCorpBruteClassFrigateBlueAlbedo.png")
+
+ModelData():setName("shuttle-wreck"):setScale(0.05):setRadius(40):setMesh("shuttle-wreck.obj"):setTexture("SpaceshipEscapePod/SpaceshipEscapePodBlueAlbedo.png")
