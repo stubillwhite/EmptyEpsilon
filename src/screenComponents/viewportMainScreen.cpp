@@ -7,6 +7,9 @@ GuiViewportMainScreen::GuiViewportMainScreen(GuiContainer* owner, string id)
 : GuiViewport3D(owner, id)
 {
     uint8_t flags = PreferencesManager::get("ship_mainscreen_flags","0").toInt();
+
+    LOG(INFO) << "SBW: flags: " << flags;
+
     if (flags & flag_callsigns)
         showCallsigns();
     if (flags & flag_headings)
@@ -19,6 +22,8 @@ GuiViewportMainScreen::GuiViewportMainScreen(GuiContainer* owner, string id)
 
 void GuiViewportMainScreen::onDraw(sf::RenderTarget& window)
 {
+    bool include_hack;
+
     if (my_spaceship)
     {
         P<SpaceObject> target_ship = my_spaceship->getTarget();
@@ -49,7 +54,7 @@ void GuiViewportMainScreen::onDraw(sf::RenderTarget& window)
         }
         sf::Vector2f cameraPosition2D = my_spaceship->getPosition() + sf::vector2FromAngle(target_camera_yaw) * -camera_ship_distance;
         sf::Vector3f targetCameraPosition(cameraPosition2D.x, cameraPosition2D.y, camera_ship_height);
-#ifdef DEBUG
+//#ifdef DEBUG
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
         {
             targetCameraPosition.x = my_spaceship->getPosition().x;
@@ -57,17 +62,41 @@ void GuiViewportMainScreen::onDraw(sf::RenderTarget& window)
             targetCameraPosition.z = 3000.0;
             camera_pitch = 90.0f;
         }
-#endif
+
+//#endif
+
+        // SBW -- This works, but I don't know why. Target camera?
         if (!first_person)
         {
-            camera_position = targetCameraPosition;
-            camera_yaw = target_camera_yaw;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::X))
+            {
+                camera_position = camera_position * 0.9f + targetCameraPosition * 0.1f;
+                camera_yaw += sf::angleDifference(camera_yaw, target_camera_yaw) * 0.1f;
+                include_hack = true;
+            }
+            else
+            {
+                camera_position = targetCameraPosition;
+                camera_yaw = target_camera_yaw;
+                include_hack = false;
+            }
         }
         else
         {
             camera_position = camera_position * 0.9f + targetCameraPosition * 0.1f;
             camera_yaw += sf::angleDifference(camera_yaw, target_camera_yaw) * 0.1f;
         }
+
+        // LOG(INFO)
+        //     << "SBW: " << my_spaceship->getCallSign() << "-" << include_hack
+        //     << ", my_spaceship->getPosition() [" << my_spaceship->getPosition().x << ", " << my_spaceship->getPosition().y << ", " << my_spaceship->getPositionZ() << "]"
+        //     << ", first_person " << first_person
+        //     // << ", main_screen_setting " << my_spaceship->main_screen_setting
+        //     // << ", camera_yaw " << camera_yaw
+        //     << ", dx " << (my_spaceship->getPosition().x - camera_position.x)
+        //     << ", camera_pitch " << camera_pitch
+        //     << ", target_camera_position [" << targetCameraPosition.x << ", " << targetCameraPosition.y << ", " << targetCameraPosition.z << "]"
+        //     << ", camera_position [" << camera_position.x << ", " << camera_position.y << ", " << camera_position.z << "]";
     }
     GuiViewport3D::onDraw(window);
 }
