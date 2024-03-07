@@ -93,6 +93,7 @@ private:
     EWeaponTubeState state;
     float delay;
     int fire_count;
+    EMissileWeapons fired;
 };
 
 #endif//WEAPON_TUBE_H

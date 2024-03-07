@@ -80,6 +80,7 @@ protected:
     float cooldown;
     string beam_texture;
     int station;
+    EDamageType damage_done_type;
 };
 
 #endif//BEAM_WEAPON_H
