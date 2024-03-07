@@ -419,11 +419,11 @@ bool HardwareController::getVariableValue(int ship_number, string variable_name,
         SHIP_VARIABLE("TubeLoading" + string(n), ship->weapon_tube[n].isLoading() ? 1.0f : 0.0f);
         SHIP_VARIABLE("TubeUnloading" + string(n), ship->weapon_tube[n].isUnloading() ? 1.0f : 0.0f);
         SHIP_VARIABLE("TubeFiring" + string(n), ship->weapon_tube[n].isFiring() ? 1.0f : 0.0f);
-        SHIP_VARIABLE("TubeFiredType" + string(n), getMissileWeaponName(ship->weapon_tube[n].firedType()));
+        SHIP_VARIABLE("TubeFiredType" + string(n), ship->weapon_tube[n].firedType());
     }
     for(int n=0; n<max_beam_weapons; n++)
     {
-        SHIP_VARIABLE("BeamFiredType" + string(n), getBeamWeaponDamageTypeName(ship->weapon_beam[n].getDamageDoneType()));
+        SHIP_VARIABLE("BeamFiredType" + string(n), ship->weapon_beam[n].getDamageDoneType());
     }
     for(int n=0; n<SYS_COUNT; n++)
     {
