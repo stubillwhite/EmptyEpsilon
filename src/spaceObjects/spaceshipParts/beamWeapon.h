@@ -41,6 +41,7 @@ public:
 
     void setDamageType(EDamageType damage_type);
     EDamageType getDamageType();
+    EDamageType getDamageDoneType();
 
     void setEnergyPerFire(float energy);
     float getEnergyPerFire();

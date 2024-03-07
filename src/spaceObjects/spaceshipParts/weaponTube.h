@@ -61,6 +61,7 @@ public:
     bool isLoading();
     bool isUnloading();
     bool isFiring();
+    EMissileWeapons firedType();
 
     float getLoadProgress();
     float getUnloadProgress();
