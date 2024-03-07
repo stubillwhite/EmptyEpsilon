@@ -119,7 +119,7 @@ void WeaponTube::fire(float target_angle)
     }
 }
 
-EMissileWeapons firedType()
+EMissileWeapons WeaponTube::firedType()
 {
     return fired;
 }
