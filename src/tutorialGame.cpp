@@ -19,8 +19,8 @@
 #include "screens/crew4/tacticalScreen.h"
 #include "screens/crew4/operationsScreen.h"
 // new screens for BC tutorials
-#include "screens/extra/TractorBeamScreen.h"
-#include "screens/extra/TargetAnalysisScreen.h"
+#include "screens/extra/tractorBeamScreen.h"
+#include "screens/extra/targetAnalysisScreen.h"
 #include "screens/extra/damcon.h"
 #include "screens/extra/powerManagement.h"
 #include "screens/extra/dockMasterScreen.h"
