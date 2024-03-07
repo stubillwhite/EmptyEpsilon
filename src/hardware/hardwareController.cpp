@@ -423,7 +423,7 @@ bool HardwareController::getVariableValue(int ship_number, string variable_name,
     }
     for(int n=0; n<max_beam_weapons; n++)
     {
-        SHIP_VARIABLE("BeamFiredType" + string(n), ship->weapon_beam[n].getDamageDoneType());
+        SHIP_VARIABLE("BeamFiredType" + string(n), ship->beam_weapons[n].getDamageDoneType());
     }
     for(int n=0; n<SYS_COUNT; n++)
     {
