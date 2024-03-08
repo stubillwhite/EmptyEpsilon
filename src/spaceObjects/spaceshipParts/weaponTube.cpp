@@ -20,7 +20,7 @@ WeaponTube::WeaponTube()
     tube_index = 0;
     size = MS_Medium;
     station = 0;
-    fired = MW_None;
+    fired = MW_Count;
 }
 
 void WeaponTube::setParent(SpaceShip* parent)
@@ -256,7 +256,7 @@ void WeaponTube::forceUnload()
 
 void WeaponTube::update(float delta)
 {
-    fired = MW_None;
+    fired = MW_Count;
     if (delay > 0.0)
     {
         delay -= delta * parent->getSystemEffectiveness(SYS_MissileSystem);
