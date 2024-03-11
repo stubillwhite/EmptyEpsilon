@@ -169,7 +169,7 @@ void TractorBeam::update(float delta)
             }
         }
         targetInRage = tmpTrackingTarget;
-        parent->forceMemberReplication(&targetInRange);
+        parent->forceMemberReplicationUpdate(&targetInRange);
         for(auto it = targets.begin(); it != targets.end(); ++it)
         {
             bool tmpInTmpTargets = false;

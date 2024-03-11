@@ -20,6 +20,7 @@ WeaponTube::WeaponTube()
     tube_index = 0;
     size = MS_Medium;
     station = 0;
+    fired_update_delay = 0.0;
     fired = MW_Count;
 }
 
@@ -36,6 +37,7 @@ void WeaponTube::setParent(SpaceShip* parent)
     parent->registerMemberReplication(&type_loaded);
     parent->registerMemberReplication(&state);
     parent->registerMemberReplication(&delay, 0.5);
+    parent->registerMemberReplication(&fired_update_delay);
     parent->registerMemberReplication(&fired);
 }
 
@@ -257,7 +259,14 @@ void WeaponTube::forceUnload()
 
 void WeaponTube::update(float delta)
 {
-    fired = MW_Count;
+    if(fired_update_delay > 0.0)
+    {
+        fired_update_delay -= delta;
+    }
+    else 
+    {
+        fired = MW_Count;
+    }
     if (delay > 0.0)
     {
         delay -= delta * parent->getSystemEffectiveness(SYS_MissileSystem);
@@ -281,6 +290,7 @@ void WeaponTube::update(float delta)
                 fire_count -= 1;
                 fired = type_loaded;
                 parent->forceMemberReplicationUpdate(&fired);
+                fired_update_delay = 0.5;
                 if (fire_count > 0)
                 {
                     delay = 1.5;
