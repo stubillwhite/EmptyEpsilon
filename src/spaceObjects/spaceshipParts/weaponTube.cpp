@@ -114,6 +114,7 @@ void WeaponTube::fire(float target_angle)
     }else{
         spawnProjectile(target_angle);
         fired = type_loaded;
+        parent->forceMemberReplicationUpdate(&fired);
         state = WTS_Empty;
         type_loaded = MW_None;
     }
@@ -279,6 +280,7 @@ void WeaponTube::update(float delta)
 
                 fire_count -= 1;
                 fired = type_loaded;
+                parent->forceMemberReplicationUpdate(&fired);
                 if (fire_count > 0)
                 {
                     delay = 1.5;

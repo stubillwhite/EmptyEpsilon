@@ -300,4 +300,5 @@ void BeamWeapon::fire(P<SpaceObject> target, ESystem system_target)
 
     target->takeDamage(damage, info);
     damage_done_type = getDamageType();
+    parent->forceMemberReplicationUpdate(&damage_done_type);
 }
