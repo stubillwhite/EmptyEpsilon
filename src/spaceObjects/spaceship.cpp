@@ -137,6 +137,8 @@ REGISTER_SCRIPT_SUBCLASS_NO_CREATE(SpaceShip, ShipTemplateBasedObject)
     /// Requires the maximal range of the beam
     /// Example : ship:setTractorBeamMax(2000)
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setTractorBeamMax);
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, addAsTractorBeamTargeter);
+    REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, removeAsTractorBeamTargeter);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, setWeaponTubeCount);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getWeaponTubeCount);
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceShip, getWeaponTubeLoadType);
@@ -1498,6 +1500,23 @@ float SpaceShip::getSystemEffectiveness(ESystem system)
 
     // If a system cannot be damaged, excessive heat degrades it.
     return std::max(0.0f, power * (1.0f - systems[system].heat_level));
+}
+
+void SpaceShip::addAsTractorBeamTargeter(SpaceShip* targeter)
+{
+    targetedByTractorBeams.insert(targeter);
+}
+
+void SpaceShip::removeAsTractorBeamTargeter(SpaceShip* targeter)
+{
+    for(auto it = targetedByTractorBeams.begin(); it != targetedByTractorBeams.end(); ++it)
+    {
+        if(*it == targeter)
+        {
+            targetedByTractorBeams.erase(it);
+            break;
+        }
+    }
 }
 
 void SpaceShip::setWeaponTubeCount(int amount)

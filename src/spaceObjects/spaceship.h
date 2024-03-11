@@ -105,6 +105,8 @@ public:
     Dock docks[max_docks_count];
     OxygenZone oxygen_zones[10];
 
+    std::vector<SpaceShip*> targetedBy;
+
     ShipSystem systems[SYS_COUNT];
     /*!
      *[input] Ship will try to aim to this rotation. (degrees)
@@ -212,6 +214,8 @@ public:
     ESystem beam_system_target;
     BeamWeapon beam_weapons[max_beam_weapons];
     TractorBeam tractor_beam;
+    std::set<SpaceShip*> targetedByTractorBeams;
+
     /**
      * Frequency setting of the shields.
      */
@@ -547,6 +551,9 @@ public:
         tractor_beam.setMaxRange(max_range);
         tractor_beam.setDragPerSecond(drag_per_second);
     }
+
+    void addAsTractorBeamTargeter(SpaceShip* targeter);
+    void removeAsTractorBeamTargeter(SpaceShip* targeter);
     
     void setWeaponTubeCount(int amount);
     int getWeaponTubeCount();

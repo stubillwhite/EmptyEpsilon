@@ -18,6 +18,8 @@ void TractorBeam::setParent(SpaceShip* parent)
     parent->registerMemberReplication(&direction);
     parent->registerMemberReplication(&range);
     parent->registerMemberReplication(&mode);
+    parent->registerMemberReplication(&targetInRange);
+    parent->registerMemberReplication(&targets);
 }
 
 void TractorBeam::setMode(ETractorBeamMode mode)
@@ -106,12 +108,18 @@ float TractorBeam::getDragSpeed()
     return getDragPerSecond() * parent->getSystemEffectiveness(SYS_Docks);
 }
 
+bool TractorBeam::isTargetInRange()
+{
+    return targetInRange;
+}
+
 void TractorBeam::update(float delta)
 {
     if (game_server && mode > TBM_Off && range > 0.0 && delta > 0)
     {
         float dragCapability = delta * getDragSpeed();
-
+        bool tmpTrackingTarget = false;
+        std::set<SpaceShip*> tmpTargets;
         foreach(SpaceObject, target, space_object_list)
         {
             if (target != parent) {
@@ -123,6 +131,7 @@ void TractorBeam::update(float delta)
                 // If the target is in the beam's arc and range 
                 if (sf::length(diff) < range && angle_diff < arc / 2.0)
                 {
+                    tmpTrackingTarget = true;
                     sf::Vector2f destination;
                     switch(mode) {
                         case TBM_Pull : 
@@ -137,6 +146,11 @@ void TractorBeam::update(float delta)
                         case TBM_Off :
                         default:
                             break;
+                    }
+                    if(mode != TBM_Off && SpaceShip* shipPtr = dynamic_cast<SpaceShip*>(target))
+                    {
+                        shipPtr->addAsTractorBeamTargeter(mode);
+                        tmpTargets.insert(shipPtr);
                     }
                     diff = target->getPosition() - destination;
                     float target_distance = std::max(0.0f, sf::length(diff) - parent->getRadius() - target->getRadius());
@@ -153,6 +167,25 @@ void TractorBeam::update(float delta)
                         target->setPosition(target->getPosition() - (distanceToDrag * normalize(diff)));
                     }
                 }
+            }
+        }
+        targetInRage = tmpTrackingTarget;
+        parent->forceMemberReplication(&targetInRange);
+        for(auto it = targets.begin(); it != targets.end(); ++it)
+        {
+            bool tmpInTmpTargets = false;
+            for(auto tmpIt = tmpTargets.begin(); tmpIt != tmpTargets.end(); ++tmpIt)
+            {
+                if(*it == *tmpIt)
+                {
+                    tmpInTmpTargets = true;
+                    break;
+                }
+            }
+            if(!tmpInTmpTargets)
+            {
+                it->removeAsTractorBeamTargeter(this);
+                targets.erase(it);
             }
         }
     }
