@@ -30,7 +30,7 @@ protected:
     float arc; 
     float direction;
     float range;
-    bool targetInRage;
+    bool targetInRange;
     std::set<SpaceShip*> targets;
 public:
     constexpr static float energy_per_target_u = 0.05f; /*< Amount of energy it takes to drag a target (of radius 100) for 1U */

@@ -146,7 +146,7 @@ void TractorBeam::update(float delta)
                         default:
                             break;
                     }
-                    if(mode != TBM_Off && SpaceShip* shipPtr = dynamic_cast<SpaceShip*>(target))
+                    if(mode != TBM_Off && SpaceShip* shipPtr = dynamic_cast<SpaceShip*>(*target))
                     {
                         shipPtr->addAsTractorBeamTargeter(mode);
                         tmpTargets.insert(shipPtr);
@@ -183,7 +183,7 @@ void TractorBeam::update(float delta)
             }
             if(!tmpInTmpTargets)
             {
-                it->removeAsTractorBeamTargeter(this);
+                it->removeAsTractorBeamTargeter(&this);
                 targets.erase(it);
             }
         }
