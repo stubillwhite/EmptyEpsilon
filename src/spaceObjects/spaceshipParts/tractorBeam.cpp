@@ -169,8 +169,8 @@ void TractorBeam::update(float delta)
                 }
             }
         }
-        // targetInRange = tmpTrackingTarget;
-        // parent->forceMemberReplicationUpdate(&targetInRange);
+        targetInRange = tmpTrackingTarget;
+        parent->forceMemberReplicationUpdate(&targetInRange);
         // for(auto it = targets.begin(); it != targets.end(); ++it)
         // {
         //     bool tmpInTmpTargets = false;
