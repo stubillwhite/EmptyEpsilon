@@ -41,7 +41,7 @@ public:
 
     void setDamageType(EDamageType damage_type);
     EDamageType getDamageType();
-    EDamageType getDamageDoneType();
+    int getDamageDoneType();
 
     void setEnergyPerFire(float energy);
     float getEnergyPerFire();
@@ -81,7 +81,8 @@ protected:
     float cooldown;
     string beam_texture;
     int station;
-    EDamageType damage_done_type;
+    float damage_update_delay;
+    int damage_done_type;
 };
 
 #endif//BEAM_WEAPON_H

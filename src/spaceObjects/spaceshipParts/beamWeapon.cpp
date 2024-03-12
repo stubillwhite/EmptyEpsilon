@@ -23,6 +23,7 @@ BeamWeapon::BeamWeapon()
     station = 0;
     parent = nullptr;
     damage_done_type = DT_Count;
+    damage_update_delay = 0.0f;
 }
 
 void BeamWeapon::setParent(SpaceShip* parent)
@@ -41,6 +42,7 @@ void BeamWeapon::setParent(SpaceShip* parent)
     parent->registerMemberReplication(&cooldown, 0.5);
     parent->registerMemberReplication(&station, 1.0);
     parent->registerMemberReplication(&damage_done_type);
+    parent->registerMemberReplication(&damage_update_delay);
 }
 
 void BeamWeapon::setArc(float arc)
@@ -138,7 +140,7 @@ EDamageType BeamWeapon::getDamageType()
     return damage_type;
 }
 
-EDamageType BeamWeapon::getDamageDoneType()
+int BeamWeapon::getDamageDoneType()
 {
     return damage_done_type;
 }
@@ -195,7 +197,14 @@ int BeamWeapon::getStation()
 
 void BeamWeapon::update(float delta)
 {
-    damage_done_type = DT_Count;
+    if(damage_update_delay > 0.0)
+    {
+        damage_update_delay -= delta;
+    }
+    else 
+    {
+        damage_done_type = DT_Count;
+    }
     if (cooldown > 0.0)
         cooldown -= delta * parent->getSystemEffectiveness(SYS_BeamWeapons);
 
@@ -301,4 +310,5 @@ void BeamWeapon::fire(P<SpaceObject> target, ESystem system_target)
     target->takeDamage(damage, info);
     damage_done_type = getDamageType();
     parent->forceMemberReplicationUpdate(&damage_done_type);
+    damage_update_delay = 0.5f;
 }
