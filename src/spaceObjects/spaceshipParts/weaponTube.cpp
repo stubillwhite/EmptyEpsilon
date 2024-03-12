@@ -122,7 +122,7 @@ void WeaponTube::fire(float target_angle)
     }
 }
 
-EMissileWeapons WeaponTube::firedType()
+int WeaponTube::firedType()
 {
     return fired;
 }
@@ -279,7 +279,6 @@ void WeaponTube::update(float delta)
         case WTS_Unloading:
             state = WTS_Empty;
             if (parent->weapon_storage[type_loaded] < parent->weapon_storage_max[type_loaded])
-                parent->weapon_storage[type_loaded] ++;
             type_loaded = MW_None;
             break;
         case WTS_Firing:

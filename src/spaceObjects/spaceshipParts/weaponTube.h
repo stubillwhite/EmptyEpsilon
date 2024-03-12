@@ -61,7 +61,7 @@ public:
     bool isLoading();
     bool isUnloading();
     bool isFiring();
-    EMissileWeapons firedType();
+    int firedType();
 
     float getLoadProgress();
     float getUnloadProgress();
@@ -95,7 +95,7 @@ private:
     float delay;
     int fire_count;
     float fired_update_delay;
-    EMissileWeapons fired;
+    int fired;
 };
 
 #endif//WEAPON_TUBE_H
