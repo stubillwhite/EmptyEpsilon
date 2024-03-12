@@ -146,11 +146,12 @@ void TractorBeam::update(float delta)
                         default:
                             break;
                     }
-                    if(mode != TBM_Off && SpaceShip* shipPtr = dynamic_cast<SpaceShip*>(*target))
-                    {
-                        shipPtr->addAsTractorBeamTargeter(mode);
-                        tmpTargets.insert(shipPtr);
-                    }
+                    // SpaceObject* targetPtr = &target;
+                    // if(mode != TBM_Off && (SpaceShip* shipPtr = dynamic_cast<SpaceShip*>(targetPtr)))
+                    // {
+                    //     shipPtr->addAsTractorBeamTargeter(mode);
+                    //     tmpTargets.insert(shipPtr);
+                    // }
                     diff = target->getPosition() - destination;
                     float target_distance = std::max(0.0f, sf::length(diff) - parent->getRadius() - target->getRadius());
                     float distanceToDrag = std::min(target_distance, dragCapability);
@@ -168,25 +169,25 @@ void TractorBeam::update(float delta)
                 }
             }
         }
-        targetInRage = tmpTrackingTarget;
-        parent->forceMemberReplicationUpdate(&targetInRange);
-        for(auto it = targets.begin(); it != targets.end(); ++it)
-        {
-            bool tmpInTmpTargets = false;
-            for(auto tmpIt = tmpTargets.begin(); tmpIt != tmpTargets.end(); ++tmpIt)
-            {
-                if(*it == *tmpIt)
-                {
-                    tmpInTmpTargets = true;
-                    break;
-                }
-            }
-            if(!tmpInTmpTargets)
-            {
-                it->removeAsTractorBeamTargeter(&this);
-                targets.erase(it);
-            }
-        }
+        // targetInRange = tmpTrackingTarget;
+        // parent->forceMemberReplicationUpdate(&targetInRange);
+        // for(auto it = targets.begin(); it != targets.end(); ++it)
+        // {
+        //     bool tmpInTmpTargets = false;
+        //     for(auto tmpIt = tmpTargets.begin(); tmpIt != tmpTargets.end(); ++tmpIt)
+        //     {
+        //         if(*it == *tmpIt)
+        //         {
+        //             tmpInTmpTargets = true;
+        //             break;
+        //         }
+        //     }
+        //     if(!tmpInTmpTargets)
+        //     {
+        //         it->removeAsTractorBeamTargeter(this);
+        //         targets.erase(it);
+        //     }
+        // }
     }
 }
 
