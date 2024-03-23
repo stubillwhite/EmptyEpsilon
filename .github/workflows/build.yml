@@ -45,7 +45,18 @@ jobs:
         cd _build_linux
         cmake ../EmptyEpsilon -DSERIOUS_PROTON_DIR=../SeriousProton
         make
-        ls _build_linux
+
+    - name: Zip artifact for deployment
+      if: ${{ false }} # TODO: Disabled
+      run: |
+        zip -r emptyepsilon-linux.zip _build_linux/*.deb
+
+    - name: Publish
+      if: ${{ false }} # TODO: Disabled
+      uses: actions/upload-artifact@v4
+      with:
+        name: EmptyEpsilon (linux)
+        path: emptyepsilon-linux.zip
 
   ########################################
   # Windows
@@ -124,6 +135,7 @@ jobs:
         ninja install
 
     - name: Zip artifact for deployment
+      if: ${{ false }} # TODO: Disabled
       run: |
         zip -r emptyepsilon-macos.zip _build_macos/EmptyEpsilon.app
 
