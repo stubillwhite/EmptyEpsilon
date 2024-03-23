@@ -1,32 +1,36 @@
 name: EE Builder
 
-on: 
+on:
   push:
     branches: [ '*' ]
   pull_request:
     branches: [ '*' ]
 
 jobs:
-  build:
-    runs-on: self-hosted
+  linux:
+    name: Linux
+    runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Update and install packages
+    - name: Dependencies
       run: |
-        sudo apt-get update
+        sudo apt-get update -qq
 
-    - name: Make build folder and CMake
+    - name: Checkout EmptyEpsilon
+      uses: actions/checkout@v2
+      with:
+        path: EmptyEpsilon
+
+    - name: Checkout SeriousProton
+      uses: actions/checkout@v2
+      with:
+        repository: daid/SeriousProton
+        path: SeriousProton
+        ref: master
+
+    - name: Build
       run: |
         mkdir _build_win32
         cd _build_win32
-        cmake .. -G Ninja -DSERIOUS_PROTON_DIR=/ee-workspace/SeriousProton -DCMAKE_TOOLCHAIN_FILE=../cmake/mingw.toolchain -DCMAKE_BUILD_TYPE=RelWithDebInfo
+        cmake .. -G Ninja -DSERIOUS_PROTON_DIR=../SeriousProton -DCMAKE_TOOLCHAIN_FILE=../cmake/mingw.toolchain -DCMAKE_BUILD_TYPE=RelWithDebInfo
         cmake --build . --target package
-
-    - name: Upload artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: EmptyEpsilon
-        path: _build_win32/EmptyEpsilon.zip
