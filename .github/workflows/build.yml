@@ -36,7 +36,7 @@ jobs:
   #      cmake ../EmptyEpsilon -G Ninja -DCMAKE_MAKE_PROGRAM=ninja -DCMAKE_TOOLCHAIN_FILE=../EmptyEpsilon/cmake/mingw.toolchain -DSERIOUS_PROTON_DIR=../SeriousProton -DWARNING_IS_ERROR=1
 
   macos:
-    name: MacOS
+    name: macOS
     runs-on: macos-latest
 
     steps:
@@ -68,3 +68,9 @@ jobs:
           cmake ../EmptyEpsilon -G Ninja -DSERIOUS_PROTON_DIR=../SeriousProton -DCMAKE_INSTALL_PREFIX=. -DWARNING_IS_ERROR=1
           ninja
           ninja install
+
+      - name: Publish
+        uses: actions/upload-artifact@v4
+        with:
+          name: EmptyEpsilon (macOS)
+          path: _build_macos/EmptyEpsilon.app
