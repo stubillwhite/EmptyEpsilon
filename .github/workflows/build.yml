@@ -34,7 +34,7 @@ jobs:
         path: SeriousProton
         fetch-depth: 0
 
-    - name: Checkout correct SeriousProton version
+    - name: Switch to correct SeriousProton version
       run: |
         cd SeriousProton
         git checkout b068a01
@@ -43,8 +43,9 @@ jobs:
       run: |
         mkdir _build_linux
         cd _build_linux
+        echo $PATH
+        ln -s /usr/bin/ninja /usr/sbin/ninja
         cmake ../EmptyEpsilon -G Ninja -DSERIOUS_PROTON_DIR=../SeriousProton -DCMAKE_TOOLCHAIN_FILE=../cmake/mingw.toolchain -DCMAKE_BUILD_TYPE=RelWithDebInfo
-        cmake ../EmptyEpsilon -G Ninja -DCMAKE_MAKE_PROGRAM=ninja -DCMAKE_TOOLCHAIN_FILE=../EmptyEpsilon/cmake/mingw.toolchain -DSERIOUS_PROTON_DIR=../SeriousProton -DWARNING_IS_ERROR=1
 
   ########################################
   # macOS
@@ -71,7 +72,7 @@ jobs:
         #        path: SeriousProton
         #        fetch-depth: 0
         #
-        #    - name: Checkout correct SeriousProton version
+        #    - name: Switch to correct SeriousProton version
         #      run: |
         #        cd SeriousProton
         #        git checkout b068a01
