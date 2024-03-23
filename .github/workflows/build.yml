@@ -42,7 +42,7 @@ jobs:
     steps:
       - name: Dependencies
         run: |
-          brew install cmake sdl2 ninja
+          brew install cmake sdl2 ninja sfml glm libopusenc
 
       - name: Checkout EmptyEpsilon
         uses: actions/checkout@v2
