@@ -7,70 +7,85 @@ on:
     branches: [ '*' ]
 
 jobs:
-  #linux:
-  #  name: Linux
-  #  runs-on: ubuntu-latest
 
-  #  steps:
-  #  - name: Dependencies
-  #    run: |
-  #      sudo apt-get update -qq
+  ########################################
+  # Linux
+  ########################################
 
-  #  - name: Checkout EmptyEpsilon
-  #    uses: actions/checkout@v2
-  #    with:
-  #      path: EmptyEpsilon
-
-  #  - name: Checkout SeriousProton
-  #    uses: actions/checkout@v2
-  #    with:
-  #      repository: daid/SeriousProton
-  #      path: SeriousProton
-  #      ref: master
-
-  #  - name: Build
-  #    run: |
-  #      mkdir _build_win32
-  #      cd _build_win32
-  #      cmake .. -G Ninja -DSERIOUS_PROTON_DIR=../SeriousProton -DCMAKE_TOOLCHAIN_FILE=../cmake/mingw.toolchain -DCMAKE_BUILD_TYPE=RelWithDebInfo
-  #      cmake ../EmptyEpsilon -G Ninja -DCMAKE_MAKE_PROGRAM=ninja -DCMAKE_TOOLCHAIN_FILE=../EmptyEpsilon/cmake/mingw.toolchain -DSERIOUS_PROTON_DIR=../SeriousProton -DWARNING_IS_ERROR=1
-
-  macos:
-    name: macOS
-    runs-on: macos-latest
+  linux:
+    name: Linux
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Dependencies
-        run: |
-          brew install cmake sdl2 ninja sfml glm libopusenc
+    - name: Dependencies
+      run: |
+        sudo apt-get update -qq
+        sudo apt-get install build-essential cmake git libsdl2-dev mingw-w64 ninja-build p7zip-full unzip wget zip
 
-      - name: Checkout EmptyEpsilon
-        uses: actions/checkout@v2
-        with:
-          path: EmptyEpsilon
+    - name: Checkout EmptyEpsilon
+      uses: actions/checkout@v2
+      with:
+        path: EmptyEpsilon
 
-      - name: Checkout SeriousProton
-        uses: actions/checkout@v3
-        with:
-          repository: tdelc/SeriousProton
-          path: SeriousProton
-          fetch-depth: 0
+    - name: Checkout SeriousProton
+      uses: actions/checkout@v3
+      with:
+        repository: tdelc/SeriousProton
+        path: SeriousProton
+        fetch-depth: 0
 
-      - name: Checkout correct SeriousProton version
-        run: |
-          cd SeriousProton
-          git checkout b068a01
+    - name: Checkout correct SeriousProton version
+      run: |
+        cd SeriousProton
+        git checkout b068a01
 
-      - name: Build
-        run: |
-          mkdir -p _build_macos
-          cd _build_macos
-          cmake ../EmptyEpsilon -G Ninja -DSERIOUS_PROTON_DIR=../SeriousProton -DCMAKE_INSTALL_PREFIX=. -DWARNING_IS_ERROR=1
-          ninja
-          ninja install
+    - name: Build
+      run: |
+        mkdir _build_linux
+        cd _build_linux
+        cmake .. -G Ninja -DSERIOUS_PROTON_DIR=../SeriousProton -DCMAKE_TOOLCHAIN_FILE=../cmake/mingw.toolchain -DCMAKE_BUILD_TYPE=RelWithDebInfo
+        cmake ../EmptyEpsilon -G Ninja -DCMAKE_MAKE_PROGRAM=ninja -DCMAKE_TOOLCHAIN_FILE=../EmptyEpsilon/cmake/mingw.toolchain -DSERIOUS_PROTON_DIR=../SeriousProton -DWARNING_IS_ERROR=1
 
-      - name: Publish
-        uses: actions/upload-artifact@v4
-        with:
-          name: EmptyEpsilon (macOS)
-          path: _build_macos/EmptyEpsilon.app
+  ########################################
+  # macOS
+  ########################################
+
+        #  macos:
+        #    name: macOS
+        #    runs-on: macos-latest
+        #
+        #    steps:
+        #    - name: Dependencies
+        #      run: |
+        #        brew install cmake sdl2 ninja sfml glm libopusenc
+        #
+        #    - name: Checkout EmptyEpsilon
+        #      uses: actions/checkout@v2
+        #      with:
+        #        path: EmptyEpsilon
+        #
+        #    - name: Checkout SeriousProton
+        #      uses: actions/checkout@v3
+        #      with:
+        #        repository: tdelc/SeriousProton
+        #        path: SeriousProton
+        #        fetch-depth: 0
+        #
+        #    - name: Checkout correct SeriousProton version
+        #      run: |
+        #        cd SeriousProton
+        #        git checkout b068a01
+        #
+        #    - name: Build
+        #      run: |
+        #        mkdir -p _build_macos
+        #        cd _build_macos
+        #        cmake ../EmptyEpsilon -G Ninja -DSERIOUS_PROTON_DIR=../SeriousProton -DCMAKE_INSTALL_PREFIX=. -DWARNING_IS_ERROR=1
+        #        ninja
+        #        ninja install
+        #
+        #    - name: Publish
+        #      uses: actions/upload-artifact@v4
+        #      with:
+        #        name: EmptyEpsilon (macOS)
+        #        path: _build_macos/EmptyEpsilon.app
