@@ -45,6 +45,7 @@ jobs:
         cd _build_linux
         cmake ../EmptyEpsilon -DSERIOUS_PROTON_DIR=../SeriousProton
         make
+        ls _build_linux
 
   ########################################
   # Windows
@@ -124,7 +125,7 @@ jobs:
 
     - name: Zip artifact for deployment
       run: |
-        zip -r emptyepsilon-macos.zip EmptyEpsilon.app
+        zip -r emptyepsilon-macos.zip _build_macos/EmptyEpsilon.app
 
     - name: Publish
       if: ${{ false }} # TODO: Disabled
