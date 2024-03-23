@@ -44,8 +44,11 @@ jobs:
         mkdir _build_linux
         cd _build_linux
         echo $PATH
-        ln -s /usr/bin/ninja /usr/sbin/ninja
-        cmake ../EmptyEpsilon -G Ninja -DSERIOUS_PROTON_DIR=../SeriousProton -DCMAKE_TOOLCHAIN_FILE=../cmake/mingw.toolchain -DCMAKE_BUILD_TYPE=RelWithDebInfo
+        which ninja-build
+        which ninja
+        sudo ln -s /usr/bin/ninja /usr/sbin/ninja
+        cmake ../EmptyEpsilon -G Ninja -DSERIOUS_PROTON_DIR=../SeriousProton
+        ninja package
 
   ########################################
   # macOS
