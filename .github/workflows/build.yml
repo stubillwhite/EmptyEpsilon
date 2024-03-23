@@ -12,8 +12,46 @@ jobs:
   # Linux
   ########################################
 
-  linux:
-    name: Linux
+  # linux:
+  #   name: Linux
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #   - name: Dependencies
+  #     run: |
+  #       sudo apt-get update -qq
+  #       sudo apt-get install build-essential libsfml-dev cmake git libsdl2-dev mingw-w64 ninja-build p7zip-full unzip wget zip
+
+  #   - name: Checkout EmptyEpsilon
+  #     uses: actions/checkout@v2
+  #     with:
+  #       path: EmptyEpsilon
+
+  #   - name: Checkout SeriousProton
+  #     uses: actions/checkout@v3
+  #     with:
+  #       repository: tdelc/SeriousProton
+  #       path: SeriousProton
+  #       fetch-depth: 0
+
+  #   - name: Switch to correct SeriousProton version
+  #     run: |
+  #       cd SeriousProton
+  #       git checkout b068a01
+
+  #   - name: Build
+  #     run: |
+  #       mkdir _build_linux
+  #       cd _build_linux
+  #       cmake ../EmptyEpsilon -G Ninja -DSERIOUS_PROTON_DIR=../SeriousProton
+  #       ninja package
+
+  ########################################
+  # Windows
+  ########################################
+
+  win32:
+    name: Win32
     runs-on: ubuntu-latest
 
     steps:
@@ -41,52 +79,10 @@ jobs:
 
     - name: Build
       run: |
-        mkdir _build_linux
-        cd _build_linux
-        cmake ../EmptyEpsilon -G Ninja -DSERIOUS_PROTON_DIR=../SeriousProton
+        mkdir _build_win32
+        cd _build_win32
+        cmake ../EmptyEpsilon -G Ninja -DSERIOUS_PROTON_DIR=../SeriousProton -DCMAKE_MAKE_PROGRAM=ninja -DCMAKE_TOOLCHAIN_FILE=../EmptyEpsilon/cmake/mingw.toolchain -DWARNING_IS_ERROR=1
         ninja package
-
-  ########################################
-  # Windows
-  ########################################
-
-        # win32:
-        #   name: Win32
-        #   runs-on: ubuntu-latest
-
-        #   steps:
-        #   - name: Dependencies
-        #     run: |
-        #       sudo apt-get update -qq
-        #       sudo apt-get install build-essential cmake git libsdl2-dev mingw-w64 ninja-build p7zip-full unzip wget zip
-
-        #   - name: Checkout EmptyEpsilon
-        #     uses: actions/checkout@v2
-        #     with:
-        #       path: EmptyEpsilon
-
-        #   - name: Checkout SeriousProton
-        #     uses: actions/checkout@v3
-        #     with:
-        #       repository: tdelc/SeriousProton
-        #       path: SeriousProton
-        #       fetch-depth: 0
-
-        #   - name: Switch to correct SeriousProton version
-        #     run: |
-        #       cd SeriousProton
-        #       git checkout b068a01
-
-        #   - name: Build
-        #     run: |
-        #       mkdir _build_linux
-        #       cd _build_linux
-        #       echo $PATH
-        #       which ninja-build
-        #       which ninja
-        #       sudo ln -s /usr/bin/ninja /usr/sbin/ninja
-        #       cmake ../EmptyEpsilon -G Ninja -DSERIOUS_PROTON_DIR=../SeriousProton
-        #       ninja package
 
   ########################################
   # macOS
@@ -95,29 +91,29 @@ jobs:
   # macos:
   #   name: macOS
   #   runs-on: macos-latest
-  # 
+  #
   #   steps:
   #   - name: Dependencies
   #     run: |
   #       brew install cmake sdl2 ninja sfml glm libopusenc
-  # 
+  #
   #   - name: Checkout EmptyEpsilon
   #     uses: actions/checkout@v2
   #     with:
   #       path: EmptyEpsilon
-  # 
+  #
   #   - name: Checkout SeriousProton
   #     uses: actions/checkout@v3
   #     with:
   #       repository: tdelc/SeriousProton
   #       path: SeriousProton
   #       fetch-depth: 0
-  # 
+  #
   #   - name: Switch to correct SeriousProton version
   #     run: |
   #       cd SeriousProton
   #       git checkout b068a01
-  # 
+  #
   #   - name: Build
   #     run: |
   #       mkdir -p _build_macos
@@ -125,7 +121,7 @@ jobs:
   #       cmake ../EmptyEpsilon -G Ninja -DSERIOUS_PROTON_DIR=../SeriousProton -DCMAKE_INSTALL_PREFIX=. -DWARNING_IS_ERROR=1
   #       ninja
   #       ninja install
-  # 
+  #
   #   - name: Zip artifact for deployment
   #     run: |
   #       zip -r emptyepsilon-macos.zip EmptyEpsilon.app
