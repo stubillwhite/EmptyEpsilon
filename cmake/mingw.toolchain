@@ -12,6 +12,7 @@ set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
 set(MING_DLL_PATH /usr/lib/gcc/i686-w64-mingw32/4.8/)
 
 function(execute_process_ex)
+    message(WARN "SBW - Executing: ${ARGV}")
     execute_process(${ARGV} RESULT_VARIABLE RES)
     if(RES)
         message(FATAL_ERROR "Failed to execute: ${ARGV}")
