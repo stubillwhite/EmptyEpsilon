@@ -71,7 +71,7 @@ jobs:
     - name: Dependencies
       run: |
         sudo apt-get update -qq
-        sudo apt-get install build-essential cmake git libsdl2-dev mingw-w64 ninja-build p7zip-full unzip wget zip
+        sudo apt-get install build-essential libsfml-dev cmake git libsdl2-dev mingw-w64 ninja-build p7zip-full unzip wget zip
 
     - name: Checkout EmptyEpsilon
       uses: actions/checkout@v3
