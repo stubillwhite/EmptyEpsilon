@@ -60,7 +60,7 @@ jobs:
         path: emptyepsilon-linux.zip
 
   ########################################
-  # Windows
+  # Windows - Testing
   ########################################
 
   win32:
