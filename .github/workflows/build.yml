@@ -86,7 +86,6 @@ jobs:
     - name: Debug if build failes
       if: ${{ failure() && steps.buildStep.outcome == 'failure'}}
       run: |
-        cd _build_win32
         find . -name link.txt
 
   ########################################
