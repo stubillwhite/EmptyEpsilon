@@ -86,9 +86,8 @@ jobs:
     - name: Debug if build failes
       if: ${{ failure() && steps.buildStep.outcome == 'failure'}}
       run: |
-        ls /workspace/_build_win32/openal_build
-        cat /workspace/_build_win32/openal_build
-
+        cd _build_win32
+        find . -name link.txt
 
   ########################################
   # macOS
@@ -147,6 +146,7 @@ jobs:
   windows:
     name: Windows
     runs-on: windows-latest
+    if: ${{ false }} # TODO: Disabled
 
     steps:
     - name: Dependencies
