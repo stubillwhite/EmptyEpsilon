@@ -87,6 +87,7 @@ jobs:
       if: ${{ failure() && steps.buildStep.outcome == 'failure'}}
       run: |
         find . -name link.txt
+        cat ./EmptyEpsilon/cmake/_win32/openal_build/CMakeFiles/OpenAL.dir/link.txt
 
   ########################################
   # macOS
