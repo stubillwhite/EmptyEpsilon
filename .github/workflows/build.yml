@@ -76,12 +76,19 @@ jobs:
         git checkout b068a01
 
     - name: Build
+      id: buildStep
       run: |
-        cd EmptyEpsilon
         mkdir _build_win32
         cd _build_win32
-        cmake .. -G Ninja -DCMAKE_MAKE_PROGRAM=ninja -DCMAKE_TOOLCHAIN_FILE=../cmake/mingw.toolchain -DSERIOUS_PROTON_DIR=../../SeriousProton -DWARNING_IS_ERROR=1
+        cmake ../EmptyEpsilon -G Ninja -DCMAKE_MAKE_PROGRAM=ninja -DCMAKE_TOOLCHAIN_FILE=../EmptyEpsilon/cmake/mingw.toolchain -DSERIOUS_PROTON_DIR=../SeriousProton -DWARNING_IS_ERROR=1
         ninja package
+
+    - name: Debug if build failes
+      if: ${{ failure() && steps.buildStep.outcome == 'failure'}}
+      run: |
+        ls /workspace/_build_win32/openal_build
+        cat /workspace/_build_win32/openal_build
+
 
   ########################################
   # macOS
@@ -195,7 +202,7 @@ jobs:
         cmake -E make_directory ${{github.workspace}}/build
         cd ${{github.workspace}}/build
         cmake ../EmptyEpsilon -G "Visual Studio 17 2022" -A Win32 -DSDL2_DIR:PATH="$env:GITHUB_WORKSPACE/externals" -DSERIOUS_PROTON_DIR="../SeriousProton"
-        cmake --build . --config Release --target package 
+        cmake --build . --config Release --target package
 
       # - name: Zip artifact for deployment
       #   run: |
