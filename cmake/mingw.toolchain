@@ -43,7 +43,7 @@ if(NOT SFML_ROOT)
                 "-DDXSDK_DIR=/usr/i686-w64-mingw32"
             WORKING_DIRECTORY "${WIN32_BASE}/openal_build")
         execute_process_ex(
-            COMMAND "make" "-j4" "install"
+            COMMAND "make" "-d" "-j4" "install"
             WORKING_DIRECTORY "${WIN32_BASE}/openal_build")
     endif()
 
