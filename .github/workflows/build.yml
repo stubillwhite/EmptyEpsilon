@@ -86,7 +86,7 @@ jobs:
     - name: Debug if build failes
       if: ${{ failure() && steps.buildStep.outcome == 'failure'}}
       run: |
-        find _win32/openal_build/CMakeFiles/OpenAL.dir
+        find ./EmptyEpsilon/cmake/_win32/openal_build/
         echo --
         find . -name link.txt
         echo --
