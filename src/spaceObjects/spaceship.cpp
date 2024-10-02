@@ -259,6 +259,10 @@ SpaceShip::SpaceShip(string multiplayerClassName, float multiplayer_significant_
     registerMemberReplication(&combat_maneuver_strafe_speed);
     registerMemberReplication(&radar_trace);
     
+    registerMemberReplication(&beams_button_station);
+    registerMemberReplication(&shields_station);
+    registerMemberReplication(&lock_button_station);
+
     for(int n=0; n<max_target_id; n++)
     {
         target_id[n] = -1;
@@ -372,6 +376,11 @@ void SpaceShip::applyTemplateValues()
         beam_weapons[n].setStation(ship_template->beams[n].getStation());
     }
 
+    beams_button_station = ship_template->beams_button_station;
+    shields_station = ship_template->shields_station;
+    lock_button_station = ship_template->lock_button_station;
+    LOG(INFO) << "-- NatDebug - applyTemplateValues - getName(): " << ship_template->getName() << ", beams_button_station: " << beams_button_station << ", shields_station: " << shields_station << ", lock_button_station: " << lock_button_station << ", ";
+
     tractor_beam.setMaxArea(ship_template->tractor_beam.getMaxArea());
     tractor_beam.setDragPerSecond(ship_template->tractor_beam.getDragPerSecond());
 
@@ -404,6 +413,8 @@ void SpaceShip::applyTemplateValues()
         weapon_tube[n].setDirection(ship_template->weapon_tube[n].direction);
         weapon_tube[n].setSize(ship_template->weapon_tube[n].size);
         weapon_tube[n].setStation(ship_template->weapon_tube[n].station);
+        LOG(INFO) << "-- NatDebugTubes - applyTemplateValues - getName(): " << ship_template->getName() << ", weapon_tube[" << n << "].setStation(" << ship_template->weapon_tube[n].station << ")";
+
         for(int m=0; m<MW_Count; m++)
         {
             if (ship_template->weapon_tube[n].type_allowed_mask & (1 << m))

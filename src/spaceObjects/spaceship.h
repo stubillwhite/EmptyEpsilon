@@ -215,6 +215,9 @@ public:
     BeamWeapon beam_weapons[max_beam_weapons];
     TractorBeam tractor_beam;
     std::set<SpaceShip*> targetedByTractorBeams;
+    int beams_button_station;
+    int shields_station;
+    int lock_button_station;
 
     /**
      * Frequency setting of the shields.
@@ -493,6 +496,12 @@ public:
     float getBeamWeaponHeatPerFire(int index) { if (index < 0 || index >= max_beam_weapons) return 0.0; return beam_weapons[index].getHeatPerFire(); }
     int getBeamWeaponStation(int index) { if (index < 0 || index >= max_beam_weapons) return 0; return beam_weapons[index].getStation(); }
 
+    int getBeamsButtonStation() { return beams_button_station; }
+
+    int getShieldsStation() {return shields_station; }
+
+    int getLockButtonStation() {return lock_button_station;}
+    
     int getShieldsFrequency(void){ return shield_frequency; }
     void setShieldsFrequency(float freq) { if ((freq > SpaceShip::max_frequency) || (freq < 0)) return; shield_frequency = freq;}
 

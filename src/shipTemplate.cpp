@@ -70,6 +70,12 @@ REGISTER_SCRIPT_CLASS(ShipTemplate)
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setTubeDirection);
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setTubeSize);
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setTubeStation);
+    /// add beams button to weapon specific station
+    REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setBeamsButtonStation);
+    /// ditto for shields
+    REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setShieldsStation);
+    /// ditto for lock button
+    REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setLockButtonStation);
 
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setHasReactor);
     REGISTER_SCRIPT_CLASS_FUNCTION(ShipTemplate, setHasOxygenGenerator);
@@ -265,10 +271,31 @@ void ShipTemplate::setTubeSize(int index, EMissileSizes size)
 
 void ShipTemplate::setTubeStation(int index, int station)
 {
+    LOG(INFO) << "-- NatDebugTubes - setTubeStation(" << index << ", " << station << ")";
+
     if (index < 0 || index >= 10)
         return;
     weapon_tube[index].station = station;
 }
+// cloney clone
+void ShipTemplate::setBeamsButtonStation(int station)
+{
+    LOG(INFO) << "-- NatDebug - setBeamsButtonStation(" << station << ")";
+    beams_button_station = station;
+}
+
+// cloney clone x 2
+void ShipTemplate::setShieldsStation(int station)
+{
+    shields_station = station;
+}
+
+// cloney clone x 3
+void ShipTemplate::setLockButtonStation(int station)
+{
+    lock_button_station = station;
+}
+
 
 void ShipTemplate::setType(TemplateType type)
 {

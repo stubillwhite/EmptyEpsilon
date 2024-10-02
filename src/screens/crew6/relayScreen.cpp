@@ -20,7 +20,7 @@
 #include "gui/gui2_togglebutton.h"
 
 
-RelayScreen::RelayScreen(GuiContainer* owner, bool allow_comms)
+RelayScreen::RelayScreen(GuiContainer* owner, bool allow_comms, bool allow_alert)
 : GuiOverlay(owner, "RELAY_SCREEN", colorConfig.background), mode(TargetSelection)
 {
     targets.setAllowWaypointSelection();
@@ -201,27 +201,29 @@ RelayScreen::RelayScreen(GuiContainer* owner, bool allow_comms)
     layout->setPosition(-20, -70, ABottomRight)->setSize(300, GuiElement::GuiSizeMax);
 
     // Alert level buttons.
-    alert_level_button = new GuiToggleButton(layout, "", tr("Alert level"), [this](bool value)
-    {
-        for(GuiButton* button : alert_level_buttons)
-            button->setVisible(value);
-    });
-    alert_level_button->setValue(false);
-    alert_level_button->setSize(GuiElement::GuiSizeMax, 50);
-
-    for(int level=AL_Normal; level < AL_MAX; level++)
-    {
-        GuiButton* alert_button = new GuiButton(layout, "", alertLevelToLocaleString(EAlertLevel(level)), [this, level]()
+    if (allow_alert) {
+        alert_level_button = new GuiToggleButton(layout, "", tr("Alert level"), [this](bool value)
         {
-            if (my_spaceship)
-                my_spaceship->commandSetAlertLevel(EAlertLevel(level));
             for(GuiButton* button : alert_level_buttons)
-                button->setVisible(false);
-            alert_level_button->setValue(false);
+                button->setVisible(value);
         });
-        alert_button->setVisible(false);
-        alert_button->setSize(GuiElement::GuiSizeMax, 50);
-        alert_level_buttons.push_back(alert_button);
+        alert_level_button->setValue(false);
+        alert_level_button->setSize(GuiElement::GuiSizeMax, 50);
+
+        for(int level=AL_Normal; level < AL_MAX; level++)
+        {
+            GuiButton* alert_button = new GuiButton(layout, "", alertLevelToLocaleString(EAlertLevel(level)), [this, level]()
+            {
+                if (my_spaceship)
+                    my_spaceship->commandSetAlertLevel(EAlertLevel(level));
+                for(GuiButton* button : alert_level_buttons)
+                    button->setVisible(false);
+                alert_level_button->setValue(false);
+            });
+            alert_button->setVisible(false);
+            alert_button->setSize(GuiElement::GuiSizeMax, 50);
+            alert_level_buttons.push_back(alert_button);
+        }
     }
 
     (new GuiCustomShipFunctions(this, relayOfficer, "", my_spaceship))->setPosition(-20, 240, ATopRight)->setSize(250, GuiElement::GuiSizeMax);
